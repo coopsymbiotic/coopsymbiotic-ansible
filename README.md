@@ -29,7 +29,7 @@ Copy the ssh key:
 
 Configure sudo:
 
-    # vi /etc/sudoers.d/deploy
+    # visudo -f /etc/sudoers.d/deploy
 
 Example:
 

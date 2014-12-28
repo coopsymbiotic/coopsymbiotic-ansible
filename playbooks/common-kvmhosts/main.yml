@@ -1,0 +1,6 @@
+- hosts: kvmhosts
+  sudo: yes
+
+  tasks:
+  - apt: pkg=openntpd state=installed
+  - service: name=openntpd state=started enabled=yes

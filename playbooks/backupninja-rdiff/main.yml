@@ -1,0 +1,9 @@
+---
+- name: Configure rdiff-backup with backupninja
+  hosts: all
+  remote_user: deploy
+  sudo: yes
+  tasks:
+    - apt: update_cache=yes
+    - apt: name=backupninja state=present
+    - apt: name=rdiff-backup state=present

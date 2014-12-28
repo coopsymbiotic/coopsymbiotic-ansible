@@ -1,0 +1,13 @@
+---
+- hosts: amioun.net5.bidon.ca
+  sudo: yes
+
+  tasks:
+    - apt: pkg=mysql-server state=installed
+    - apt: pkg=redmine state=installed
+    - apt: pkg=redmine-mysql state=installed
+    - apt: pkg=opendkim state=installed
+
+    # we use gitolite to help manage git repos in redmine
+    # assumes that the git server is running on the same server.
+    - apt: pkg=gitolite state=installed

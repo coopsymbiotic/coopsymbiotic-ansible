@@ -1,0 +1,26 @@
+^\w{3} [ :0-9]{11} [._[:alnum:]-]+ puppet-agent\[[0-9]+\]: .*, which is a deprecated section. I'm assuming you meant.*$
+^\w{3} [ :0-9]{11} [._[:alnum:]-]+ puppet-agent\[[0-9]+\]: \(//Sshd::Client::Base/Sshkey\[ns3.koumbit.net\]/key\) key changed.*
+^\w{3} [ :0-9]{11} [._[:alnum:]-]+ puppet-agent\[[0-9]+\]: .* executed successfully$
+^\w{3} [ :0-9]{11} [._[:alnum:]-]+ puppet-agent\[[0-9]+\]: .* is deprecated.*$
+^\w{3} [ :0-9]{11} [._[:alnum:]-]+ ansible.*
+^\w{3} [ :0-9]{11} [._[:alnum:]-]+ ntpd\[[0-9]+\]: peer .* now valid
+^\w{3} [ :0-9]{11} [._[:alnum:]-]+ ntpd\[[0-9]+\]: peer .* now invalid
+^\w{3} [ :0-9]{11} [._[:alnum:]-]+ ntpd\[[0-9]+\]: skew change .* exceeds limit
+^\w{3} [ :0-9]{11} [._[:alnum:]-]+ ntpd\[[0-9]+\]: reply from .* not synced.*
+^\w{3} [ :0-9]{11} [._[:alnum:]-]+ drupal: .*
+^\w{3} [ :0-9]{11} [._[:alnum:]-]+ logger: Pulled from client git repo.
+^\w{3} [ :0-9]{11} [._[:alnum:]-]+ logger: Pulled from client sub-modules.
+^\w{3} [ :0-9]{11} [._[:alnum:]-]+ logger: Pulled from generic git repo.
+^\w{3} [ :0-9]{11} [._[:alnum:]-]+ logger: Pulled from generic sub-modules.
+^\w{3} [ :0-9]{11} [._[:alnum:]-]+ /etc/mysql/debian-start\[[0-9]+\]: Looking for 'mysql' as: /usr/bin/mysql
+^\w{3} [ :0-9]{11} [._[:alnum:]-]+ /etc/mysql/debian-start\[[0-9]+\]: Upgrading MySQL tables if necessary.
+^\w{3} [ :0-9]{11} [._[:alnum:]-]+ mysqld: [0-9]+ [:0-9]{8} InnoDB: 5.[0-9]+.[0-9]+ started; log sequence number [0-9]+
+^\w{3} [ :0-9]{11} [._[:alnum:]-]+ mysqld: [0-9]+ [:0-9]{8} [Note] Event Scheduler: Loaded [0-9]+ events
+^\w{3} [ :0-9]{11} [._[:alnum:]-]+ mysqld: [0-9]+ [:0-9]{8} [Note] /usr/sbin/mysqld: ready for connections.
+^\w{3} [ :0-9]{11} [._[:alnum:]-]+ mysqld: [0-9]+ [:0-9]{8} [Warning] Checking table: .*
+^\w{3} [ :0-9]{11} [._[:alnum:]-]+ sshd\[[0-9]+\]: Corrupted MAC on input. \[preauth\]
+^\w{3} [ :0-9]{11} [._[:alnum:]-]+ sshd\[[0-9]+\]: Disconnecting: Packet corrupt \[preauth\]
+^\w{3} [ :0-9]{11} [._[:alnum:]-]+ sshd\[[0-9]+\]: PAM service(sshd) ignoring max retries; .*
+^\w{3} [ :0-9]{11} [._[:alnum:]-]+ sshd\[[0-9]+\]: subsystem request for sftp by user .*
+^\w{3} [ :0-9]{11} [._[:alnum:]-]+ sshd\[[0-9]+\]: fatal: Read from socket failed: Connection reset by peer \[preauth\]
+^\w{3} [ :0-9]{11} [._[:alnum:]-]+ kernel: \[[\.0-9]+\] iptables dropped input: .*

@@ -1,0 +1,45 @@
+---
+- hosts: all
+  sudo: yes
+
+  # Based on https://github.com/geerlingguy/ansible-role-munin-node/
+
+  tasks:
+    - apt: pkg=munin-node state=installed
+
+    - name: Copy our munin-node configuration.
+      template:
+        src: "templates/munin-node.conf"
+        dest: "/etc/munin/munin-node.conf"
+        owner: "root"
+        group: "root"
+        mode: 0644
+
+    - name: Remove some plugins which are rarely used or sensitive info.
+      file: name=/etc/munin/plugins/{{ item.path }} state=absent
+      with_items:
+        - { path: 'df_inode' }
+        - { path: 'entropy' }
+        - { path: 'exim_mailstats' }
+        - { path: 'interrupts' }
+        - { path: 'irqstats' }
+        - { path: 'load' }
+        - { path: 'nfs4_client' }
+        - { path: 'nfs_client' }
+        - { path: 'nfsd' }
+        - { path: 'uptime' }
+        - { path: 'users' }
+
+    - name: Ensure that some plugins are enabled (this is only partial, is missing some network graphs).
+      file: src=/usr/share/munin/plugins/{{ item.path }} dest=/etc/munin/plugins/{{ item.path }} state=link
+      with_items:
+        - { path: 'cpu' }
+        - { path: 'df' }
+        - { path: 'diskstats' }
+        - { path: 'memory' }
+        - { path: 'open_files' }
+        - { path: 'vmstat' }
+        - { path: 'fail2ban' }
+
+    - name: Ensure munin-node is running.
+      service: name=munin-node state=started enabled=yes

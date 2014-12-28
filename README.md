@@ -1,7 +1,7 @@
 Ansible playbooks for bidon.ca
 ==============================
 
-Ansible playbooks for my personnal servers.
+Ansible playbooks for my personnal servers (all running the latest stable version of Debian GNU/Linux).
 
 WARNING: I have just started using Ansible, my playbooks probably are most
 probably not a model for best practices. Copy-paste at your own risk.

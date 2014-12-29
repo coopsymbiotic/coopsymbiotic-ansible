@@ -29,7 +29,7 @@ THREADS="0:8"
 WORKERS=2
 
 function start {
-  echo "Start Puma Server..."
+  echo "Starting the Puma server..."
   set -x
   su -l $USER -c "puma --daemon --preload --bind $BIND_URI \
     --environment $RAILS_ENV --dir $SYSTEM_REDMINE_PATH \
@@ -40,7 +40,7 @@ function start {
 }
 
 function stop {
-  echo "Stop Puma Server..."
+  echo "Stopping the Puma server..."
   if [ -f $PID_FILE ] ; then
     su -l $USER -c "pumactl -P $PID_FILE stop"
     rm -f $PID_FILE

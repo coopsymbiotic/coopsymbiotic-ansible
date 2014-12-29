@@ -30,7 +30,6 @@ WORKERS=2
 
 function start {
   echo "Starting the Puma server..."
-  set -x
   su -l $USER -c "puma --daemon --preload --bind $BIND_URI \
     --environment $RAILS_ENV --dir $SYSTEM_REDMINE_PATH \
     --workers $WORKERS --threads $THREADS \

@@ -69,6 +69,6 @@ case "$1" in
     start
   ;;
   *)
-    echo "Usage : service_puma.sh {start|stop|restart}"
+    echo "Usage : redmine {start|stop|restart}"
   ;;
 esac

@@ -3,11 +3,48 @@
   sudo: yes
 
   tasks:
-    - apt: pkg=mysql-server state=installed
-    - apt: pkg=redmine state=installed
-    - apt: pkg=redmine-mysql state=installed
-    - apt: pkg=opendkim state=installed
+    # adduser --disabled-password redmine
 
-    # we use gitolite to help manage git repos in redmine
-    # assumes that the git server is running on the same server.
-    - apt: pkg=gitolite state=installed
+    - name: Make sure that wheezy-backports apt repository is available (for redmine 2.x).
+      apt_repository:
+        repo='deb http://ftp.ca.debian.net/debian wheezy-backports main'
+        state=present
+        update_cache=yes
+
+    - name: Install base packages for Redmine (git, mysql-server, redmine, redmine-mysql).
+      apt: update_cache=yes
+      apt: pkg=git state=installed
+      apt: pkg=mysql-server state=installed
+      apt: pkg=redmine=2.* state=installed default_release=wheezy-backports
+      apt: pkg=redmine-mysql state=installed
+
+    - name: Install various packages required for gem compilation (libicu-dev, zlib1g-dev).
+      apt: pkg=libicu-dev state=installed
+      apt: pkg=zlib1g-dev state=installed
+      apt: pkg=libssl-dev state=installed
+
+    # FIXME: use dpkg overrides?
+    # chown redmine.redmine /var/cache/redmine/
+    # chgrp redmine /etc/redmine/default/session.yml
+    # chgrp redmine /etc/redmine/default/database.yml
+    # chmod redmine.redmine -R /var/log/redmine/
+    # gem install puma
+    # copy init file in /etc/init.d/redmine
+    # update-rc.d redmine defaults
+    # TODO: nginx?
+
+    - name: Install the gitolite package (assuming that redmine and git are on the same server).
+      apt: pkg=gitolite state=installed
+
+    - name: Checkout plugins for redmine/git integration (redmine_bootstrap_kit, redmine_git_hosting).
+      # mkdir /usr/share/redmine/plugins ?
+
+      shell: git clone https://github.com/jbox-web/redmine_bootstrap_kit.git
+      args:
+        chdir: /usr/share/redmine/plugins
+        creates: redmine_bootstrap_kit
+
+      shell: git clone -b v0.7.9 https://github.com/jbox-web/redmine_git_hosting.git
+      args:
+        chdir: /usr/share/redmine/plugins
+        creates: redmine_git_hosting

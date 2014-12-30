@@ -1,0 +1,32 @@
+---
+- hosts: amioun.net5.bidon.ca
+  sudo: yes
+
+  tasks:
+    - name: Configure debmon apt repository (for nsca-ng-client).
+      apt_repository:
+        repo='deb http://debmon.org/debmon debmon-wheezy main'
+        state=present
+        update_cache=yes
+
+    - name: Import the apt repository archive key.
+      apt_key: url=http://debmon.org/debmon/repo.key state=present
+
+    - apt: pkg=nsca-ng-client state=installed update_cache=yes
+
+    - name: Deploy checkbackups script in /usr/local/bin/checkbackups.
+      template:
+        src: "templates/checkbackups"
+        dest: "/usr/local/bin/checkbackups"
+        owner: "root"
+        group: "root"
+        mode: 0755
+
+    - name: Configure cron for checkbackup.
+      cron:
+        name="checkbackup"
+        minute="5,35"
+        job="/usr/local/bin/checkbackups -s damas.bidon.ca"
+        cron_file="checkbackups"
+        user="root"
+        state=present

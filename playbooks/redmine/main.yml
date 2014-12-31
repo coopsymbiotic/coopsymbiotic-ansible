@@ -3,7 +3,8 @@
   sudo: yes
 
   tasks:
-    # adduser --disabled-password redmine
+    - name: Create the redmine user manually, since we want a home.
+      user: name=redmine
 
     - name: Make sure that wheezy-backports apt repository is available (for redmine 2.x).
       apt_repository:
@@ -24,8 +25,15 @@
       apt: pkg=zlib1g-dev state=installed
       apt: pkg=libssl-dev state=installed
 
-    # gem install puma
+    - name: Install Puma from ruby gem.
+      shell: gem install puma
+      args:
+        creates: /usr/local/bin/puma
+
     # TODO: nginx vhost?
+    # TODO: create the various directories in /home/redmine/redmine/{log,tmp}
+    # TODO: create ssh key for 'redmine' user for gitolite.
+    # TODO: deploy template /home/redmine/config/puma.rb
 
     - name: Deploy the Redmine init script (for puma).
       template:

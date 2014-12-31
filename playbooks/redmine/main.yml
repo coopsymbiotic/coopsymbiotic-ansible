@@ -7,7 +7,7 @@
 
     - name: Make sure that wheezy-backports apt repository is available (for redmine 2.x).
       apt_repository:
-        repo='deb http://ftp.ca.debian.net/debian wheezy-backports main'
+        repo='deb http://ftp.ca.debian.org/debian wheezy-backports main'
         state=present
         update_cache=yes
 

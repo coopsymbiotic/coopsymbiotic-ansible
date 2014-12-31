@@ -1,0 +1,69 @@
+# default configuration options for all environments
+# [ML] set delivery_method to sendmail
+default:
+  # Outgoing emails configuration (see examples above)
+  email_delivery:
+    delivery_method: :sendmail
+
+  # Absolute path to the directory where attachments are stored.
+  # The default is the 'files' directory in your Redmine instance.
+  # Your Redmine instance needs to have write permission on this
+  # directory.
+  # Examples:
+  # attachments_storage_path: /var/redmine/files
+  # attachments_storage_path: D:/redmine/files
+  attachments_storage_path: /var/lib/redmine/default/files/
+
+  # Configuration of the autologin cookie.
+  # autologin_cookie_name: the name of the cookie (default: autologin)
+  # autologin_cookie_path: the cookie path (default: /)
+  # autologin_cookie_secure: true sets the cookie secure flag (default: false)
+  autologin_cookie_name:
+  autologin_cookie_path:
+  autologin_cookie_secure:
+
+  # Configuration of SCM executable command.
+  #
+  # Absolute path (e.g. /usr/local/bin/hg) or command name (e.g. hg.exe, bzr.exe)
+  # On Windows + CRuby, *.cmd, *.bat (e.g. hg.cmd, bzr.bat) does not work.
+  #
+  # On Windows + JRuby 1.6.2, path which contains spaces does not work.
+  # For example, "C:\Program Files\TortoiseHg\hg.exe".
+  # If you want to this feature, you need to install to the path which does not contains spaces.
+  # For example, "C:\TortoiseHg\hg.exe".
+  #
+  # Examples:
+  # scm_subversion_command: svn                                       # (default: svn)
+  # scm_mercurial_command:  C:\Program Files\TortoiseHg\hg.exe        # (default: hg)
+  # scm_git_command:        /usr/local/bin/git                        # (default: git)
+  # scm_cvs_command:        cvs                                       # (default: cvs)
+  # scm_bazaar_command:     bzr.exe                                   # (default: bzr)
+  # scm_darcs_command:      darcs-1.0.9-i386-linux                    # (default: darcs)
+  #
+  scm_subversion_command:
+  scm_mercurial_command:
+  scm_git_command:
+  scm_cvs_command:
+  scm_bazaar_command:
+  scm_darcs_command:
+  # Key used to encrypt sensitive data in the database (SCM and LDAP passwords).
+  # If you don't want to enable data encryption, just leave it blank.
+  # WARNING: losing/changing this key will make encrypted data unreadable.
+  #
+  # If you want to encrypt existing passwords in your database:
+  # * set the cipher key here in your configuration file
+  # * encrypt data using 'rake db:encrypt RAILS_ENV=production'
+  #
+  # If you have encrypted data and want to change this key, you have to:
+  # * decrypt data using 'rake db:decrypt RAILS_ENV=production' first
+  # * change the cipher key here in your configuration file
+  # * encrypt data using 'rake db:encrypt RAILS_ENV=production'
+  database_cipher_key:
+
+# specific configuration options for production environment
+# that overrides the default ones
+production:
+
+# specific configuration options for development environment
+# that overrides the default ones
+development:

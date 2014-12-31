@@ -15,6 +15,7 @@
       apt: update_cache=yes
       apt: pkg=git state=installed
       apt: pkg=mysql-server state=installed
+      apt: pkg=nginx state=installed
       apt: pkg=redmine=2.* state=installed default_release=wheezy-backports
       apt: pkg=redmine-mysql state=installed
 
@@ -23,15 +24,35 @@
       apt: pkg=zlib1g-dev state=installed
       apt: pkg=libssl-dev state=installed
 
-    # FIXME: use dpkg overrides?
-    # chown redmine.redmine /var/cache/redmine/
-    # chgrp redmine /etc/redmine/default/session.yml
-    # chgrp redmine /etc/redmine/default/database.yml
-    # chmod redmine.redmine -R /var/log/redmine/
     # gem install puma
-    # copy init file in /etc/init.d/redmine
-    # update-rc.d redmine defaults
-    # TODO: nginx?
+    # TODO: nginx vhost?
+
+    - name: Deploy the Redmine init script (for puma).
+      template:
+        src: "templates/etc-init-redmine"
+        dest: "/etc/init.d/redmine"
+        owner: "root"
+        group: "root"
+        mode: 0755
+
+    - name: Enable Redmine init script for default boot levels.
+      shell: update-rc.d redmine defaults
+
+    - name: Change permissions on various Redmine directories
+      shell: dpkg-statoverride --update --force --add redmine redmine 0750 /var/cache/redmine
+      shell: dpkg-statoverride --update --force --add redmine redmine 0750 /var/cache/redmine/default
+      shell: dpkg-statoverride --update --force --add redmine redmine 0750 /var/cache/redmine/default/plugin_assets
+      shell: dpkg-statoverride --update --force --add redmine redmine 0750 /var/cache/redmine/default/cache
+      shell: chown -R redmine.redmine /var/cache/redmine
+      shell: dpkg-statoverride --update --force --add redmine redmine 0750 /var/log/redmine
+      shell: chown -R redmine.redmine /var/log/redmine
+      shell: dpkg-statoverride --update --force --add redmine redmine 0755 /var/lib/redmine/default
+      shell: dpkg-statoverride --update --force --add redmine redmine 0755 /var/lib/redmine/default/files
+      shell: chown -R redmine.redmine /var/lib/redmine
+
+    - name: Change permissions on Redmine configuration files.
+      shell: dpkg-statoverride --update --force --add redmine redmine 0640 /etc/redmine/default/session.yml
+      shell: dpkg-statoverride --update --force --add redmine redmine 0640 /etc/redmine/default/database.yml
 
     - name: Install the gitolite package (assuming that redmine and git are on the same server).
       apt: pkg=gitolite state=installed
@@ -48,3 +69,14 @@
       args:
         chdir: /usr/share/redmine/plugins
         creates: redmine_git_hosting
+
+    - name: Deploy the Redmine configuration for smtp notifications.
+      template:
+        src: "templates/etc-redmine-default-configuration.yml"
+        dest: "/etc/redmine/default/configuration.yml"
+        owner: "redmine"
+        group: "redmine"
+        mode: 0644
+
+    - name: Restart Redmine.
+      service: name=redmine state=restarted

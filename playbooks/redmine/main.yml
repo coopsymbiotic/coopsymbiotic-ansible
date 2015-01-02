@@ -47,10 +47,10 @@
       shell: update-rc.d redmine defaults
 
     - name: Change permissions on various Redmine directories
-      shell: dpkg-statoverride --update --force --add redmine redmine 0750 /var/cache/redmine
-      shell: dpkg-statoverride --update --force --add redmine redmine 0750 /var/cache/redmine/default
-      shell: dpkg-statoverride --update --force --add redmine redmine 0750 /var/cache/redmine/default/plugin_assets
-      shell: dpkg-statoverride --update --force --add redmine redmine 0750 /var/cache/redmine/default/cache
+      shell: dpkg-statoverride --update --force --add redmine redmine 0755 /var/cache/redmine
+      shell: dpkg-statoverride --update --force --add redmine redmine 0755 /var/cache/redmine/default
+      shell: dpkg-statoverride --update --force --add redmine redmine 0755 /var/cache/redmine/default/plugin_assets
+      shell: dpkg-statoverride --update --force --add redmine redmine 0755 /var/cache/redmine/default/cache
       shell: chown -R redmine.redmine /var/cache/redmine
       shell: dpkg-statoverride --update --force --add redmine redmine 0750 /var/log/redmine
       shell: chown -R redmine.redmine /var/log/redmine

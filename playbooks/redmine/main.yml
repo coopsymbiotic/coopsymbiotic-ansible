@@ -78,6 +78,11 @@
         chdir: /usr/share/redmine/plugins
         creates: redmine_git_hosting
 
+      shell: git clone -b redmine-2.5 https://github.com/mlutfy/redmine_stealth.git
+      args:
+        chdir: /usr/share/redmine/plugins
+        creates: redmine_stealth
+
     - name: Deploy the Redmine configuration for smtp notifications.
       template:
         src: "templates/etc-redmine-default-configuration.yml"

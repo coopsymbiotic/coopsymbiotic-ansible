@@ -63,7 +63,7 @@
       shell: dpkg-statoverride --update --force --add redmine redmine 0640 /etc/redmine/default/database.yml
 
     - name: Install the gitolite package (assuming that redmine and git are on the same server).
-      apt: pkg=gitolite state=installed
+      apt: pkg=gitolite3 state=installed
 
     - name: Checkout plugins for redmine/git integration (redmine_bootstrap_kit, redmine_git_hosting).
       # mkdir /usr/share/redmine/plugins ?

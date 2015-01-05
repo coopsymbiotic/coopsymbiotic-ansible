@@ -1,4 +1,8 @@
-NB: on the backup server, you must configure:
+NB: on the backup server, you must install:
+
+    apt-get install nsca-ng-server # from debmon or jessie
+
+then configure:
 
     /etc/send_nsca.cfg
 
@@ -29,3 +33,9 @@ For example:
         services = ".+"
         hosts = ".+"
     }
+
+Also note that the monitoring server must have the directory
+
+    /var/run/nsca-ng/
+
+owned by nagios.nagios, otherwise nsca-ng-server won't start.

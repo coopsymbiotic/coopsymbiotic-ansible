@@ -1,5 +1,5 @@
 ---
-- hosts: amioun.net5.bidon.ca
+- hosts: backupservers
   sudo: yes
 
   tasks:
@@ -26,7 +26,7 @@
       cron:
         name="checkbackup"
         minute="5,35"
-        job="/usr/local/bin/checkbackups -s damas.bidon.ca"
+        job="/usr/local/bin/checkbackups -s karak.bidon.ca"
         cron_file="checkbackups"
         user="root"
         state=present

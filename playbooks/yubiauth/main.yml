@@ -1,0 +1,48 @@
+- hosts: all
+  sudo: yes
+
+  vars:
+    - yubiauthfile: "{{ lookup('file', '/etc/ansible/files/etc/yubiauth') }}"
+    - yubipamfile: "{{ lookup('file', '/etc/ansible/files/etc/pam.d/yubiauth') }}"
+
+  tasks:
+    - apt: pkg=libpam-yubico state=installed
+
+    - name: Copy the yubiauth file to /etc/yubiauth
+      copy: content="{{ yubiauthfile }}" dest=/etc/yubiauth owner="root" group="root" mode=0640
+
+    - name: Copy the yubiauth PAM to /etc/pam.d/yubiauth
+      copy: content="{{ yubipamfile }}" dest=/etc/pam.d/yubiauth owner="root" group="root" mode=0600
+
+    - name: Copy the pam.d ssh configuration to /etc/pam.d/sshd
+      template:
+        src: "templates/etc-pam.d-sshd"
+        dest: "/etc/pam.d/sshd"
+        owner: "root"
+        group: "root"
+        mode: 0644
+
+    - name: Update ssh configuration.
+      lineinfile:
+        dest: /etc/ssh/sshd_config
+        regexp: "{{ item.regexp }}"
+        line: "{{ item.line }}"
+        state: present
+      with_items:
+        - {
+          regexp: "^PasswordAuthentication",
+          line: "PasswordAuthentication yes"
+        }
+        - {
+          regexp: "^ChallengeResponseAuthentication",
+          line: "ChallengeResponseAuthentication yes"
+        }
+        - {
+          regexp: "^PubkeyAuthentication",
+          line: "PubkeyAuthentication yes"
+        }
+      notify: restart ssh
+
+  handlers:
+    - name: restart ssh
+      service: name=ssh state=restarted

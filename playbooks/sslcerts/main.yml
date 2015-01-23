@@ -1,0 +1,9 @@
+- hosts: all
+  sudo: yes
+
+  tasks:
+    - copy: src=/etc/ansible/files/etc/ssl/private/{{ item }}.crt dest=/etc/ssl/private/{{ item }}.crt owner=root group=root mode=0640
+      with_items: sslcertificates
+
+    - copy: src=/etc/ansible/files/etc/ssl/private/{{ item }}.key dest=/etc/ssl/private/{{ item }}.key owner=root group=root mode=0640
+      with_items: sslcertificates

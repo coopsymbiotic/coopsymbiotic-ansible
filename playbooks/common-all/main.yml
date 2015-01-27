@@ -1,5 +1,7 @@
 - hosts: all
   sudo: yes
+
+  # Only install basic things which must be everywhere.
   tasks:
   - apt: pkg=etckeeper state=installed update_cache=yes
   - apt: pkg=fail2ban state=installed
@@ -9,7 +11,6 @@
   - apt: pkg=logcheck state=installed
   - apt: pkg=ncdu state=installed
   - apt: pkg=ntpdate state=installed
-  - apt: pkg=postfix state=installed
   - apt: pkg=tmux state=installed
   - apt: pkg=unzip state=installed
   - apt: pkg=vim state=installed

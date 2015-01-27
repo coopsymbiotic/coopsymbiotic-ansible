@@ -1,0 +1,9 @@
+---
+- hosts: all
+  sudo: yes
+  tasks:
+    - apt: pkg=icinga-core state=installed
+    - apt: pkg=icli state=installed
+
+    - name: Restart icinga.
+      service: name=icinga state=restarted

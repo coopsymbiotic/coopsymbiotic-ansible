@@ -33,6 +33,9 @@
     # TODO: nginx vhost?
     # TODO: create the various directories in /home/redmine/redmine/{log,tmp}
     # TODO: create ssh key for 'redmine' user for gitolite.
+    # -> place key in /usr/share/redmine/plugins/redmine_git_hosting/ssh_keys/redmine_gitolite_admin_id_rsa
+    # -> chown redmine.redmine
+
     # TODO: deploy template /home/redmine/config/puma.rb
 
     - name: Deploy the Redmine init script (for puma).
@@ -82,6 +85,12 @@
       args:
         chdir: /usr/share/redmine/plugins
         creates: redmine_stealth
+
+    # TODO: ln -s /var/log/redmine /usr/share/redmine/log
+    # (because git_hosting wants to log there)
+
+    # chown redmine.redmine /usr/share/redmine/plugins/redmine_git_hosting/bin/
+
 
     - name: Deploy the Redmine configuration for smtp notifications.
       template:

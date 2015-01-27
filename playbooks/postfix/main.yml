@@ -1,0 +1,97 @@
+---
+- hosts: all
+  sudo: yes
+  tasks:
+    - apt: pkg=postfix state=installed
+    - apt: pkg=opendkim state=installed
+    - apt: pkg=opendkim-tools state=installed
+
+    - name: Test if the bidon.ca key is present.
+      stat: path=/etc/ssl/private/wildcard.bidon.ca.key
+      register: stkey
+
+    - set_fact:
+        postfix_key: "/etc/ssl/private/wildcard.bidon.ca.key"
+        when: stkey.stat.exists
+
+    - name: Test if the bidon.ca cert bundle is present.
+      stat: path=/etc/ssl/private/wildcard.bidon.ca.bundled.crt
+      register: stcrt
+
+    - set_fact:
+        postfix_cert: "/etc/ssl/private/wildcard.bidon.ca.bundled.crt"
+        when: stcrt.stat.exists
+
+    # SymbioTIC key
+    - name: Test if the symbiotic.coop key is present.
+      stat: path=/etc/ssl/private/wildcard.symbiotic.coop.key
+      register: stkey
+
+    - set_fact:
+        postfix_key: "/etc/ssl/private/wildcard.symbiotic.coop.key"
+        when: stkey.stat.exists
+
+    - name: Test if the symbiotic.coop cert bundle is present.
+      stat: path=/etc/ssl/private/wildcard.symbiotic.coop.bundled.crt
+      register: stcrt
+
+    - set_fact:
+        postfix_cert: "/etc/ssl/private/wildcard.symbiotic.coop.bundled.crt"
+        when: stcrt.stat.exists
+
+    - name: Deploy the postfix main.cf configuration.
+      template:
+        src: "templates/etc-postfix-main.cf"
+        dest: "/etc/postfix/main.cf"
+        owner: "root"
+        group: "root"
+        mode: 0644
+
+    - name: Deploy the opendkim default configuration.
+      template:
+        src: "templates/etc-default-opendkim"
+        dest: "/etc/default/opendkim"
+        owner: "root"
+        group: "root"
+        mode: 0644
+
+    - name: Deploy the opendkim main configuration.
+      template:
+        src: "templates/etc-opendkim.conf"
+        dest: "/etc/opendkim.conf"
+        owner: "root"
+        group: "root"
+        mode: 0644
+
+    - name: Ensure that the postfix run directory exists.
+      file: path=/var/spool/postfix/run/ state=directory owner=postfix
+
+    - name: Ensure that the opendkim socket directory exists.
+      file: path=/var/spool/postfix/run/opendkim/ state=directory owner=opendkim
+
+    - name: Ensure that the opendkim keys directory exists and is restricted.
+      file: path=/etc/opendkim/ state=directory owner=opendkim group=opendkim mode=0700
+
+    - stat: path=/etc/opendkim/201409.private
+      register: stkey
+
+    - name: Warn if the OpenDKIM private key does not exist.
+      debug: msg="/etc/opendkim/201409.private does not exist! Deploy it manually."
+      when: stkey.stat.exists == false
+
+    - name: Set OpenDKIM private key permissions.
+      file: path=/etc/opendkim/201409.private owner=opendkim group=opendkim mode=0600
+      when: (stkey.stat.exists == true)
+
+    - name: Set OpenDKIM public key permissions.
+      file: path=/etc/opendkim/201409.txt owner=opendkim group=opendkim mode=0600
+      when: (stkey.stat.exists == true)
+
+    - name: Add postfix in the opendkim group.
+      user: name=postfix groups=opendkim append=yes
+
+    - name: Restart postfix because of the ipv4 protocol change (unbind ipv6).
+      service: name=postfix state=restarted
+
+    - name: Restart opendkim.
+      service: name=opendkim state=restarted

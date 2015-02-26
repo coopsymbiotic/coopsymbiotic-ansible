@@ -25,28 +25,45 @@
       when: aegir_check.stdout.find('install ok installed') == -1
 
     - name: Download civix from github
+      sudo_user: aegir
       git: repo=https://github.com/totten/civix.git
            dest=/var/aegir/lib/civix
            update=yes
 
     - name: Install composer
+      sudo_user: aegir
       shell: curl -sS https://getcomposer.org/installer | php
       args:
         chdir: /var/aegir/lib/
         creates: composer.phar
 
     - name: Check composer version
+      sudo_user: aegir
       command: /var/aegir/lib/composer.phar diagnose
       register: composer_version_check
 
     - name: Upgrade composer if necessary
+      sudo_user: aegir
       shell: curl -sS https://getcomposer.org/installer | php
       when: composer_version_check.rc == 1
 
     - name: Download git-scan from github
+      sudo_user: aegir
       git: repo=https://github.com/totten/git-scan.git
            dest=/var/aegir/lib/git-scan
            update=yes
 
-    - name: Chown everything to the aegir user, so that it's easier to update later.
-      file: path=/var/aegir/lib/ owner=aegir group=aegir recurse=yes
+    - name: Install bower using npm.
+      sudo_user: aegir
+      npm: name=bower global=no path=/var/aegir/lib
+
+    - name: Create symlinks in /var/aegir/bin/ for composer, civix, git-scan, bower.
+      file: src={{ item.path }} dest={{ item.dest }} owner=aegir group=aegir state=link
+      with_items:
+        - { path: '/var/aegir/lib/composer.phar', dest: '/var/aegir/bin/composer.phar' }
+        - { path: '/var/aegir/lib/civix/civix', dest: '/var/aegir/bin/civix' }
+        - { path: '/var/aegir/lib/git-scan/bin/git-scan', dest: '/var/aegir/bin/git-scan' }
+        - { path: '/var/aegir/lib/node_modules/bower/bin/bower', dest: '/var/aegir/bin/bower' }
+
+    - name: Deploy our .bashrc for the Aegir user.
+      template: src=templates/bashrc dest=/var/aegir/.bashrc owner=aegir group=aegir mode=0644

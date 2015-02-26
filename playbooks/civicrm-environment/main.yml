@@ -1,0 +1,52 @@
+---
+- hosts: all
+  sudo: yes
+
+  # Installs required tools for CiviCRM development:
+  # civix, nodejs, composer, git-scan, etc.
+  # https://civicrm.org/blogs/totten/new-46-dev-composer-and-nodejs
+
+  tasks:
+    - name: Make sure that wheezy-backports apt repository is available (for nodejs).
+      apt_repository:
+        repo='deb http://ftp.ca.debian.org/debian wheezy-backports main'
+        state=present
+        update_cache=yes
+
+    - apt: pkg=git state=installed
+    - apt: pkg=bzip2 state=installed
+    - apt: pkg=nodejs state=installed
+
+    - name: Check if Aegir is installed
+      command: dpkg-query -W -f='${Status} ${Version}\n' aegir2
+      register: aegir_check
+
+    - fail: Fail if Aegir is not installed.
+      when: aegir_check.stdout.find('install ok installed') == -1
+
+    - name: Download civix from github
+      git: repo=https://github.com/totten/civix.git
+           dest=/var/aegir/lib/civix
+           update=yes
+
+    - name: Install composer
+      shell: curl -sS https://getcomposer.org/installer | php
+      args:
+        chdir: /var/aegir/lib/
+        creates: composer.phar
+
+    - name: Check composer version
+      command: /var/aegir/lib/composer.phar diagnose
+      register: composer_version_check
+
+    - name: Upgrade composer if necessary
+      shell: curl -sS https://getcomposer.org/installer | php
+      when: composer_version_check.rc == 1
+
+    - name: Download git-scan from github
+      git: repo=https://github.com/totten/git-scan.git
+           dest=/var/aegir/lib/git-scan
+           update=yes
+
+    - name: Chown everything to the aegir user, so that it's easier to update later.
+      file: path=/var/aegir/lib/ owner=aegir group=aegir recurse=yes

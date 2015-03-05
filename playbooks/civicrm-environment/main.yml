@@ -30,6 +30,12 @@
            dest=/var/aegir/lib/civix
            update=yes
 
+    - name: Download civistrings from github
+      sudo_user: aegir
+      git: repo=https://github.com/civicrm/civistrings.git
+           dest=/var/aegir/lib/civistrings
+           update=yes
+
     - name: Install composer
       sudo_user: aegir
       shell: curl -sS https://getcomposer.org/installer | php
@@ -40,12 +46,15 @@
     - name: Check composer version
       sudo_user: aegir
       command: /var/aegir/lib/composer.phar diagnose
+      ignore_errors: yes
       register: composer_version_check
 
     - name: Upgrade composer if necessary
       sudo_user: aegir
       shell: curl -sS https://getcomposer.org/installer | php
-      when: composer_version_check.rc == 1
+      args:
+        chdir: /var/aegir/lib/
+      when: composer_version_check.rc != 0
 
     - name: Download git-scan from github
       sudo_user: aegir
@@ -62,6 +71,7 @@
       with_items:
         - { path: '/var/aegir/lib/composer.phar', dest: '/var/aegir/bin/composer.phar' }
         - { path: '/var/aegir/lib/civix/civix', dest: '/var/aegir/bin/civix' }
+        - { path: '/var/aegir/lib/civistrings/bin/civistrings', dest: '/var/aegir/bin/civistrings' }
         - { path: '/var/aegir/lib/git-scan/bin/git-scan', dest: '/var/aegir/bin/git-scan' }
         - { path: '/var/aegir/lib/node_modules/bower/bin/bower', dest: '/var/aegir/bin/bower' }
 

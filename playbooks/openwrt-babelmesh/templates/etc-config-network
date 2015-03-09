@@ -1,0 +1,35 @@
+# {{ ansible_managed }}
+
+config interface 'loopback'
+        option ifname 'lo'
+        option proto 'static'
+        option ipaddr '127.0.0.1'
+        option netmask '255.0.0.0'
+
+config interface 'lan'
+        option ifname 'eth0'
+        option proto 'static'
+        option ipaddr '{{ lan_ipaddr }}'
+        option netmask '{{ lan_netmask }}'
+        option gateway '{{ lan_gateway }}'
+        option ip6addr '{{ lan_ip6addr }}'
+        option ip6gw '{{ lan_ip6gw }}'
+        option dns '{{ lan_dns }}'
+
+config interface 'mesh'
+        option ifname 'wlan0-2'
+        option proto 'none'
+
+config interface 'ap'
+        option ifname 'wlan0'
+        option proto 'static'
+        option ip6addr '{{ ap_ip6addr }}'
+        option ipaddr '{{ ap_ipaddr }}'
+        option netmask '{{ ap_netmask }}'
+
+config interface 'znet'
+        option ifname 'wlan0-1'
+        option proto 'static'
+        option ipaddr '{{ znet_ipaddr }}'
+        option netmask '{{ znet_netmask }}'
+        option dns '{{ znet_dns }}'

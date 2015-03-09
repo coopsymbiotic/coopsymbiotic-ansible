@@ -1,0 +1,36 @@
+# {{ ansible_managed }}
+
+config wifi-device 'radio0'
+        option type 'mac80211'
+        option channel '{{ radio0_channel }}'
+        option macaddr '{{ radio0_macaddr }}'
+        option hwmode '{{ radio0_hwmode }}'
+        option htmode 'HT20'
+        list ht_capab 'SHORT-GI-40'
+        list ht_capab 'TX-STBC'
+        list ht_capab 'RX-STBC1'
+        list ht_capab 'DSSS_CCK-40'
+
+config wifi-iface
+        option device 'radio0'
+        option network '{{ mesh_network }}'
+        option encryption 'none'
+        option mode 'adhoc'
+        option ssid '{{ mesh_ssid }}'
+        option bssid '02:CA:FF:EE:BA:BE'
+
+config wifi-iface
+        option device 'radio0'
+        option encryption 'none'
+        option mode 'ap'
+        option ssid '{{ ap_ssid }}'
+        option wmm '1'
+        option network '{{ ap_network }}'
+
+config wifi-iface
+        option device 'radio0'
+        option encryption psk2
+        option mode ap
+        option ssid '{{ znet_ssid }}'
+        option key '{{ znet_key }}'
+        option network '{{ znet_network }}'

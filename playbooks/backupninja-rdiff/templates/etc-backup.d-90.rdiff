@@ -1,0 +1,65 @@
+# {{ ansible_managed }}
+
+[source]
+type = local
+keep = 60D
+
+# A few notes about includes and excludes:
+# 1. include, exclude and vsinclude statements support globbing with '*'
+# 2. Symlinks are not dereferenced. Moreover, an include line whose path
+#    contains, at any level, a symlink to a directory, will only have the
+#    symlink backed-up, not the target directory's content. Yes, you have to
+#    dereference yourself the symlinks, or to use 'mount --bind' instead.
+#    Example: let's say /home is a symlink to /mnt/crypt/home ; the following
+#    line will only backup a "/home" symlink ; neither /home/user nor
+#    /home/user/Mail will be backed-up :
+#      include = /home/user/Mail
+#    A workaround is to 'mount --bind /mnt/crypt/home /home' ; another one is to
+#    write :
+#      include = /mnt/crypt/home/user/Mail
+# 3. All the excludes come after all the includes. The order is not otherwise
+#    taken into account.
+
+# files to include in the backup
+include = /var/spool/cron/crontabs
+include = /var/backups
+include = /etc
+include = /root
+include = /home
+include = /usr/local/*bin
+include = /var/lib/dpkg/status*
+include = /var/aegir
+include = /var/lib/munin
+include = /usr/share/coquelicot
+
+{% if backupincludes is defined %}
+# Includes defined for this host only
+  {% for item in backupincludes %}
+include = {{ item }}
+  {% endfor %}
+{% endif %}
+
+exclude = /home/*/.local/share/Trash
+exclude = /home/*/.Trash
+exclude = /home/*/.thumbnails
+exclude = /home/*/.beagle
+exclude = /home/*/gtk-gnutella-downloads
+exclude = /var/cache/backupninja/duplicity
+exclude = /var/aegir/backups/
+
+{% if backupexcludes is defined %}
+# Excludes defined for this host only
+  {% for item in backupexcludes %}
+exclude = {{ item }}
+  {% endfor %}
+{% endif %}
+
+######################################################
+## destination section
+## (where the files are copied to)
+
+[dest]
+type = remote
+directory = /backup/{{ ansible_fqdn }}/rdiff-backup
+host = {{ backupserver }}
+user = backup-{{ ansible_hostname }}

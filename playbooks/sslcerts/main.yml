@@ -2,8 +2,36 @@
   sudo: yes
 
   tasks:
-    - copy: src=/etc/ansible/files/etc/ssl/private/{{ item }}.crt dest=/etc/ssl/private/{{ item }}.crt owner=root group=root mode=0640
+    - copy: src=/etc/ansible/files/etc/ssl/private/{{ item }}.crt dest=/etc/ssl/private/{{ item }}.crt owner=root group=ssl-cert mode=0640
       with_items: sslcertificates
 
-    - copy: src=/etc/ansible/files/etc/ssl/private/{{ item }}.key dest=/etc/ssl/private/{{ item }}.key owner=root group=root mode=0640
+    - copy: src=/etc/ansible/files/etc/ssl/private/{{ item }}.crt dest=/etc/ssl/private/{{ item }}.bundled.crt owner=root group=ssl-cert mode=0640
       with_items: sslcertificates
+
+    - copy: src=/etc/ansible/files/etc/ssl/private/{{ item }}.cacert.crt dest=/etc/ssl/private/{{ item }}.cacert.crt owner=root group=ssl-cert mode=0640
+      with_items: sslcertificates
+
+    - copy: src=/etc/ansible/files/etc/ssl/private/{{ item }}.key dest=/etc/ssl/private/{{ item }}.key owner=root group=ssl-cert mode=0640
+      with_items: sslcertificates
+
+    # If using Aegir
+    - copy: src=/etc/ansible/files/etc/ssl/private/{{ item }}.key dest=/var/aegir/config/ssl.d/{{ item }}/openssl.key owner=root group=aegir mode=0640
+      with_items: sslcertificates
+      when: host_aegir_managed
+
+    - copy: src=/etc/ansible/files/etc/ssl/private/{{ item }}.crt dest=/var/aegir/config/ssl.d/{{ item }}/openssl.crt owner=root group=aegir mode=0640
+      with_items: sslcertificates
+      when: host_aegir_managed
+
+    # Restart various services
+    - name: Restart postfix.
+      service: name=postfix state=restarted
+      when: host_postfix_managed
+
+    - name: Restart apache.
+      service: name=apache2 state=restarted
+      when: host_apache_managed
+
+    - name: Restart nginx.
+      service: name=nginx state=restarted
+      when: host_nginx_managed

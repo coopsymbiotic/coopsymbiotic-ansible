@@ -1,5 +1,5 @@
 ---
-- hosts: amioun.net5.bidon.ca
+- hosts: redmineservers
   sudo: yes
 
   tasks:
@@ -86,11 +86,25 @@
         chdir: /usr/share/redmine/plugins
         creates: redmine_stealth
 
+    # "Redmine Agile" plugin and dependancies
+    - name: Install Redmine Agile
+      git: repo=https://github.com/RCRM/redmine_agile.git
+           dest=/usr/share/redmine/plugins/redmine_agile
+
+    - name: Redmine Agile, run bundle install
+      shell: bundle install --without development test RAILS_ENV=production
+      args:
+        chdir: /usr/share/redmine/plugins/redmine_agile
+
+    - name: Redmine Agile, run rake
+      shell: rake redmine:plugins NAME=redmine_agile RAILS_ENV=production
+      args:
+        chdir: /usr/share/redmine/plugins/redmine_agile
+
     # TODO: ln -s /var/log/redmine /usr/share/redmine/log
     # (because git_hosting wants to log there)
 
     # chown redmine.redmine /usr/share/redmine/plugins/redmine_git_hosting/bin/
-
 
     - name: Deploy the Redmine configuration for smtp notifications.
       template:

@@ -8,7 +8,10 @@
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ ntpd\[[0-9]+\]: peer .* now invalid
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ ntpd\[[0-9]+\]: skew change .* exceeds limit
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ ntpd\[[0-9]+\]: reply from .* not synced.*
+^\w{3} [ :0-9]{11} [._[:alnum:]-]+ ntpd\[[0-9]+\]: adjusting clock frequency by -0.*
+^\w{3} [ :0-9]{11} [._[:alnum:]-]+ ntpd\[[0-9]+\]: adjusting clock frequency by 0.*
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ drupal: .*
+^\w{3} [ :0-9]{11} [._[:alnum:]-]+ logger: Applied Puppet configuration successfully.
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ logger: Pulled from client git repo.
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ logger: Pulled from client sub-modules.
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ logger: Pulled from generic git repo.

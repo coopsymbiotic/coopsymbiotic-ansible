@@ -30,6 +30,7 @@
 
     - apt: pkg=nginx state=installed
     - apt: pkg=php5-fpm state=installed
+    - apt: pkg=curl state=installed
 
     # Not necessary in Jessie, + PITA to use?
     # - name: Secure the MySQL installation
@@ -37,6 +38,24 @@
 
     # TODO: preseed the root password in debconf
     # TODO: preseed the aegir hostname in debconf
+
+    - name: Preseed Aegir hostmaster site url
+      shell: echo "debconf aegir/site string {{ inventory_hostname }}" | debconf-set-selections
+
+    - name: Preseed Aegir hostmaster db_host
+      shell: echo "debconf aegir/db_host string 127.0.0.1" | debconf-set-selections
+
+    - name: Preseed Aegir hostmaster db_user
+      shell: echo "debconf aegir/db_user string root" | debconf-set-selections
+
+    - name: Preseed Aegir hostmaster db_password
+      shell: echo "debconf aegir/db_password password `cat /root/.mysql.root`" | debconf-set-selections
+
+    - name: Preseed Aegir hostmaster webmaster (nginx)
+      shell: echo "debconf aegir/webserver string nginx" | debconf-set-selections
+
+    # "echo debconf aegir/email string $aegir_email | debconf-set-selections"
+    # "echo debconf aegir/makefile string $aegir_makefile | debconf-set-selections"
 
     - name: Get the Aegir repo key
       apt_key: url=http://debian.aegirproject.org/key.asc state=present
@@ -47,4 +66,4 @@
         state=present
         update_cache=yes
 
-    - apt: pkg=aegir2 state=installed
+    - apt: pkg=aegir3 state=installed

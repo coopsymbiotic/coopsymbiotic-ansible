@@ -1,0 +1,50 @@
+---
+- hosts: all
+  sudo: yes
+
+  # Installs Aegir2 (http://www.aegirproject.org)
+  # Assumes Debian Jessie, with MariaDB, Nginx, php5-fpm
+
+  tasks:
+    - apt: pkg=pwgen state=installed
+
+    # https://github.com/gaspaio/ansible-devbox/blob/master/roles/mysql/tasks/server.yml
+    # Install server using a preseed file to set the root password
+    - name: Check for previous MySQL installation
+      shell: "[ -f /usr/sbin/mysqld ]"
+      ignore_errors: True
+      register: mysqld_exists
+
+    - name: Generate a root password for MySQL
+      shell: pwgen 15 1 > /root/.mysql.root
+      when: mysqld_exists|failed
+
+    - name: Preseed MariaDB root password 1 of 2
+      shell: echo "mariadb-server-10.0 mysql-server/root_password password `cat /root/.mysql.root`" | debconf-set-selections
+
+    - name: Preseed MariaDB root password 2 of 2
+      shell: echo "mariadb-server-10.0 mysql-server/root_password_again password `cat /root/.mysql.root`" | debconf-set-selections
+
+    - apt: pkg=mariadb-server state=installed
+    - apt: pkg=mariadb-client state=installed
+
+    - apt: pkg=nginx state=installed
+    - apt: pkg=php5-fpm state=installed
+
+    # Not necessary in Jessie, + PITA to use?
+    # - name: Secure the MySQL installation
+    #  shell: mysql_secure_installation
+
+    # TODO: preseed the root password in debconf
+    # TODO: preseed the aegir hostname in debconf
+
+    - name: Get the Aegir repo key
+      apt_key: url=http://debian.aegirproject.org/key.asc state=present
+
+    - name: Add the Aegir apt repository
+      apt_repository:
+        repo='deb http://debian.aegirproject.org stable main'
+        state=present
+        update_cache=yes
+
+    - apt: pkg=aegir2 state=installed

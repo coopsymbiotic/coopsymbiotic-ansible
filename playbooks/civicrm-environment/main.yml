@@ -12,17 +12,26 @@
         repo='deb http://ftp.ca.debian.org/debian wheezy-backports main'
         state=present
         update_cache=yes
+      when: ansible_distribution_release == "wheezy"
 
     - apt: pkg=git state=installed
     - apt: pkg=bzip2 state=installed
     - apt: pkg=nodejs state=installed
+    - apt: pkg=npm state=installed
 
-    - name: Check if Aegir is installed
+    - name: Check if Aegir2 is installed
       command: dpkg-query -W -f='${Status} ${Version}\n' aegir2
-      register: aegir_check
+      register: aegir2_check
+
+    - name: Check if Aegir3 is installed
+      command: dpkg-query -W -f='${Status} ${Version}\n' aegir3
+      register: aegir3_check
 
     - fail: Fail if Aegir is not installed.
-      when: aegir_check.stdout.find('install ok installed') == -1
+      when: aegir2_check.stdout.find('install ok installed') == -1 and aegir3_check.stdout.find('install ok installed') == -1
+
+    - name: Ensure that the /var/aegir/bin directory exists.
+      file: path=/var/aegir/bin/ state=directory owner=aegir
 
     - name: Download civix from github
       sudo_user: aegir
@@ -69,7 +78,7 @@
     - name: Create symlinks in /var/aegir/bin/ for composer, civix, git-scan, bower.
       file: src={{ item.path }} dest={{ item.dest }} owner=aegir group=aegir state=link
       with_items:
-        - { path: '/var/aegir/lib/composer.phar', dest: '/var/aegir/bin/composer.phar' }
+        - { path: '/var/aegir/lib/composer.phar', dest: '/var/aegir/bin/composer' }
         - { path: '/var/aegir/lib/civix/civix', dest: '/var/aegir/bin/civix' }
         - { path: '/var/aegir/lib/civistrings/bin/civistrings', dest: '/var/aegir/bin/civistrings' }
         - { path: '/var/aegir/lib/git-scan/bin/git-scan', dest: '/var/aegir/bin/git-scan' }

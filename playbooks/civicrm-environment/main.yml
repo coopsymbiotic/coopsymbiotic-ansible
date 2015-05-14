@@ -20,31 +20,19 @@
     - apt: pkg=nodejs state=installed
     - apt: pkg=npm state=installed
 
-    - name: Check if Aegir2 is installed
-      command: dpkg-query -W -f='${Status} ${Version}\n' aegir2
-      register: aegir2_check
-
-    - name: Check if Aegir3 is installed
-      command: dpkg-query -W -f='${Status} ${Version}\n' aegir3
-      register: aegir3_check
-
-    - fail: Fail if Aegir is not installed.
-      when: aegir2_check.stdout.find('install ok installed') == -1 and aegir3_check.stdout.find('install ok installed') == -1
+#     - name: Check if Aegir2 is installed
+#       command: dpkg-query -W -f='${Status} ${Version}\n' aegir2
+#       register: aegir2_check
+#
+#     - name: Check if Aegir3 is installed
+#       command: dpkg-query -W -f='${Status} ${Version}\n' aegir3
+#       register: aegir3_check
+#
+#    - fail: Fail if Aegir is not installed.
+#      when: aegir2_check.stdout.find('install ok installed') == -1 and aegir3_check.stdout.find('install ok installed') == -1
 
     - name: Ensure that the /var/aegir/bin directory exists.
       file: path=/var/aegir/bin/ state=directory owner=aegir
-
-    - name: Download civix from github
-      sudo_user: aegir
-      git: repo=https://github.com/totten/civix.git
-           dest=/var/aegir/lib/civix
-           update=yes
-
-    - name: Download civistrings from github
-      sudo_user: aegir
-      git: repo=https://github.com/civicrm/civistrings.git
-           dest=/var/aegir/lib/civistrings
-           update=yes
 
     - name: Install composer
       sudo_user: aegir
@@ -65,6 +53,24 @@
       args:
         chdir: /var/aegir/lib/
       when: composer_version_check.rc != 0
+
+    - name: Download civix from github
+      sudo_user: aegir
+      git: repo=https://github.com/totten/civix.git
+           dest=/var/aegir/lib/civix
+           update=yes
+
+    - name: Run composer install for civix
+      sudo_user: aegir
+      shell: /var/aegir/lib/composer.phar install
+      args:
+        chdir: /var/aegir/lib/civix/
+
+    - name: Download civistrings from github
+      sudo_user: aegir
+      git: repo=https://github.com/civicrm/civistrings.git
+           dest=/var/aegir/lib/civistrings
+           update=yes
 
     - name: Download git-scan from github
       sudo_user: aegir

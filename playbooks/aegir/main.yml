@@ -2,7 +2,7 @@
 - hosts: all
   sudo: yes
 
-  # Installs Aegir2 (http://www.aegirproject.org)
+  # Installs Aegir3 (http://www.aegirproject.org)
   # Assumes Debian Jessie, with MariaDB, Nginx, php5-fpm
 
   tasks:
@@ -36,10 +36,6 @@
 
     - name: Making sure the drush package is removed (aegir3 installs through composer)
       apt: pkg=drush state=absent
-
-    # Not necessary in Jessie, + PITA to use?
-    # - name: Secure the MySQL installation
-    #  shell: mysql_secure_installation
 
     - name: Preseed Aegir hostmaster site url
       shell: echo "debconf aegir/site string {{ inventory_hostname }}" | debconf-set-selections

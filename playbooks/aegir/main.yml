@@ -65,3 +65,17 @@
         update_cache=yes
 
     - apt: pkg=aegir3 state=installed
+
+    - name: Download provision_civicrm from Drupal.org
+      sudo_user: aegir
+      git: repo=http://git.drupal.org/project/provision_civicrm.git
+           version=6.x-2.x
+           dest=/var/aegir/.drush/provision_civicrm
+           update=yes
+
+    - name: Download provision_symbiotic from Github
+      sudo_user: aegir
+      git: repo=https://github.com/coopsymbiotic/provision_symbiotic.git
+           version=master
+           dest=/var/aegir/.drush/provision_symbiotic
+           update=yes

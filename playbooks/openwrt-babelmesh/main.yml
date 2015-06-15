@@ -4,6 +4,10 @@
   serial: 6
 
   tasks:
+    # Packages
+    # - raw: opkg install radvd tinc babeld ip tcpdump
+    # - TODO: firewall?
+
     # Wireless configurations
     - raw: uci delete wireless.radio0 || true
     - raw: uci delete uci delete wireless.@wifi-iface[2] || true
@@ -48,20 +52,45 @@
     - raw: uci commit
 
     # Network configuration
-    - raw: uci show network | cut -f 1-2 -d '.' | grep -v interface | sort | uniq | xargs uci del 
+    - raw: uci show network | cut -f 1-2 -d '.' | grep -v interface | sort | uniq | xargs -n 1 uci del
     - raw: uci set network.loopback=interface
     - raw: uci set network.loopback.ifname=lo
     - raw: uci set network.loopback.proto=static
     - raw: uci set network.loopback.ipaddr=127.0.0.1
     - raw: uci set network.loopback.netmask=255.0.0.0
+
     - raw: uci set network.lan=interface
     - raw: uci set network.lan.ifname=eth0
     - raw: uci set network.lan.proto=static
+    - raw: uci set network.lan.force_link=1
     - raw: uci set network.lan.ip6addr={{ lan_ip6addr }}
+
+    # LAN might be ipv6 only, and serve as the uplink (ex: tarator)
+    # In this case, there is no ipv6gw, and no ipaddr (ipv4).
     - raw: uci set network.lan.ip6gw={{ lan_ip6gw }}
+      when: lan_ip6gw is defined
+
+    - raw: uci del network.lan.ip6gw || true
+      when: lan_ip6gw is not defined
+
     - raw: uci set network.lan.ipaddr={{ lan_ipaddr }}
+      when: lan_ipaddr is defined
+
+    - raw: uci del network.lan.ipaddr || true
+      when: lan_ipaddr is not defined
+
     - raw: uci set network.lan.netmask={{ lan_netmask }}
+      when: lan_netmask is defined
+
+    - raw: uci del network.lan.netmask || true
+      when: lan_netmask is not defined
+
     - raw: uci set network.lan.gateway={{ lan_gateway }}
+      when: lan_gateway is defined
+
+    - raw: uci del network.lan.gateway || true
+      when: lan_gateway is not defined
+
     - raw: uci set network.lan.dns={{ lan_dns }}
     - raw: uci set network.{{ mesh_network }}=interface
     - raw: uci set network.{{ mesh_network }}.ifname=wlan0-1
@@ -79,8 +108,79 @@
     - raw: uci set network.{{ znet_network }}.netmask={{ znet_ipaddr }}
     - raw: uci set network.{{ znet_network }}.dns={{ znet_dns }}
 
-    # Does not work because my openwrt relays do not have python (not enough space available)
-    # - name: Network template
-    #   template: src=templates/etc-config-network dest=/etc/config/network owner=root group=root mode=0644
-    # - name: DHCP template
-    #   template: src=templates/etc-config-dhcp dest=/etc/config/dhcp owner=root group=root mode=0644
+    # DHCP server
+    - raw: uci set dhcp.lan=dhcp
+    - raw: uci set dhcp.lan.interface=lan
+    - raw: uci set dhcp.lan.start=100
+    - raw: uci set dhcp.lan.limit=150
+    - raw: uci set dhcp.lan.leasetime=12h
+    - raw: uci set dhcp.{{ ap_network }}=dhcp
+    - raw: uci set dhcp.{{ ap_network }}.interface={{ ap_network }}
+    - raw: uci set dhcp.{{ ap_network }}.start=100
+    - raw: uci set dhcp.{{ ap_network }}.limit=150
+    - raw: uci set dhcp.{{ ap_network }}.leasetime=1h
+    - raw: uci set dhcp.{{ ap_network }}.ra=server
+    - raw: uci set dhcp.{{ znet_network }}=dhcp
+    - raw: uci set dhcp.{{ znet_network }}.interface={{ znet_network }}
+    - raw: uci set dhcp.{{ znet_network }}.start=100
+    - raw: uci set dhcp.{{ znet_network }}.limit=150
+    - raw: uci set dhcp.{{ znet_network }}.leasetime=1h
+    - raw: uci set dhcp.{{ znet_network }}.ra=server
+    - raw: uci set dhcp.{{ znet_network }}.dhcp_option=6,{{ znet_dns }}
+
+    # radvd server
+    - raw: uci set radvd.@interface[0]=interface
+    - raw: uci set radvd.@interface[0].interface={{ ap_network }}
+    - raw: uci set radvd.@interface[0].AdvSendAdvert=1
+    - raw: uci set radvd.@interface[0].AdvManagedFlag=1
+    - raw: uci set radvd.@interface[0].AdvOtherConfigFlag=1
+    - raw: uci set radvd.@interface[0].client=
+    - raw: uci set radvd.@prefix[0]=prefix
+    - raw: uci set radvd.@prefix[0].interface={{ ap_network }}
+    - raw: uci set radvd.@prefix[0].AdvOnLink=1
+    - raw: uci set radvd.@prefix[0].AdvRouterAddr=0
+    - raw: uci set radvd.@prefix[0].AdvAutonomous=1
+    - raw: uci set radvd.@prefix[0].prefix=
+    - raw: uci set radvd.@route[0]=route
+    - raw: uci set radvd.@route[0].interface={{ ap_network }}
+    - raw: uci set radvd.@route[0].prefix=2607:f2c0:f00f:29b1::/64
+    - raw: uci set radvd.@rdnss[0]=rdnss
+    - raw: uci set radvd.@rdnss[0].interface=ap
+    - raw: uci set radvd.@rdnss[0].addr=2607:f2c0:f00f:2900::1
+    - raw: uci set radvd.@dnssl[0]=dnssl
+    - raw: uci set radvd.@dnssl[0].interface=ap
+    - raw: uci set radvd.@dnssl[0].suffix=bidon.ca
+
+    # Babeld
+    - raw: rm /etc/config/babeld
+    - raw: echo 'package babeld' > /etc/config/babeld
+
+    - raw: uci add babeld general
+    - raw: uci set babeld.@general[0]=general
+    - raw: uci set babeld.@general[0].local_port=33123
+
+    - raw: uci add babeld interface
+    - raw: uci set babeld.@interface[0]=interface
+    - raw: uci set babeld.@interface[0].ifname=lan
+
+    - raw: uci add babeld interface
+    - raw: uci set babeld.@interface[1]=interface
+    - raw: uci set babeld.@interface[1].ifname=mesh
+
+    - raw: uci add babeld filter
+    - raw: uci set babeld.@filter[0]=filter
+    - raw: uci set babeld.@filter[0].local='true'
+    - raw: uci set babeld.@filter[0].proto=2
+    - raw: uci set babeld.@filter[0].type=redistribute
+    - raw: uci set babeld.@filter[0].ip={{ lan_ip6addr }}
+    - raw: uci set babeld.@filter[0].le=60
+
+    - raw: uci add babeld filter
+    - raw: uci set babeld.@filter[1]=filter
+    - raw: uci set babeld.@filter[1].type=redistribute
+    - raw: uci set babeld.@filter[1].local=true
+    - raw: uci set babeld.@filter[1].action=deny
+
+    # make sure services are enabled
+    - raw: /etc/init.d/radvd enable
+    - raw: /etc/init.d/babeld enable

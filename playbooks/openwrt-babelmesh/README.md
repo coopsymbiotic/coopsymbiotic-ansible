@@ -5,7 +5,7 @@ THIS IS HIGHLY EXPERIMENTAL, USE AT YOUR OWN RISK.
 
 NB: not managed by the playbook, is:
 
-- opkg install radvd tinc babeld ip tcpdump
+- opkg install radvd tinc babeld ip tcpdump iperf
 - remove/disable the firewall (opkg remove firewall).. or set outbound only?
 - most importantly: ip6tables -P FORWARD ACCEPT
 

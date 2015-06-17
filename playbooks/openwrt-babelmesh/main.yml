@@ -5,7 +5,7 @@
 
   tasks:
     # Packages
-    # - raw: opkg install radvd tinc babeld ip tcpdump
+    # - raw: opkg install radvd tinc babeld ip tcpdump iperf
     # - TODO: firewall?
 
     # Wireless configurations

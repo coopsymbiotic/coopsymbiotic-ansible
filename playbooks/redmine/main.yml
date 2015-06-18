@@ -2,15 +2,11 @@
 - hosts: redmineservers
   sudo: yes
 
+  # Assumes Debian Jessie with Redmine 3.0.x
+
   tasks:
     - name: Create the redmine user manually, since we want a home.
       user: name=redmine
-
-    - name: Make sure that wheezy-backports apt repository is available (for redmine 2.x).
-      apt_repository:
-        repo='deb http://ftp.ca.debian.org/debian wheezy-backports main'
-        state=present
-        update_cache=yes
 
     - name: Install base packages for Redmine (git, mysql-server, redmine, redmine-mysql).
       apt: update_cache=yes
@@ -19,16 +15,29 @@
       apt: pkg=nginx state=installed
       apt: pkg=redmine=2.* state=installed default_release=wheezy-backports
       apt: pkg=redmine-mysql state=installed
+      apt: pkg=libmysqlclient-dev state=installed
+
+      # could be avoided with:
+      # bundle install --without rmagick
+      apt: pkg=ImageMagick state=installed
 
     - name: Install various packages required for gem compilation (libicu-dev, zlib1g-dev).
       apt: pkg=libicu-dev state=installed
       apt: pkg=zlib1g-dev state=installed
       apt: pkg=libssl-dev state=installed
 
+    - name: Install more packages required for rugged-gitolite
+      apt: pkg=pkg-config state=installed
+      apt: pkg=cmake state=installed
+
     - name: Install Puma from ruby gem.
       shell: gem install puma
       args:
         creates: /usr/local/bin/puma
+
+    # No idea why this is necessary, but some bundle complained..
+    - name: Install shoulda-matchers gem
+      shell: gem install shoulda-matchers -v 2.7.0
 
     # TODO: nginx vhost?
     # TODO: create the various directories in /home/redmine/redmine/{log,tmp}
@@ -36,7 +45,10 @@
     # -> place key in /usr/share/redmine/plugins/redmine_git_hosting/ssh_keys/redmine_gitolite_admin_id_rsa
     # -> chown redmine.redmine
 
+    # TODO : create /usr/share/redmine/Gemfile.local with : gem 'puma'
+
     # TODO: deploy template /home/redmine/config/puma.rb
+    # mkdir /usr/share/redmine/plugins
 
     - name: Deploy the Redmine init script (for puma).
       template:
@@ -69,22 +81,25 @@
       apt: pkg=gitolite3 state=installed
 
     - name: Checkout plugins for redmine/git integration (redmine_bootstrap_kit, redmine_git_hosting).
-      # mkdir /usr/share/redmine/plugins ?
 
-      shell: git clone https://github.com/jbox-web/redmine_bootstrap_kit.git
-      args:
-        chdir: /usr/share/redmine/plugins
-        creates: redmine_bootstrap_kit
+      git: repo=https://github.com/jbox-web/redmine_bootstrap_kit.git
+           dest=/usr/share/redmine/plugins/redmine_bootstrap_kit
+           version=0.2.3
+           update=yes
 
-      shell: git clone -b v0.7.9 https://github.com/jbox-web/redmine_git_hosting.git
-      args:
-        chdir: /usr/share/redmine/plugins
-        creates: redmine_git_hosting
+      # TODO: must "bundle install" this..
+      git: repo=https://github.com/jbox-web/gitolite-rugged.git
+           dest=/usr/share/redmine/plugins/gitolite_rugged
+           update=yes
 
-      shell: git clone -b redmine-2.5 https://github.com/mlutfy/redmine_stealth.git
-      args:
-        chdir: /usr/share/redmine/plugins
-        creates: redmine_stealth
+      git: repo=https://github.com/jbox-web/redmine_git_hosting.git
+           dest=/usr/share/redmine/plugins/redmine_git_hosting
+           version=1.1.0
+           update=yes
+
+      git: repo=https://github.com/mlutfy/redmine_stealth.git
+           dest=/usr/share/redmine/plugins/redmine_stealth
+           update=yes
 
     # "Redmine Agile" plugin and dependancies
     - name: Install Redmine Agile

@@ -14,3 +14,5 @@ If you run into this error when doing the "bundle install" for redmine_git_hosti
 * replace the gitolite-rugged reference to just: `gem 'gitolite-rugged'`
 
 I also had issues with gitlab-grack and the redcarpet version.. so I ended up commenting them out, since I don't use Gitlab.
+
+If you're having weird issues with gitolite, but the redmine_git_hosting "Config Test" is all green, make sure that the "Rugged" features include "ssh" (not just https and threads). If not, you probably forgot some dependancies (http://redmine-git-hosting.io/get_started/) and need to re-install the rugged gem.

@@ -17,18 +17,23 @@
       apt: pkg=redmine-mysql state=installed
       apt: pkg=libmysqlclient-dev state=installed
 
-      # could be avoided with:
-      # bundle install --without rmagick
-      apt: pkg=ImageMagick state=installed
+      # imagemagick is only used to export Gantt charts to PNG.
+      # can be avoided by using:
+      # bundle install --without development test rmagick
+      # apt: pkg=ImageMagick state=installed
 
     - name: Install various packages required for gem compilation (libicu-dev, zlib1g-dev).
       apt: pkg=libicu-dev state=installed
       apt: pkg=zlib1g-dev state=installed
       apt: pkg=libssl-dev state=installed
 
+    # redmine_git_hosting needs this
+    # http://redmine-git-hosting.io/get_started/#step-1-install-dependencies
     - name: Install more packages required for rugged-gitolite
       apt: pkg=pkg-config state=installed
       apt: pkg=cmake state=installed
+      apt: pkg=libssh2-1 state=installed
+      apt: pkg=libssh2-1-dev state=installed
 
     - name: Install Puma from ruby gem.
       shell: gem install puma

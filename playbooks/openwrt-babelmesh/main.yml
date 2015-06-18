@@ -93,7 +93,7 @@
 
     - raw: uci set network.lan.dns={{ lan_dns }}
     - raw: uci set network.{{ mesh_network }}=interface
-    - raw: uci set network.{{ mesh_network }}.ifname=wlan0-1
+    - raw: uci set network.{{ mesh_network }}.ifname=wlan0-2
     - raw: uci set network.{{ mesh_network }}.proto=none
     - raw: uci set network.{{ ap_network }}=interface
     - raw: uci set network.{{ ap_network }}.ifname=wlan0

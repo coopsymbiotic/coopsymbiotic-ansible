@@ -8,7 +8,7 @@
     - name: Create the redmine user manually, since we want a home.
       user: name=redmine
 
-    - name: Install base packages for Redmine (git, mysql-server, redmine, redmine-mysql).
+    - name: Install base packages for Redmine (git, mariadb-server, redmine, redmine-mysql).
       apt: update_cache=yes
       apt: pkg=git state=installed
       apt: pkg=mysql-server state=installed

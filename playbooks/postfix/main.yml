@@ -90,6 +90,12 @@
     - name: Add postfix in the opendkim group.
       user: name=postfix groups=opendkim append=yes
 
+    # Configure SASL if necessary
+    - name: Create sasl directory if necessary.
+      file: path=/etc/postfix/sasl/ state=directory owner=root group=root mode=0700
+      when: host_postfix_sasl != false
+
+    # Restarts
     - name: Restart postfix because of the ipv4 protocol change (unbind ipv6).
       service: name=postfix state=restarted
 

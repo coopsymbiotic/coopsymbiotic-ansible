@@ -137,6 +137,19 @@ foreach $host (@hosts) {
                         # XXX: this doesn't check backup consistency
                         $flag="$dir/rsync.log";
                         $type="rsync";
+                } elsif (-d "$dir/TimeMachine") {
+                        # XXX: this doesn't check backup consistency
+                        @files = glob("$dir/TimeMachine/*.sparsebundle");
+
+                        if (scalar @files == 1) {
+                                $message = "Coucou";
+                                $flag = $files[0];
+                        }
+                        else {
+                                $message = "TimeMachine: found " . (scalar @files) . " sparse files";
+                        }
+
+                        $type="timemachine";
                 } else {
                         $message = "unknown system";
                         next;

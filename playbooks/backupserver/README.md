@@ -20,7 +20,7 @@ This must match the NSCA server configurations found in:
 
 For example:
 
-    command_file= "/var/lib/icinga/rw/icinga.cmd"
+    command_file= "/var/lib/icinga2/cmd/icinga.cmd"
     listen = "*:5668"
     tls_ciphers = "PSK-AES256-CBC-SHA"
 
@@ -33,6 +33,10 @@ For example:
         services = ".+"
         hosts = ".+"
     }
+
+If you are using icinga1, the command_file is in:
+
+    command_file= "/var/lib/icinga2/cmd/icinga.cmd"
 
 Also note that the monitoring server must have the directory
 

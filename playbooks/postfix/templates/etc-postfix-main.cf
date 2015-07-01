@@ -37,11 +37,21 @@ mydestination = {{ inventory_hostname }}, localhost
 
 alias_maps = hash:/etc/aliases
 alias_database = hash:/etc/aliases
-relayhost =
 mynetworks = 127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128
 
 {% if ansible_distribution_release == "jessie" %}
 smtpd_relay_restrictions = permit_mynetworks permit_sasl_authenticated defer_unauth_destination
+{% endif %}
+
+{% if host_postfix_sasl %}
+# Sender-dependent SASL authentication
+smtp_sasl_auth_enable = yes
+smtp_use_tls = yes
+smtp_sasl_password_maps = hash:/etc/postfix/sasl/sasl_pass
+smtp_sasl_security_options = noanonymous
+relayhost = {{ host_postfix_sasl }}
+{% else %}
+relayhost =
 {% endif %}
 
 mailbox_command = procmail -a "$EXTENSION"

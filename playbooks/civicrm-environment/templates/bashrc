@@ -124,4 +124,4 @@ if ! shopt -oq posix; then
   fi
 fi
 
-PATH=$PATH:/var/aegir/bin
+PATH=$PATH:/var/aegir/bin:/var/aegir/.composer/vendor/bin

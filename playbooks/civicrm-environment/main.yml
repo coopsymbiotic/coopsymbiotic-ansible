@@ -1,35 +1,26 @@
 ---
 - hosts: all
   sudo: yes
+  vars:
+    civix_version: 15.04.1
 
   # Installs required tools for CiviCRM development:
   # civix, nodejs, composer, git-scan, etc.
   # https://civicrm.org/blogs/totten/new-46-dev-composer-and-nodejs
 
   tasks:
-    - name: Make sure that wheezy-backports apt repository is available (for nodejs).
-      apt_repository:
-        repo='deb http://ftp.ca.debian.org/debian wheezy-backports main'
-        state=present
-        update_cache=yes
-      when: ansible_distribution_release == "wheezy"
-
     - apt: pkg=gettext state=installed
     - apt: pkg=git state=installed
     - apt: pkg=bzip2 state=installed
     - apt: pkg=nodejs state=installed
     - apt: pkg=npm state=installed
 
-#     - name: Check if Aegir2 is installed
-#       command: dpkg-query -W -f='${Status} ${Version}\n' aegir2
-#       register: aegir2_check
-#
 #     - name: Check if Aegir3 is installed
 #       command: dpkg-query -W -f='${Status} ${Version}\n' aegir3
 #       register: aegir3_check
 #
 #    - fail: Fail if Aegir is not installed.
-#      when: aegir2_check.stdout.find('install ok installed') == -1 and aegir3_check.stdout.find('install ok installed') == -1
+#      when: aegir3_check.stdout.find('install ok installed') == -1
 
     - name: Ensure that the /var/aegir/bin directory exists.
       file: path=/var/aegir/bin/ state=directory owner=aegir
@@ -54,17 +45,18 @@
         chdir: /var/aegir/lib/
       when: composer_version_check.rc != 0
 
-    - name: Download civix from github
+    # NB: in Ansible 2.0, this can be simplified in one step (unarchive with http)
+    # but right now I'm using Debian Jessie, which has Ansible 1.7
+    - name: Download civix
       sudo_user: aegir
-      git: repo=https://github.com/totten/civix.git
-           dest=/var/aegir/lib/civix
-           update=yes
+      get_url:
+        url=http://iweb.dl.sourceforge.net/project/civix/civix-{{ civix_version }}.tar.bz2
+        dest=/var/aegir/lib/civix-{{ civix_version }}.tar.bz2
 
-    - name: Run composer install for civix
-      sudo_user: aegir
-      shell: /var/aegir/lib/composer.phar install
-      args:
-        chdir: /var/aegir/lib/civix/
+    - name: Uncompress the civix archive
+      unarchive: src=/var/aegir/lib/civix-{{ civix_version }}.tar.bz2
+        dest=/var/aegir/lib/
+        copy=no
 
     - name: Download civistrings from github
       sudo_user: aegir
@@ -86,7 +78,7 @@
       file: src={{ item.path }} dest={{ item.dest }} owner=aegir group=aegir state=link
       with_items:
         - { path: '/var/aegir/lib/composer.phar', dest: '/var/aegir/bin/composer' }
-        - { path: '/var/aegir/lib/civix/civix', dest: '/var/aegir/bin/civix' }
+        - { path: '/var/aegir/lib/civix-{{ civix_version }}/civix', dest: '/var/aegir/bin/civix' }
         - { path: '/var/aegir/lib/civistrings/bin/civistrings', dest: '/var/aegir/bin/civistrings' }
         - { path: '/var/aegir/lib/git-scan/bin/git-scan', dest: '/var/aegir/bin/git-scan' }
         - { path: '/var/aegir/lib/node_modules/bower/bin/bower', dest: '/var/aegir/bin/bower' }

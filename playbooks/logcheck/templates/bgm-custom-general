@@ -3,6 +3,7 @@
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ puppet-agent\[[0-9]+\]: .* executed successfully$
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ puppet-agent\[[0-9]+\]: .* is deprecated.*$
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ puppet-agent\[[0-9]+\]: .* ensure changed 'held' to 'present'$
+^\w{3} [ :0-9]{11} [._[:alnum:]-]+ puppet-agent\[[0-9]+\]: .* Could not delete user .*$
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ ansible.*
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ ntpd\[[0-9]+\]: peer .* now valid
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ ntpd\[[0-9]+\]: peer .* now invalid
@@ -28,9 +29,11 @@
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ mysqld: [0-9]+ [:0-9]{8} [Warning] Checking table: .*
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ sshd\[[0-9]+\]: Corrupted MAC on input. \[preauth\]
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ sshd\[[0-9]+\]: Disconnecting: Packet corrupt \[preauth\]
+^\w{3} [ :0-9]{11} [._[:alnum:]-]+ sshd\[[0-9]+\]: Disconnecting: Too many authentication failures for .*
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ sshd\[[0-9]+\]: PAM service\(sshd\) ignoring max retries; .*
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ sshd\[[0-9]+\]: subsystem request for sftp by user .*
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ sshd\[[0-9]+\]: fatal: Read from socket failed: Connection reset by peer \[preauth\]
+^\w{3} [ :0-9]{11} [._[:alnum:]-]+ sshd\[[0-9]+\]: fatal: Unable to negotiate a key exchange method \[preauth\]
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ sshd\[[0-9]+\]: Received disconnect from .*
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ sshd\[[0-9]+\]: error: Received disconnect from .*
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ sshd\[[0-9]+\]: Accepted publickey for.*
@@ -47,14 +50,23 @@
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ systemd\[[\.0-9]+\]: Stopped.*
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ systemd\[[\.0-9]+\]: Reached.*
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ systemd\[[\.0-9]+\]: Received.*
+^\w{3} [ :0-9]{11} [._[:alnum:]-]+ systemd\[[\.0-9]+\]: Created slice.*
+^\w{3} [ :0-9]{11} [._[:alnum:]-]+ systemd\[[\.0-9]+\]: Removed slice.*
+^\w{3} [ :0-9]{11} [._[:alnum:]-]+ systemd\[[\.0-9]+\]: Reloading LSB: Apache2 web server.
+^\w{3} [ :0-9]{11} [._[:alnum:]-]+ systemd\[[\.0-9]+\]: Reloaded LSB: Apache2 web server.
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ systemd: pam_unix\(systemd-user:session\): session closed for user.*
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ systemd: pam_unix\(systemd-user:session\): session opened for user.*
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ systemd-logind\[[\.0-9]+\]: Removed session.*
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ systemd-logind\[[\.0-9]+\]: New session.*
+^\w{3} [ :0-9]{11} [._[:alnum:]-]+ apache2\[[\.0-9]+\]: Reloading web server: apache2.
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ dovecot: .*
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ milter-greylist: .*
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ spamd.*
-^\w{3} [ :0-9]{11} [._[:alnum:]-]+ postfix/smtpd\[[\.0-9]+\]: warning: hostname [\-\.a-zA-Z0-9]+ does not resolve to .*
+^\w{3} [ :0-9]{11} [._[:alnum:]-]+ postfix/smtpd\[[\.0-9]+\]: warning: hostname .*
+^\w{3} [ :0-9]{11} [._[:alnum:]-]+ postfix/smtpd\[[\.0-9]+\]: NOQUEUE: milter-reject: RCPT from .* Greylisting .*
+^\w{3} [ :0-9]{11} [._[:alnum:]-]+ postfix/cleanup\[[\.0-9]+\]: .* Blocked by SpamAssassin.*
+^\w{3} [ :0-9]{11} [._[:alnum:]-]+ postfix-slow/smtp\[[\.0-9]+\]: .* status=sent .*
+^\w{3} [ :0-9]{11} [._[:alnum:]-]+ opendkim\[[\.0-9]+\]: \[[A-Za-z0-9]+\]: message has signatures from .*
 {% if logcheckextras is defined %}
 {% for item in logcheckextras %}
 {{ item }}

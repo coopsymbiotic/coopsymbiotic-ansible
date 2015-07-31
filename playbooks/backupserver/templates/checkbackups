@@ -70,6 +70,9 @@ if (defined($opt_o)) {
         @hosts=qx{ls $backupdir};
 }
 
+# Remove exceptions to avoid reporting invalid hosts.
+@hosts = grep { $_ !~ /lost\+found/ } @hosts;
+
 chdir($backupdir);
 my ($state, $message, @vservers, $host, @lines);
 foreach $host (@hosts) {
@@ -85,10 +88,6 @@ foreach $host (@hosts) {
         @vservers = ();
         $state = $STATE_UNKNOWN;
         $message = "???";
-
-        if ($dir =~ 'lost+found') {
-          next;
-        }
 
         if (-d $dir) {
                 # guess the backup type and find a proper stamp file to compare

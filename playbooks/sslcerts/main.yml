@@ -19,6 +19,15 @@
       with_items: sslcertificates
 
     # If using Aegir
+    - file: path=/var/aegir/config/ssl.d/{{ item }} state=directory owner=aegir group=aegir mode=0700
+      with_items: sslcertificates
+      when: host_aegir_managed
+
+    - file: path=/var/aegir/config/server_master/ssl.d/{{ item }} state=directory owner=aegir group=aegir mode=0700
+      with_items: sslcertificates
+      when: host_aegir_managed
+
+    # Copy to the root space (files used as a reference for when a site is verified, sent to the server_master later on).
     - copy: src=/etc/ansible/files/etc/ssl/private/{{ item }}.key dest=/var/aegir/config/ssl.d/{{ item }}/openssl.key owner=root group=aegir mode=0640
       with_items: sslcertificates
       when: host_aegir_managed
@@ -28,6 +37,19 @@
       when: host_aegir_managed
 
     - copy: src=/etc/ansible/files/etc/ssl/private/{{ item }}.cacert.crt dest=/var/aegir/config/ssl.d/{{ item }}/openssl_chain.crt owner=root group=aegir mode=0640
+      with_items: sslcertificates
+      when: host_aegir_managed
+
+    # Copy to the "server_master" (the file referenced in the vhost declaration)
+    - copy: src=/etc/ansible/files/etc/ssl/private/{{ item }}.key dest=/var/aegir/config/server_master/ssl.d/{{ item }}/openssl.key owner=root group=aegir mode=0640
+      with_items: sslcertificates
+      when: host_aegir_managed
+
+    - copy: src=/etc/ansible/files/etc/ssl/private/{{ item }}.crt dest=/var/aegir/config/server_master/ssl.d/{{ item }}/openssl.crt owner=root group=aegir mode=0640
+      with_items: sslcertificates
+      when: host_aegir_managed
+
+    - copy: src=/etc/ansible/files/etc/ssl/private/{{ item }}.cacert.crt dest=/var/aegir/config/server_master/ssl.d/{{ item }}/openssl_chain.crt owner=root group=aegir mode=0640
       with_items: sslcertificates
       when: host_aegir_managed
 

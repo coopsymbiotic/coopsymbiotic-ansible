@@ -72,6 +72,9 @@
     - name: Ensure that the opendkim keys directory exists and is restricted.
       file: path=/etc/opendkim/ state=directory owner=opendkim group=opendkim mode=0700
 
+    - name: Deploy the public OpenDKIM key
+      copy: src=/etc/ansible/files/etc/opendkim/201409.txt dest=/etc/opendkim/201409.txt owner=opendkim group=opendkim mode=0600
+
     - name: Deploy the private OpenDKIM key
       copy: src=/etc/ansible/files/etc/opendkim/201409.private dest=/etc/opendkim/201409.private owner=opendkim group=opendkim mode=0600
 

@@ -72,12 +72,11 @@
     - name: Ensure that the opendkim keys directory exists and is restricted.
       file: path=/etc/opendkim/ state=directory owner=opendkim group=opendkim mode=0700
 
+    - name: Deploy the private OpenDKIM key
+      copy: src=/etc/ansible/files/etc/opendkim/201409.private dest=/etc/opendkim/201409.private owner=opendkim group=opendkim mode=0600
+
     - stat: path=/etc/opendkim/201409.private
       register: stkey
-
-    - name: Warn if the OpenDKIM private key does not exist.
-      debug: msg="/etc/opendkim/201409.private does not exist! Deploy it manually."
-      when: stkey.stat.exists == false
 
     - name: Set OpenDKIM private key permissions.
       file: path=/etc/opendkim/201409.private owner=opendkim group=opendkim mode=0600

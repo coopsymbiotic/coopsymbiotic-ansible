@@ -2,8 +2,25 @@
 - hosts: all
   sudo: yes
   tasks:
-    - apt: pkg=icinga-core state=installed
+    - apt: pkg=icinga2 state=installed
     - apt: pkg=icli state=installed
 
+#    - name: Enable statusdata feature for icli (FIXME, should deploy template instead)
+#      file: src=/etc/icinga2/features-available/statusdata.conf dest=/etc/icinga2/features-enabled/statusdata.conf state=link
+
+    - name: Enable command feature for nsca
+      file: src=/etc/icinga2/features-available/command.conf dest=/etc/icinga2/features-enabled/command.conf state=link
+
+    # https://github.com/derf/icli/issues/16
+    - name: Symlinks for icli compatibility
+      file: src=/var/lib/icinga2 dest=/var/lib/icinga state=link
+
+    - name: Symlinks for icli compatibility
+      file: src=/var/cache/icinga2 dest=/var/cache/icinga state=link
+
+    - name: Another symlink for icli comptability (send commands)
+      file: path=/var/lib/icinga/rw/ state=directory mode=0755
+      file: src=/var/run/icinga2/cmd/icinga2.cmd dest=/var/lib/icinga/rw/icinga.cmd state=link
+
     - name: Restart icinga.
-      service: name=icinga state=restarted
+      service: name=icinga2 state=restarted

@@ -8,7 +8,7 @@ This is very specific playbook if you happen to:
 * use Debian Jessie 8.x
 
 This playbook will deploy civix, git-scan, composer, bower, as well as to ensure
-that npm is installed, git and bzip2.
+that npm is installed, git and bzip2. It also deploys some PHP settings.
 
 You do not need this playbook if you are only using CiviCRM. Most of the tools
 installed are related to developing extensions, core development, running tests,

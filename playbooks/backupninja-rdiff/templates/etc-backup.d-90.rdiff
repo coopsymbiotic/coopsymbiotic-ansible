@@ -60,6 +60,6 @@ exclude = {{ item }}
 
 [dest]
 type = remote
-directory = /backup/{{ ansible_fqdn }}/rdiff-backup
+directory = /backup/{{ inventory_hostname }}/rdiff-backup
 host = {{ backupserver }}
-user = backup-{{ ansible_hostname }}
+user = backups-{{ ansible_hostname }}

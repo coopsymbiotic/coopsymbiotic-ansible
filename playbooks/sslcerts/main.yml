@@ -9,7 +9,7 @@
     - copy: src=/etc/ansible/files/etc/ssl/private/{{ item }}.crt dest=/etc/ssl/private/{{ item }}.crt owner=root group=ssl-cert mode=0640
       with_items: sslcertificates
 
-    - copy: src=/etc/ansible/files/etc/ssl/private/{{ item }}.crt dest=/etc/ssl/private/{{ item }}.bundled.crt owner=root group=ssl-cert mode=0640
+    - copy: src=/etc/ansible/files/etc/ssl/private/{{ item }}.bundled.crt dest=/etc/ssl/private/{{ item }}.bundled.crt owner=root group=ssl-cert mode=0640
       with_items: sslcertificates
 
     - copy: src=/etc/ansible/files/etc/ssl/private/{{ item }}.cacert.crt dest=/etc/ssl/private/{{ item }}.cacert.crt owner=root group=ssl-cert mode=0640

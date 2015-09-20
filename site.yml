@@ -1,0 +1,55 @@
+---
+- hosts: servers
+  roles:
+    - common-all
+    - logcheck
+    - logstash-forwarder
+    - sslcerts
+
+- hosts: kvm-hosts
+  roles:
+    - common-kvmhosts
+
+- hosts: aegir-managed
+  roles:
+    - aegir
+
+- hosts: backup-servers
+  roles:
+    - backupserver
+
+- hosts: logstash-servers
+  roles:
+    - logstash
+
+- hosts: icinga-servers
+  roles:
+    - icinga
+
+- hosts: redmine-servers
+  roles:
+    - redmine
+
+- hosts: yubiauth-managed
+  roles:
+    - yubiauth
+
+- hosts: rdiff-backups
+  roles:
+    - backupninja-rdiff
+
+- hosts: civicrm-environment
+  roles:
+    - civicrm-environment
+
+- hosts: openwrt-mesh-nodes
+  roles:
+    - openwrt-babelmesh
+
+- hosts: munin-nodes
+  roles:
+    - munin-node
+
+- hosts: postfix-servers
+  roles:
+    - postfix

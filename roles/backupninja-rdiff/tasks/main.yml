@@ -1,25 +1,22 @@
 ---
-- name: Configure rdiff-backup with backupninja
-  hosts: all
-  remote_user: deploy
-  sudo: yes
-  tasks:
-    - apt: update_cache=yes
-    - apt: name=backupninja state=present
-    - apt: name=rdiff-backup state=present
+# Configure rdiff-backup with backupninja
 
-    - name: Deploy the main Backupninja configuration file.
-      template:
-        src: "templates/etc-backupninja.conf"
-        dest: "/etc/backupninja.conf"
-        owner: "root"
-        group: "root"
-        mode: 0600
+- apt: update_cache=yes
+- apt: name=backupninja state=present
+- apt: name=rdiff-backup state=present
 
-    - name: Deploy the rdiff configuration file.
-      template:
-        src: "templates/etc-backup.d-90.rdiff"
-        dest: "/etc/backup.d/90.rdiff"
-        owner: "root"
-        group: "root"
-        mode: 0600
+- name: Deploy the main Backupninja configuration file.
+  template:
+    src: "templates/etc-backupninja.conf"
+    dest: "/etc/backupninja.conf"
+    owner: "root"
+    group: "root"
+    mode: 0600
+
+- name: Deploy the rdiff configuration file.
+  template:
+    src: "templates/etc-backup.d-90.rdiff"
+    dest: "/etc/backup.d/90.rdiff"
+    owner: "root"
+    group: "root"
+    mode: 0600

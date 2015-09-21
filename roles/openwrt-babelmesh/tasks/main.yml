@@ -1,186 +1,181 @@
 ---
-- hosts: all
-  gather_facts: false
-  serial: 6
+# Packages
+# - raw: opkg install radvd tinc babeld ip tcpdump-mini iperf
+# - TODO: firewall?
 
-  tasks:
-    # Packages
-    # - raw: opkg install radvd tinc babeld ip tcpdump-mini iperf
-    # - TODO: firewall?
+# Wireless configurations
+- raw: uci delete wireless.radio0 || true
+- raw: uci delete uci delete wireless.@wifi-iface[2] || true
+- raw: uci delete uci delete wireless.@wifi-iface[1] || true
+- raw: uci delete uci delete wireless.@wifi-iface[0] || true
 
-    # Wireless configurations
-    - raw: uci delete wireless.radio0 || true
-    - raw: uci delete uci delete wireless.@wifi-iface[2] || true
-    - raw: uci delete uci delete wireless.@wifi-iface[1] || true
-    - raw: uci delete uci delete wireless.@wifi-iface[0] || true
+- raw: uci set wireless.radio0=wifi-device
+- raw: uci set wireless.radio0.type=mac80211
+- raw: uci set wireless.radio0.channel={{ radio0_channel }}
+- raw: uci set wireless.radio0.hwmode={{ radio0_hwmode }}
+- raw: uci set wireless.radio0.htmode=HT20
+- raw: uci set wireless.radio0.macaddr={{ radio0_macaddr }}
+- raw: uci set wireless.radio0.ht_capab='SHORT-GI-40 TX-STBC RX-STBC1 DSSS_CCK-40'
 
-    - raw: uci set wireless.radio0=wifi-device
-    - raw: uci set wireless.radio0.type=mac80211
-    - raw: uci set wireless.radio0.channel={{ radio0_channel }}
-    - raw: uci set wireless.radio0.hwmode={{ radio0_hwmode }}
-    - raw: uci set wireless.radio0.htmode=HT20
-    - raw: uci set wireless.radio0.macaddr={{ radio0_macaddr }}
-    - raw: uci set wireless.radio0.ht_capab='SHORT-GI-40 TX-STBC RX-STBC1 DSSS_CCK-40'
+- raw: uci add wireless wifi-iface
+- raw: uci set wireless.@wifi-iface[0]=wifi-iface
+- raw: uci set wireless.@wifi-iface[0].device=radio0
+- raw: uci set wireless.@wifi-iface[0].encryption=none
+- raw: uci set wireless.@wifi-iface[0].mode=adhoc
+- raw: uci set wireless.@wifi-iface[0].ssid='{{ mesh_ssid }}'
+- raw: uci set wireless.@wifi-iface[0].bssid=02:CA:FF:EE:BA:BE
+- raw: uci set wireless.@wifi-iface[0].wmm=1
+- raw: uci set wireless.@wifi-iface[0].network='{{ mesh_network }}'
 
-    - raw: uci add wireless wifi-iface
-    - raw: uci set wireless.@wifi-iface[0]=wifi-iface
-    - raw: uci set wireless.@wifi-iface[0].device=radio0
-    - raw: uci set wireless.@wifi-iface[0].encryption=none
-    - raw: uci set wireless.@wifi-iface[0].mode=adhoc
-    - raw: uci set wireless.@wifi-iface[0].ssid='{{ mesh_ssid }}'
-    - raw: uci set wireless.@wifi-iface[0].bssid=02:CA:FF:EE:BA:BE
-    - raw: uci set wireless.@wifi-iface[0].wmm=1
-    - raw: uci set wireless.@wifi-iface[0].network='{{ mesh_network }}'
+- raw: uci add wireless wifi-iface
+- raw: uci set wireless.@wifi-iface[1]=wifi-iface
+- raw: uci set wireless.@wifi-iface[1].device=radio0
+- raw: uci set wireless.@wifi-iface[1].encryption=none
+- raw: uci set wireless.@wifi-iface[1].mode=ap
+- raw: uci set wireless.@wifi-iface[1].ssid='{{ ap_ssid }}'
+- raw: uci set wireless.@wifi-iface[1].wmm=1
+- raw: uci set wireless.@wifi-iface[1].network='{{ ap_network }}'
 
-    - raw: uci add wireless wifi-iface
-    - raw: uci set wireless.@wifi-iface[1]=wifi-iface
-    - raw: uci set wireless.@wifi-iface[1].device=radio0
-    - raw: uci set wireless.@wifi-iface[1].encryption=none
-    - raw: uci set wireless.@wifi-iface[1].mode=ap
-    - raw: uci set wireless.@wifi-iface[1].ssid='{{ ap_ssid }}'
-    - raw: uci set wireless.@wifi-iface[1].wmm=1
-    - raw: uci set wireless.@wifi-iface[1].network='{{ ap_network }}'
+- raw: uci add wireless wifi-iface
+- raw: uci set wireless.@wifi-iface[2]=wifi-iface
+- raw: uci set wireless.@wifi-iface[2].device=radio0
+- raw: uci set wireless.@wifi-iface[2].encryption=psk2
+- raw: uci set wireless.@wifi-iface[2].mode=ap
+- raw: uci set wireless.@wifi-iface[2].ssid='{{ znet_ssid }}'
+- raw: uci set wireless.@wifi-iface[2].key='{{ znet_key }}'
+- raw: uci set wireless.@wifi-iface[2].network='{{ znet_network }}'
+- raw: uci commit
 
-    - raw: uci add wireless wifi-iface
-    - raw: uci set wireless.@wifi-iface[2]=wifi-iface
-    - raw: uci set wireless.@wifi-iface[2].device=radio0
-    - raw: uci set wireless.@wifi-iface[2].encryption=psk2
-    - raw: uci set wireless.@wifi-iface[2].mode=ap
-    - raw: uci set wireless.@wifi-iface[2].ssid='{{ znet_ssid }}'
-    - raw: uci set wireless.@wifi-iface[2].key='{{ znet_key }}'
-    - raw: uci set wireless.@wifi-iface[2].network='{{ znet_network }}'
-    - raw: uci commit
+# Network configuration
+- raw: uci show network | cut -f 1-2 -d '.' | grep -v interface | sort | uniq | xargs -n 1 uci del
+- raw: uci set network.loopback=interface
+- raw: uci set network.loopback.ifname=lo
+- raw: uci set network.loopback.proto=static
+- raw: uci set network.loopback.ipaddr=127.0.0.1
+- raw: uci set network.loopback.netmask=255.0.0.0
 
-    # Network configuration
-    - raw: uci show network | cut -f 1-2 -d '.' | grep -v interface | sort | uniq | xargs -n 1 uci del
-    - raw: uci set network.loopback=interface
-    - raw: uci set network.loopback.ifname=lo
-    - raw: uci set network.loopback.proto=static
-    - raw: uci set network.loopback.ipaddr=127.0.0.1
-    - raw: uci set network.loopback.netmask=255.0.0.0
+- raw: uci set network.lan=interface
+- raw: uci set network.lan.ifname=eth0
+- raw: uci set network.lan.proto=static
+- raw: uci set network.lan.force_link=1
+- raw: uci set network.lan.ip6addr={{ lan_ip6addr }}
 
-    - raw: uci set network.lan=interface
-    - raw: uci set network.lan.ifname=eth0
-    - raw: uci set network.lan.proto=static
-    - raw: uci set network.lan.force_link=1
-    - raw: uci set network.lan.ip6addr={{ lan_ip6addr }}
+# LAN might be ipv6 only, and serve as the uplink (ex: tarator)
+# In this case, there is no ipv6gw, and no ipaddr (ipv4).
+- raw: uci set network.lan.ip6gw={{ lan_ip6gw }}
+  when: lan_ip6gw is defined
 
-    # LAN might be ipv6 only, and serve as the uplink (ex: tarator)
-    # In this case, there is no ipv6gw, and no ipaddr (ipv4).
-    - raw: uci set network.lan.ip6gw={{ lan_ip6gw }}
-      when: lan_ip6gw is defined
+- raw: uci del network.lan.ip6gw || true
+  when: lan_ip6gw is not defined
 
-    - raw: uci del network.lan.ip6gw || true
-      when: lan_ip6gw is not defined
+- raw: uci set network.lan.ipaddr={{ lan_ipaddr }}
+  when: lan_ipaddr is defined
 
-    - raw: uci set network.lan.ipaddr={{ lan_ipaddr }}
-      when: lan_ipaddr is defined
+- raw: uci del network.lan.ipaddr || true
+  when: lan_ipaddr is not defined
 
-    - raw: uci del network.lan.ipaddr || true
-      when: lan_ipaddr is not defined
+- raw: uci set network.lan.netmask={{ lan_netmask }}
+  when: lan_netmask is defined
 
-    - raw: uci set network.lan.netmask={{ lan_netmask }}
-      when: lan_netmask is defined
+- raw: uci del network.lan.netmask || true
+  when: lan_netmask is not defined
 
-    - raw: uci del network.lan.netmask || true
-      when: lan_netmask is not defined
+- raw: uci set network.lan.gateway={{ lan_gateway }}
+  when: lan_gateway is defined
 
-    - raw: uci set network.lan.gateway={{ lan_gateway }}
-      when: lan_gateway is defined
+- raw: uci del network.lan.gateway || true
+  when: lan_gateway is not defined
 
-    - raw: uci del network.lan.gateway || true
-      when: lan_gateway is not defined
+- raw: uci set network.lan.dns={{ lan_dns }}
+- raw: uci set network.{{ mesh_network }}=interface
+- raw: uci set network.{{ mesh_network }}.ifname=wlan0-2
+- raw: uci set network.{{ mesh_network }}.proto=none
+- raw: uci set network.{{ ap_network }}=interface
+- raw: uci set network.{{ ap_network }}.ifname=wlan0
+- raw: uci set network.{{ ap_network }}.proto=static
+- raw: uci set network.{{ ap_network }}.ip6addr={{ ap_ip6addr }}
+- raw: uci set network.{{ ap_network }}.ipaddr={{ ap_ipaddr }}
+- raw: uci set network.{{ ap_network }}.netmask={{ ap_netmask }}
+- raw: uci set network.{{ znet_network }}=interface
+- raw: uci set network.{{ znet_network }}.ifname=wlan0-1
+- raw: uci set network.{{ znet_network }}.proto=static
+- raw: uci set network.{{ znet_network }}.ipaddr={{ znet_ipaddr }}
+- raw: uci set network.{{ znet_network }}.netmask={{ znet_ipaddr }}
+- raw: uci set network.{{ znet_network }}.dns={{ znet_dns }}
 
-    - raw: uci set network.lan.dns={{ lan_dns }}
-    - raw: uci set network.{{ mesh_network }}=interface
-    - raw: uci set network.{{ mesh_network }}.ifname=wlan0-2
-    - raw: uci set network.{{ mesh_network }}.proto=none
-    - raw: uci set network.{{ ap_network }}=interface
-    - raw: uci set network.{{ ap_network }}.ifname=wlan0
-    - raw: uci set network.{{ ap_network }}.proto=static
-    - raw: uci set network.{{ ap_network }}.ip6addr={{ ap_ip6addr }}
-    - raw: uci set network.{{ ap_network }}.ipaddr={{ ap_ipaddr }}
-    - raw: uci set network.{{ ap_network }}.netmask={{ ap_netmask }}
-    - raw: uci set network.{{ znet_network }}=interface
-    - raw: uci set network.{{ znet_network }}.ifname=wlan0-1
-    - raw: uci set network.{{ znet_network }}.proto=static
-    - raw: uci set network.{{ znet_network }}.ipaddr={{ znet_ipaddr }}
-    - raw: uci set network.{{ znet_network }}.netmask={{ znet_ipaddr }}
-    - raw: uci set network.{{ znet_network }}.dns={{ znet_dns }}
+# DHCP server
+- raw: uci set dhcp.lan=dhcp
+- raw: uci set dhcp.lan.interface=lan
+- raw: uci set dhcp.lan.start=100
+- raw: uci set dhcp.lan.limit=150
+- raw: uci set dhcp.lan.leasetime=12h
+- raw: uci set dhcp.{{ ap_network }}=dhcp
+- raw: uci set dhcp.{{ ap_network }}.interface={{ ap_network }}
+- raw: uci set dhcp.{{ ap_network }}.start=100
+- raw: uci set dhcp.{{ ap_network }}.limit=150
+- raw: uci set dhcp.{{ ap_network }}.leasetime=1h
+- raw: uci set dhcp.{{ ap_network }}.ra=server
+- raw: uci set dhcp.{{ znet_network }}=dhcp
+- raw: uci set dhcp.{{ znet_network }}.interface={{ znet_network }}
+- raw: uci set dhcp.{{ znet_network }}.start=100
+- raw: uci set dhcp.{{ znet_network }}.limit=150
+- raw: uci set dhcp.{{ znet_network }}.leasetime=1h
+- raw: uci set dhcp.{{ znet_network }}.ra=server
+- raw: uci set dhcp.{{ znet_network }}.dhcp_option=6,{{ znet_dns }}
 
-    # DHCP server
-    - raw: uci set dhcp.lan=dhcp
-    - raw: uci set dhcp.lan.interface=lan
-    - raw: uci set dhcp.lan.start=100
-    - raw: uci set dhcp.lan.limit=150
-    - raw: uci set dhcp.lan.leasetime=12h
-    - raw: uci set dhcp.{{ ap_network }}=dhcp
-    - raw: uci set dhcp.{{ ap_network }}.interface={{ ap_network }}
-    - raw: uci set dhcp.{{ ap_network }}.start=100
-    - raw: uci set dhcp.{{ ap_network }}.limit=150
-    - raw: uci set dhcp.{{ ap_network }}.leasetime=1h
-    - raw: uci set dhcp.{{ ap_network }}.ra=server
-    - raw: uci set dhcp.{{ znet_network }}=dhcp
-    - raw: uci set dhcp.{{ znet_network }}.interface={{ znet_network }}
-    - raw: uci set dhcp.{{ znet_network }}.start=100
-    - raw: uci set dhcp.{{ znet_network }}.limit=150
-    - raw: uci set dhcp.{{ znet_network }}.leasetime=1h
-    - raw: uci set dhcp.{{ znet_network }}.ra=server
-    - raw: uci set dhcp.{{ znet_network }}.dhcp_option=6,{{ znet_dns }}
+# radvd server
+- raw: uci set radvd.@interface[0]=interface
+- raw: uci set radvd.@interface[0].interface={{ ap_network }}
+- raw: uci set radvd.@interface[0].AdvSendAdvert=1
+- raw: uci set radvd.@interface[0].AdvManagedFlag=1
+- raw: uci set radvd.@interface[0].AdvOtherConfigFlag=1
+- raw: uci set radvd.@interface[0].client=
+- raw: uci set radvd.@prefix[0]=prefix
+- raw: uci set radvd.@prefix[0].interface={{ ap_network }}
+- raw: uci set radvd.@prefix[0].AdvOnLink=1
+- raw: uci set radvd.@prefix[0].AdvRouterAddr=0
+- raw: uci set radvd.@prefix[0].AdvAutonomous=1
+- raw: uci set radvd.@prefix[0].prefix=
+- raw: uci set radvd.@route[0]=route
+- raw: uci set radvd.@route[0].interface={{ ap_network }}
+- raw: uci set radvd.@route[0].prefix=2607:f2c0:f00f:29b1::/64
+- raw: uci set radvd.@rdnss[0]=rdnss
+- raw: uci set radvd.@rdnss[0].interface=ap
+- raw: uci set radvd.@rdnss[0].addr=2607:f2c0:f00f:2900::1
+- raw: uci set radvd.@dnssl[0]=dnssl
+- raw: uci set radvd.@dnssl[0].interface=ap
+- raw: uci set radvd.@dnssl[0].suffix=bidon.ca
 
-    # radvd server
-    - raw: uci set radvd.@interface[0]=interface
-    - raw: uci set radvd.@interface[0].interface={{ ap_network }}
-    - raw: uci set radvd.@interface[0].AdvSendAdvert=1
-    - raw: uci set radvd.@interface[0].AdvManagedFlag=1
-    - raw: uci set radvd.@interface[0].AdvOtherConfigFlag=1
-    - raw: uci set radvd.@interface[0].client=
-    - raw: uci set radvd.@prefix[0]=prefix
-    - raw: uci set radvd.@prefix[0].interface={{ ap_network }}
-    - raw: uci set radvd.@prefix[0].AdvOnLink=1
-    - raw: uci set radvd.@prefix[0].AdvRouterAddr=0
-    - raw: uci set radvd.@prefix[0].AdvAutonomous=1
-    - raw: uci set radvd.@prefix[0].prefix=
-    - raw: uci set radvd.@route[0]=route
-    - raw: uci set radvd.@route[0].interface={{ ap_network }}
-    - raw: uci set radvd.@route[0].prefix=2607:f2c0:f00f:29b1::/64
-    - raw: uci set radvd.@rdnss[0]=rdnss
-    - raw: uci set radvd.@rdnss[0].interface=ap
-    - raw: uci set radvd.@rdnss[0].addr=2607:f2c0:f00f:2900::1
-    - raw: uci set radvd.@dnssl[0]=dnssl
-    - raw: uci set radvd.@dnssl[0].interface=ap
-    - raw: uci set radvd.@dnssl[0].suffix=bidon.ca
+# Babeld
+- raw: rm /etc/config/babeld
+- raw: echo 'package babeld' > /etc/config/babeld
 
-    # Babeld
-    - raw: rm /etc/config/babeld
-    - raw: echo 'package babeld' > /etc/config/babeld
+- raw: uci add babeld general
+- raw: uci set babeld.@general[0]=general
+- raw: uci set babeld.@general[0].local_port=33123
 
-    - raw: uci add babeld general
-    - raw: uci set babeld.@general[0]=general
-    - raw: uci set babeld.@general[0].local_port=33123
+- raw: uci add babeld interface
+- raw: uci set babeld.@interface[0]=interface
+- raw: uci set babeld.@interface[0].ifname=lan
 
-    - raw: uci add babeld interface
-    - raw: uci set babeld.@interface[0]=interface
-    - raw: uci set babeld.@interface[0].ifname=lan
+- raw: uci add babeld interface
+- raw: uci set babeld.@interface[1]=interface
+- raw: uci set babeld.@interface[1].ifname=mesh
 
-    - raw: uci add babeld interface
-    - raw: uci set babeld.@interface[1]=interface
-    - raw: uci set babeld.@interface[1].ifname=mesh
+- raw: uci add babeld filter
+- raw: uci set babeld.@filter[0]=filter
+- raw: uci set babeld.@filter[0].local='true'
+- raw: uci set babeld.@filter[0].proto=2
+- raw: uci set babeld.@filter[0].type=redistribute
+- raw: uci set babeld.@filter[0].ip={{ lan_ip6addr }}
+- raw: uci set babeld.@filter[0].le=60
 
-    - raw: uci add babeld filter
-    - raw: uci set babeld.@filter[0]=filter
-    - raw: uci set babeld.@filter[0].local='true'
-    - raw: uci set babeld.@filter[0].proto=2
-    - raw: uci set babeld.@filter[0].type=redistribute
-    - raw: uci set babeld.@filter[0].ip={{ lan_ip6addr }}
-    - raw: uci set babeld.@filter[0].le=60
+- raw: uci add babeld filter
+- raw: uci set babeld.@filter[1]=filter
+- raw: uci set babeld.@filter[1].type=redistribute
+- raw: uci set babeld.@filter[1].local=true
+- raw: uci set babeld.@filter[1].action=deny
 
-    - raw: uci add babeld filter
-    - raw: uci set babeld.@filter[1]=filter
-    - raw: uci set babeld.@filter[1].type=redistribute
-    - raw: uci set babeld.@filter[1].local=true
-    - raw: uci set babeld.@filter[1].action=deny
-
-    # make sure services are enabled
-    - raw: /etc/init.d/radvd enable
-    - raw: /etc/init.d/babeld enable
+# make sure services are enabled
+- raw: /etc/init.d/radvd enable
+- raw: /etc/init.d/babeld enable

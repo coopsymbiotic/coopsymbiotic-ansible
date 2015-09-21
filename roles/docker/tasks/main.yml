@@ -1,11 +1,7 @@
-- hosts: all
-  sudo: yes
+---
+- apt_repository:
+    repo='deb http://ftp.ca.debian.org/debian jessie-backports main'
+    state=present
+    update_cache=yes
 
-  tasks:
-    - apt_repository:
-        repo='deb http://ftp.ca.debian.org/debian jessie-backports main'
-        state=present
-        update_cache=yes
-
-    - apt: pkg=docker.io state=installed default_release=jessie-backports
-
+- apt: pkg=docker.io state=installed default_release=jessie-backports

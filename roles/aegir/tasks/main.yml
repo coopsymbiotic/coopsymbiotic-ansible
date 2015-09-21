@@ -1,81 +1,77 @@
 ---
-- hosts: all
-  sudo: yes
+# Installs Aegir3 (http://www.aegirproject.org)
+# Assumes Debian Jessie, with MariaDB, Nginx, php5-fpm
 
-  # Installs Aegir3 (http://www.aegirproject.org)
-  # Assumes Debian Jessie, with MariaDB, Nginx, php5-fpm
+- apt: pkg=pwgen state=installed
 
-  tasks:
-    - apt: pkg=pwgen state=installed
+# https://github.com/gaspaio/ansible-devbox/blob/master/roles/mysql/tasks/server.yml
+# Install server using a preseed file to set the root password
+- name: Check for previous MySQL installation
+  shell: "[ -f /usr/sbin/mysqld ]"
+  ignore_errors: True
+  register: mysqld_exists
 
-    # https://github.com/gaspaio/ansible-devbox/blob/master/roles/mysql/tasks/server.yml
-    # Install server using a preseed file to set the root password
-    - name: Check for previous MySQL installation
-      shell: "[ -f /usr/sbin/mysqld ]"
-      ignore_errors: True
-      register: mysqld_exists
+- name: Generate a root password for MySQL
+  shell: pwgen 15 1 > /root/.mysql.root
+  when: mysqld_exists|failed
 
-    - name: Generate a root password for MySQL
-      shell: pwgen 15 1 > /root/.mysql.root
-      when: mysqld_exists|failed
+- name: Preseed MariaDB root password 1 of 2
+  shell: echo "mariadb-server-10.0 mysql-server/root_password password `cat /root/.mysql.root`" | debconf-set-selections
 
-    - name: Preseed MariaDB root password 1 of 2
-      shell: echo "mariadb-server-10.0 mysql-server/root_password password `cat /root/.mysql.root`" | debconf-set-selections
+- name: Preseed MariaDB root password 2 of 2
+  shell: echo "mariadb-server-10.0 mysql-server/root_password_again password `cat /root/.mysql.root`" | debconf-set-selections
 
-    - name: Preseed MariaDB root password 2 of 2
-      shell: echo "mariadb-server-10.0 mysql-server/root_password_again password `cat /root/.mysql.root`" | debconf-set-selections
+- apt: pkg=mariadb-server state=installed
+- apt: pkg=mariadb-client state=installed
 
-    - apt: pkg=mariadb-server state=installed
-    - apt: pkg=mariadb-client state=installed
+- apt: pkg=nginx state=installed
+- apt: pkg=curl state=installed
+- apt: pkg=php5-fpm state=installed
+- apt: pkg=php5-gd state=installed
+- apt: pkg=php5-curl state=installed
 
-    - apt: pkg=nginx state=installed
-    - apt: pkg=curl state=installed
-    - apt: pkg=php5-fpm state=installed
-    - apt: pkg=php5-gd state=installed
-    - apt: pkg=php5-curl state=installed
+- name: Making sure the drush package is removed (aegir3 installs through composer)
+  apt: pkg=drush state=absent
 
-    - name: Making sure the drush package is removed (aegir3 installs through composer)
-      apt: pkg=drush state=absent
+- name: Preseed Aegir hostmaster site url
+  shell: echo "debconf aegir/site string {{ inventory_hostname }}" | debconf-set-selections
 
-    - name: Preseed Aegir hostmaster site url
-      shell: echo "debconf aegir/site string {{ inventory_hostname }}" | debconf-set-selections
+- name: Preseed Aegir hostmaster db_host
+  shell: echo "debconf aegir/db_host string 127.0.0.1" | debconf-set-selections
 
-    - name: Preseed Aegir hostmaster db_host
-      shell: echo "debconf aegir/db_host string 127.0.0.1" | debconf-set-selections
+- name: Preseed Aegir hostmaster db_user
+  shell: echo "debconf aegir/db_user string root" | debconf-set-selections
 
-    - name: Preseed Aegir hostmaster db_user
-      shell: echo "debconf aegir/db_user string root" | debconf-set-selections
+- name: Preseed Aegir hostmaster db_password
+  shell: echo "debconf aegir/db_password password `cat /root/.mysql.root`" | debconf-set-selections
 
-    - name: Preseed Aegir hostmaster db_password
-      shell: echo "debconf aegir/db_password password `cat /root/.mysql.root`" | debconf-set-selections
+- name: Preseed Aegir hostmaster webmaster (nginx)
+  shell: echo "debconf aegir/webserver string nginx" | debconf-set-selections
 
-    - name: Preseed Aegir hostmaster webmaster (nginx)
-      shell: echo "debconf aegir/webserver string nginx" | debconf-set-selections
+# "echo debconf aegir/email string $aegir_email | debconf-set-selections"
+# "echo debconf aegir/makefile string $aegir_makefile | debconf-set-selections"
 
-    # "echo debconf aegir/email string $aegir_email | debconf-set-selections"
-    # "echo debconf aegir/makefile string $aegir_makefile | debconf-set-selections"
+- name: Get the Aegir repo key
+  apt_key: url=http://debian.aegirproject.org/key.asc state=present
 
-    - name: Get the Aegir repo key
-      apt_key: url=http://debian.aegirproject.org/key.asc state=present
+- name: Add the Aegir apt repository
+  apt_repository:
+    repo='deb http://debian.aegirproject.org stable main'
+    state=present
+    update_cache=yes
 
-    - name: Add the Aegir apt repository
-      apt_repository:
-        repo='deb http://debian.aegirproject.org stable main'
-        state=present
-        update_cache=yes
+- apt: pkg=aegir3 state=installed
 
-    - apt: pkg=aegir3 state=installed
+- name: Download provision_civicrm from Drupal.org
+  sudo_user: aegir
+  git: repo=http://git.drupal.org/project/provision_civicrm.git
+       version=6.x-2.x
+       dest=/var/aegir/.drush/provision_civicrm
+       update=yes
 
-    - name: Download provision_civicrm from Drupal.org
-      sudo_user: aegir
-      git: repo=http://git.drupal.org/project/provision_civicrm.git
-           version=6.x-2.x
-           dest=/var/aegir/.drush/provision_civicrm
-           update=yes
-
-    - name: Download provision_symbiotic from Github
-      sudo_user: aegir
-      git: repo=https://github.com/coopsymbiotic/provision_symbiotic.git
-           version=master
-           dest=/var/aegir/.drush/provision_symbiotic
-           update=yes
+- name: Download provision_symbiotic from Github
+  sudo_user: aegir
+  git: repo=https://github.com/coopsymbiotic/provision_symbiotic.git
+       version=master
+       dest=/var/aegir/.drush/provision_symbiotic
+       update=yes

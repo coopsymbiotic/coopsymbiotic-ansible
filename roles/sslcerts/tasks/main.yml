@@ -1,95 +1,92 @@
-- hosts: all
-  sudo: yes
+---
+- name: Add ssl-cert group on Ubuntu
+  group: name=ssl-cert state=present
+  when: ansible_distribution == "Ubuntu"
 
-  tasks:
-    - name: Add ssl-cert group on Ubuntu
-      group: name=ssl-cert state=present
-      when: ansible_distribution == "Ubuntu"
+- copy: src=/etc/ansible/files/etc/ssl/private/{{ item }}.crt dest=/etc/ssl/private/{{ item }}.crt owner=root group=ssl-cert mode=0640
+  with_items: sslcertificates
 
-    - copy: src=/etc/ansible/files/etc/ssl/private/{{ item }}.crt dest=/etc/ssl/private/{{ item }}.crt owner=root group=ssl-cert mode=0640
-      with_items: sslcertificates
+- copy: src=/etc/ansible/files/etc/ssl/private/{{ item }}.bundled.crt dest=/etc/ssl/private/{{ item }}.bundled.crt owner=root group=ssl-cert mode=0640
+  with_items: sslcertificates
 
-    - copy: src=/etc/ansible/files/etc/ssl/private/{{ item }}.bundled.crt dest=/etc/ssl/private/{{ item }}.bundled.crt owner=root group=ssl-cert mode=0640
-      with_items: sslcertificates
+- copy: src=/etc/ansible/files/etc/ssl/private/{{ item }}.cacert.crt dest=/etc/ssl/private/{{ item }}.cacert.crt owner=root group=ssl-cert mode=0640
+  with_items: sslcertificates
 
-    - copy: src=/etc/ansible/files/etc/ssl/private/{{ item }}.cacert.crt dest=/etc/ssl/private/{{ item }}.cacert.crt owner=root group=ssl-cert mode=0640
-      with_items: sslcertificates
+- copy: src=/etc/ansible/files/etc/ssl/private/{{ item }}.key dest=/etc/ssl/private/{{ item }}.key owner=root group=ssl-cert mode=0640
+  with_items: sslcertificates
 
-    - copy: src=/etc/ansible/files/etc/ssl/private/{{ item }}.key dest=/etc/ssl/private/{{ item }}.key owner=root group=ssl-cert mode=0640
-      with_items: sslcertificates
+# If using Aegir
+- file: path=/var/aegir/config/ssl.d/{{ item }} state=directory owner=aegir group=aegir mode=0700
+  with_items: sslcertificates
+  when: host_aegir_managed
 
-    # If using Aegir
-    - file: path=/var/aegir/config/ssl.d/{{ item }} state=directory owner=aegir group=aegir mode=0700
-      with_items: sslcertificates
-      when: host_aegir_managed
+- file: path=/var/aegir/config/server_master/ssl.d/{{ item }} state=directory owner=aegir group=aegir mode=0700
+  with_items: sslcertificates
+  when: host_aegir_managed
 
-    - file: path=/var/aegir/config/server_master/ssl.d/{{ item }} state=directory owner=aegir group=aegir mode=0700
-      with_items: sslcertificates
-      when: host_aegir_managed
+# Copy to the root space (files used as a reference for when a site is verified, sent to the server_master later on).
+- copy: src=/etc/ansible/files/etc/ssl/private/{{ item }}.key dest=/var/aegir/config/ssl.d/{{ item }}/openssl.key owner=root group=aegir mode=0640
+  with_items: sslcertificates
+  when: host_aegir_managed
 
-    # Copy to the root space (files used as a reference for when a site is verified, sent to the server_master later on).
-    - copy: src=/etc/ansible/files/etc/ssl/private/{{ item }}.key dest=/var/aegir/config/ssl.d/{{ item }}/openssl.key owner=root group=aegir mode=0640
-      with_items: sslcertificates
-      when: host_aegir_managed
+- copy: src=/etc/ansible/files/etc/ssl/private/{{ item }}.crt dest=/var/aegir/config/ssl.d/{{ item }}/openssl.crt owner=root group=aegir mode=0640
+  with_items: sslcertificates
+  when: host_aegir_managed
 
-    - copy: src=/etc/ansible/files/etc/ssl/private/{{ item }}.crt dest=/var/aegir/config/ssl.d/{{ item }}/openssl.crt owner=root group=aegir mode=0640
-      with_items: sslcertificates
-      when: host_aegir_managed
+- copy: src=/etc/ansible/files/etc/ssl/private/{{ item }}.cacert.crt dest=/var/aegir/config/ssl.d/{{ item }}/openssl_chain.crt owner=root group=aegir mode=0640
+  with_items: sslcertificates
+  when: host_aegir_managed
 
-    - copy: src=/etc/ansible/files/etc/ssl/private/{{ item }}.cacert.crt dest=/var/aegir/config/ssl.d/{{ item }}/openssl_chain.crt owner=root group=aegir mode=0640
-      with_items: sslcertificates
-      when: host_aegir_managed
+# Copy to the "server_master" (the file referenced in the vhost declaration)
+- copy: src=/etc/ansible/files/etc/ssl/private/{{ item }}.key dest=/var/aegir/config/server_master/ssl.d/{{ item }}/openssl.key owner=root group=aegir mode=0640
+  with_items: sslcertificates
+  when: host_aegir_managed
 
-    # Copy to the "server_master" (the file referenced in the vhost declaration)
-    - copy: src=/etc/ansible/files/etc/ssl/private/{{ item }}.key dest=/var/aegir/config/server_master/ssl.d/{{ item }}/openssl.key owner=root group=aegir mode=0640
-      with_items: sslcertificates
-      when: host_aegir_managed
+- copy: src=/etc/ansible/files/etc/ssl/private/{{ item }}.crt dest=/var/aegir/config/server_master/ssl.d/{{ item }}/openssl.crt owner=root group=aegir mode=0640
+  with_items: sslcertificates
+  when: host_aegir_managed
 
-    - copy: src=/etc/ansible/files/etc/ssl/private/{{ item }}.crt dest=/var/aegir/config/server_master/ssl.d/{{ item }}/openssl.crt owner=root group=aegir mode=0640
-      with_items: sslcertificates
-      when: host_aegir_managed
+- copy: src=/etc/ansible/files/etc/ssl/private/{{ item }}.cacert.crt dest=/var/aegir/config/server_master/ssl.d/{{ item }}/openssl_chain.crt owner=root group=aegir mode=0640
+  with_items: sslcertificates
+  when: host_aegir_managed
 
-    - copy: src=/etc/ansible/files/etc/ssl/private/{{ item }}.cacert.crt dest=/var/aegir/config/server_master/ssl.d/{{ item }}/openssl_chain.crt owner=root group=aegir mode=0640
-      with_items: sslcertificates
-      when: host_aegir_managed
+# If using Zimbra (assumes deploying only 1 cert)
+# http://wiki.zimbra.com/wiki/Installing_a_RapidSSL_Commercial_Certificate
+- copy: src=/etc/ansible/files/etc/ssl/private/{{ item }}.key dest=/opt/zimbra/ssl/zimbra/commercial/commercial.key owner=zimbra group=zimbra mode=0640
+  with_items: sslcertificates
+  when: host_zimbra_managed
 
-    # If using Zimbra (assumes deploying only 1 cert)
-    # http://wiki.zimbra.com/wiki/Installing_a_RapidSSL_Commercial_Certificate
-    - copy: src=/etc/ansible/files/etc/ssl/private/{{ item }}.key dest=/opt/zimbra/ssl/zimbra/commercial/commercial.key owner=zimbra group=zimbra mode=0640
-      with_items: sslcertificates
-      when: host_zimbra_managed
+- copy: src=/etc/ansible/files/etc/ssl/private/{{ item }}.crt dest=/tmp/openssl.crt owner=zimbra group=zimbra mode=0640
+  with_items: sslcertificates
+  when: host_zimbra_managed
 
-    - copy: src=/etc/ansible/files/etc/ssl/private/{{ item }}.crt dest=/tmp/openssl.crt owner=zimbra group=zimbra mode=0640
-      with_items: sslcertificates
-      when: host_zimbra_managed
+- copy: src=/etc/ansible/files/etc/ssl/private/{{ item }}.cacert.crt dest=/tmp/openssl.cacert.crt owner=zimbra group=zimbra mode=0640
+  with_items: sslcertificates
+  when: host_zimbra_managed
 
-    - copy: src=/etc/ansible/files/etc/ssl/private/{{ item }}.cacert.crt dest=/tmp/openssl.cacert.crt owner=zimbra group=zimbra mode=0640
-      with_items: sslcertificates
-      when: host_zimbra_managed
+- name: Run Zimbra's zmcertgr deploycrt
+  shell: /opt/zimbra/bin/zmcertmgr deploycrt comm /tmp/openssl.crt /tmp/openssl.cacert.crt
+  args:
+    chdir: /opt/zimbra/bin
+  when: host_zimbra_managed
 
-    - name: Run Zimbra's zmcertgr deploycrt
-      shell: /opt/zimbra/bin/zmcertmgr deploycrt comm /tmp/openssl.crt /tmp/openssl.cacert.crt
-      args:
-        chdir: /opt/zimbra/bin
-      when: host_zimbra_managed
+- file: path=/tmp/openssl.crt state=absent
+- file: path=/tmp/openssl.cacert.crt state=absent
 
-    - file: path=/tmp/openssl.crt state=absent
-    - file: path=/tmp/openssl.cacert.crt state=absent
+# Restart various services
+- name: Restart postfix.
+  service: name=postfix state=restarted
+  when: host_postfix_managed
 
-    # Restart various services
-    - name: Restart postfix.
-      service: name=postfix state=restarted
-      when: host_postfix_managed
+- name: Restart apache.
+  service: name=apache2 state=restarted
+  when: host_apache_managed
 
-    - name: Restart apache.
-      service: name=apache2 state=restarted
-      when: host_apache_managed
+- name: Restart nginx.
+  service: name=nginx state=restarted
+  when: host_nginx_managed
 
-    - name: Restart nginx.
-      service: name=nginx state=restarted
-      when: host_nginx_managed
-
-    - name: Restart zimbra.
-      sudo_user: zimbra
-      shell: /opt/zimbra/bin/zmcontrol restart
-      when: host_zimbra_managed
+- name: Restart zimbra.
+  sudo_user: zimbra
+  shell: /opt/zimbra/bin/zmcontrol restart
+  when: host_zimbra_managed

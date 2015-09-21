@@ -1,5 +1,6 @@
 ---
 - hosts: servers
+  sudo: yes
   roles:
     - common-all
     - logcheck
@@ -7,49 +8,61 @@
     - sslcerts
 
 - hosts: kvm-hosts
+  sudo: yes
   roles:
     - common-kvmhosts
 
 - hosts: aegir-managed
+  sudo: yes
   roles:
     - aegir
 
 - hosts: backup-servers
+  sudo: yes
   roles:
     - backupserver
 
 - hosts: logstash-servers
+  sudo: yes
   roles:
     - logstash
 
 - hosts: icinga-servers
+  sudo: yes
   roles:
     - icinga
 
 - hosts: redmine-servers
+  sudo: yes
   roles:
     - redmine
 
 - hosts: yubiauth-managed
+  sudo: yes
   roles:
     - yubiauth
 
 - hosts: rdiff-backups
+  sudo: yes
   roles:
     - backupninja-rdiff
 
 - hosts: civicrm-environment
+  sudo: yes
   roles:
     - civicrm-environment
 
 - hosts: openwrt-mesh-nodes
+  sudo: yes
   roles:
     - openwrt-babelmesh
 
 - hosts: munin-nodes
+  sudo: yes
   roles:
     - munin-node
 
 - hosts: postfix-servers
+  sudo: yes
   roles:
     - postfix

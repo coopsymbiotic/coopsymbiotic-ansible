@@ -1,29 +1,25 @@
 ---
-- hosts: all
-  sudo: yes
+- name: Make sure that logcheck is installed.
+  apt: pkg=logcheck state=installed
 
-  tasks:
-    - name: Make sure that logcheck is installed.
-      apt: pkg=logcheck state=installed
+- name: Copy custom logcheck file.
+  template:
+    src: "bgm-custom-general"
+    dest: "/etc/logcheck/ignore.d.server/bgm-custom-general"
+    owner: "root"
+    group: "root"
+    mode: 0644
 
-    - name: Copy custom logcheck file.
-      template:
-        src: "templates/bgm-custom-general"
-        dest: "/etc/logcheck/ignore.d.server/bgm-custom-general"
-        owner: "root"
-        group: "root"
-        mode: 0644
+- name: Run logcheck only twice a day. Logrotate daily usually runs at 6:25
+  lineinfile:
+    dest: /etc/cron.d/logcheck
+    regexp: '^.*/usr/sbin/logcheck;.*$'
+    line: '10 6,18 * * *   logcheck    if [ -x /usr/sbin/logcheck ]; then nice -n10 /usr/sbin/logcheck; fi'
+    state: present
 
-    - name: Run logcheck only twice a day. Logrotate daily usually runs at 6:25
-      lineinfile:
-        dest: /etc/cron.d/logcheck
-        regexp: '^.*/usr/sbin/logcheck;.*$'
-        line: '10 6,18 * * *   logcheck    if [ -x /usr/sbin/logcheck ]; then nice -n10 /usr/sbin/logcheck; fi'
-        state: present
-
-    - name: Add comment in file for documentation.
-      lineinfile:
-        dest: /etc/cron.d/logcheck
-        regexp: '^# Managed by Ansible -bgm$'
-        line: '# Managed by Ansible -bgm'
-        state: present
+- name: Add comment in file for documentation.
+  lineinfile:
+    dest: /etc/cron.d/logcheck
+    regexp: '^# Managed by Ansible -bgm$'
+    line: '# Managed by Ansible -bgm'
+    state: present

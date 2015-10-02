@@ -1,0 +1,41 @@
+---
+
+# We use the Lato font for generating PDFs using dw2pdf of dokuwiki.
+# It must be installed globally.
+
+- name: Create temp directory for Lato
+  file: path=/tmp/lato-dl state=directory mode=0700
+
+- name: Download Lato Font
+  get_url:
+    url=http://www.latofonts.com/download/Lato2OFL.zip
+    dest=/tmp/lato-dl/Lato2OFL.zip
+    mode=0644
+
+- name: Unpack Lato archive
+  unarchive: src=/tmp/lato-dl/Lato2OFL.zip dest=/tmp/lato-dl/ copy=no
+
+- name: Copy font to /usr/share/fonts/
+  command: cp /tmp/lato-dl/Lato2OFL/{{ item }} /usr/share/fonts/{{ item }}
+  with_items:
+    - Lato-BlackItalic.ttf
+    - Lato-Black.ttf
+    - Lato-BoldItalic.ttf
+    - Lato-Bold.ttf
+    - Lato-HairlineItalic.ttf
+    - Lato-Hairline.ttf
+    - Lato-HeavyItalic.ttf
+    - Lato-Heavy.ttf
+    - Lato-Italic.ttf
+    - Lato-LightItalic.ttf
+    - Lato-Light.ttf
+    - Lato-MediumItalic.ttf
+    - Lato-Medium.ttf
+    - Lato-Regular.ttf
+    - Lato-SemiboldItalic.ttf
+    - Lato-Semibold.ttf
+    - Lato-ThinItalic.ttf
+    - Lato-Thin.ttf
+
+- name: Rebuild font cache (fc-cache -f)
+  shell: fc-cache -f

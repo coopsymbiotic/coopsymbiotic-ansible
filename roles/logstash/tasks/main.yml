@@ -13,14 +13,104 @@
     state=present
     update_cache=yes
 
-- apt: pkg=logstash state=installed
+# Ubuntu 12.05 LTS only has openjdk 7
+- apt: pkg=openjdk-7-jre state=installed
+  when: ansible_distribution == "Ubuntu" and ansible_lsb.major_release == "12"
 
+# Debian Jessie
 - apt: pkg=openjdk-8-jre state=installed
+  when: ansible_distribution == "Debian"
 
+- apt: pkg=logstash state=installed
 - apt: pkg=elasticsearch state=installed
+
+- name: Logstash conf.d configurations
+  template:
+    src: "{{ item }}"
+    dest: "/etc/logstash/conf.d/{{ item }}"
+    owner: "root"
+    group: "root"
+    mode: 0644
+  with_items:
+    - 01-lumberjack-input.conf
+    - 10-syslog.conf
+    - 30-lumberjack-output.conf
+
+- name: Open the firewall for our machines only
+  ufw: proto=tcp port=5000 rule=allow src={{ item }}
+  with_items: logstash_server_allow_ips
+
+- name: Add logstash user to the ssl-cert group.
+  user: name=logstash groups="ssl-cert" append=yes
 
 - name: Restart Elastic Search.
   service: name=elasticsearch state=restarted
 
 - name: Restart Logstash.
   service: name=logstash state=restarted
+
+# Kibana (fixme: use a variable for the Kibana version)
+- name: Download Kibana
+  get_url:
+    url=https://download.elastic.co/kibana/kibana/kibana-4.1.2-linux-x64.tar.gz
+    dest=/opt/kibana-4.1.2-linux-x64.tar.gz
+    mode=0644
+  register: get_kibana
+
+- debug:
+    msg="Kibana4 was downloaded/upgraded."
+  when: get_kibana|changed
+
+- name: Unpack Kibana archive
+  unarchive: src=/opt/kibana-4.1.2-linux-x64.tar.gz dest=/opt copy=no
+  when: get_kibana|changed
+
+- name: Kibana symlink from /opt/kibana-4.1.2-linux-x64 to /opt/kibana
+  file: src=/opt/kibana-4.1.2-linux-x64 dest=/opt/kibana state=link
+
+- name: Kibana old-school init script (NB we do not auto-start for now).
+  template:
+    src: "kibana4"
+    dest: "/etc/init.d/kibana4"
+    mode: 0755
+
+- name: Auto-start Kibana 
+  shell: update-rc.d kibana4 defaults 96 9
+
+- name: Restart Kibana if the code base has changed
+  service: name=kibana4 state=restarted
+  when: get_kibana|changed
+
+# Nginx configuration
+- apt: pkg=nginx state=installed
+- apt: pkg=python-passlib state=installed
+- apt: pkg=pwgen state=installed
+
+- name: Check if a htpasswd was already created.
+  stat: path=/root/kibana-password
+  register: kibana_password_file
+
+- name: Generate a password for the htpasswd restriction.
+  shell: pwgen 15 1 > /root/kibana-password
+  when: kibana_password_file.stat.exists == False
+
+- name: Read the password and store in variable.
+  shell: cat {{ "/root/kibana-password" }}
+  register: kibana_password
+
+- htpasswd:
+    path=/etc/nginx/htpasswd-kibana.users
+    name=admin password={{ kibana_password.stdout }}
+    owner=root group=www-data mode=0640
+
+- name: Deploy the nginx vhost configuration.
+  template:
+    src: "nginx-vhost.j2"
+    dest: "/etc/nginx/sites-available/{{ logstash_server_name }}"
+    owner: "root"
+    group: "root"
+    mode: 0644
+
+- name: Enable the vhost (create a symlink).
+  file: src=/etc/nginx/sites-available/{{ logstash_server_name }} dest=/etc/nginx/sites-enabled/{{ logstash_server_name }} state=link
+  notify: restart nginx

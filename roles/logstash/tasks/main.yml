@@ -34,7 +34,23 @@
   with_items:
     - 01-lumberjack-input.conf
     - 10-syslog.conf
+    - 11-nginx.conf
+    - 12-apache.conf
     - 30-lumberjack-output.conf
+
+- name: Create the logstash pattern directory
+  file: path=/opt/logstash/patterns state=directory mode=0755 owner=logstash group=logstash
+
+- name: Deploy nginx patterns for logstash
+  copy:
+    src: "patterns/{{ item }}"
+    dest: "/opt/logstash/patterns/{{ item }}"
+    owner: logstash
+    group: logstash
+    mode: 0644
+  with_items:
+    - nginx
+    - apache-aegir
 
 - name: Open the firewall for our machines only
   ufw: proto=tcp port=5000 rule=allow src={{ item }}

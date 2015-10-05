@@ -110,6 +110,8 @@
   shell: pwgen 15 1 > /root/kibana-password
   when: kibana_password_file.stat.exists == False
 
+# Password protect access to Kibana using htpasswd.
+# Password will be stored on the server, in /root/kibana-password.
 - name: Read the password and store in variable.
   shell: cat {{ "/root/kibana-password" }}
   register: kibana_password

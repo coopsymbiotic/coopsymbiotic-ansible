@@ -38,7 +38,7 @@
 
 - name: Set the postfix mailname (and chmod it to be public, required by Aegir).
   template:
-    src: "templates/etc/mailname"
+    src: "etc/mailname"
     dest: "/etc/mailname"
     owner: "root"
     group: "root"
@@ -46,7 +46,7 @@
 
 - name: Deploy the postfix main.cf configuration.
   template:
-    src: "templates/etc/postfix/main.cf"
+    src: "etc/postfix/main.cf"
     dest: "/etc/postfix/main.cf"
     owner: "root"
     group: "root"
@@ -54,7 +54,7 @@
 
 - name: Deploy the opendkim default configuration.
   template:
-    src: "templates/etc/default/opendkim"
+    src: "etc/default/opendkim"
     dest: "/etc/default/opendkim"
     owner: "root"
     group: "root"
@@ -62,7 +62,7 @@
 
 - name: Deploy the opendkim main configuration.
   template:
-    src: "templates/etc/opendkim.conf"
+    src: "etc/opendkim.conf"
     dest: "/etc/opendkim.conf"
     owner: "root"
     group: "root"

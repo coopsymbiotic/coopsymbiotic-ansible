@@ -71,3 +71,8 @@
   sudo: yes
   roles:
     - dokuwiki
+
+- hosts: ufw-managed
+  sudo: yes
+  roles:
+    - ufw

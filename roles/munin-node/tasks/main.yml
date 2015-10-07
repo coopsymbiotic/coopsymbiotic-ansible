@@ -5,11 +5,12 @@
 
 - name: Copy our munin-node configuration.
   template:
-    src: "templates/munin-node.conf"
+    src: "munin-node.conf"
     dest: "/etc/munin/munin-node.conf"
     owner: "root"
     group: "root"
     mode: 0644
+  notify: restart munin-node
 
 - name: Remove some plugins which are rarely used or sensitive info.
   file: name=/etc/munin/plugins/{{ item.path }} state=absent
@@ -25,6 +26,7 @@
     - { path: 'nfsd' }
     - { path: 'uptime' }
     - { path: 'users' }
+  notify: restart munin-node
 
 - name: Ensure that some plugins are enabled (this is only partial, is missing some network graphs).
   file: src=/usr/share/munin/plugins/{{ item.path }} dest=/etc/munin/plugins/{{ item.path }} state=link
@@ -36,6 +38,7 @@
     - { path: 'open_files' }
     - { path: 'vmstat' }
     - { path: 'fail2ban' }
+  notify: restart munin-node
 
 - name: Ensure munin-node is running.
   service: name=munin-node state=started enabled=yes

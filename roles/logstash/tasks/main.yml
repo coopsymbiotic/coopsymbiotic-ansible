@@ -24,6 +24,10 @@
 - apt: pkg=logstash state=installed
 - apt: pkg=elasticsearch state=installed
 
+# To generate maps of the clientips.
+- apt: pkg=geoip-database state=installed
+- apt: pkg=geoip-database-extra state=installed
+
 - name: Logstash conf.d configurations
   template:
     src: "{{ item }}"

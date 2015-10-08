@@ -33,6 +33,7 @@
     mode: 0644
   with_items:
     - 01-lumberjack-input.conf
+    - 02-syslogopenwrt-input.conf
     - 10-syslog.conf
     - 11-nginx.conf
     - 12-apache.conf
@@ -52,8 +53,12 @@
     - nginx
     - apache-aegir
 
-- name: Open the firewall for our machines only
+- name: Open the lumberjack port for our machines only
   ufw: proto=tcp port=5000 rule=allow src={{ item }}
+  with_items: logstash_server_allow_ips
+
+- name: Open the rsyslog port for our machines only
+  ufw: proto=udp port=5544 rule=allow src={{ item }}
   with_items: logstash_server_allow_ips
 
 - name: Add logstash user to the ssl-cert group.

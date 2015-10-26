@@ -19,4 +19,4 @@ option log_remote 1
 option conloglevel 6
 ```
 
-Then either reboot or restart syslog manually (/sbin/syslogd -l 6 -L -R 1.2.3.4:5544 -C16).
+Then either reboot or restart syslog manually (since OpenWRT BB: /etc/init.d/log restart).

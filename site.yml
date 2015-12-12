@@ -54,6 +54,7 @@
 
 - hosts: openwrt-mesh-nodes
   sudo: yes
+  gather_facts: no
   roles:
     - openwrt-babelmesh
 

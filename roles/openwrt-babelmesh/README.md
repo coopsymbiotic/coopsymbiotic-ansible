@@ -9,6 +9,18 @@ NB: not managed by the playbook, is:
 - remove/disable the firewall (opkg remove firewall).. or set outbound only?
 - most importantly: ip6tables -P FORWARD ACCEPT
 
+Example usage in a site.yml:
+
+```
+- hosts: openwrt-mesh-nodes
+  sudo: yes
+  gather_facts: no
+  roles:
+    - openwrt-babelmesh
+```
+
+If you do not disable facts, Ansible will complain about Python not being installed.
+
 Example host_var configuration:
 
 ```

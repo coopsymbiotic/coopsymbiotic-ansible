@@ -1,6 +1,6 @@
 ---
 # Packages
-# - raw: opkg install radvd tinc babeld ip tcpdump-mini iperf
+# - raw: opkg install tinc babeld ip tcpdump-mini iperf
 # - TODO: firewall?
 
 # Wireless configurations
@@ -14,7 +14,10 @@
 - raw: uci set wireless.radio0.channel={{ radio0_channel }}
 - raw: uci set wireless.radio0.hwmode={{ radio0_hwmode }}
 - raw: uci set wireless.radio0.htmode=HT20
+
 - raw: uci set wireless.radio0.macaddr={{ radio0_macaddr }}
+  when: radio0_macaddr is defined
+
 - raw: uci set wireless.radio0.ht_capab='SHORT-GI-40 TX-STBC RX-STBC1 DSSS_CCK-40'
 
 - raw: uci add wireless wifi-iface
@@ -44,7 +47,6 @@
 - raw: uci set wireless.@wifi-iface[2].ssid='{{ znet_ssid }}'
 - raw: uci set wireless.@wifi-iface[2].key='{{ znet_key }}'
 - raw: uci set wireless.@wifi-iface[2].network='{{ znet_network }}'
-- raw: uci commit
 
 # Network configuration
 - raw: uci show network | cut -f 1-2 -d '.' | grep -v interface | sort | uniq | xargs -n 1 uci del
@@ -100,7 +102,7 @@
 - raw: uci set network.{{ znet_network }}.ifname=wlan0-1
 - raw: uci set network.{{ znet_network }}.proto=static
 - raw: uci set network.{{ znet_network }}.ipaddr={{ znet_ipaddr }}
-- raw: uci set network.{{ znet_network }}.netmask={{ znet_ipaddr }}
+- raw: uci set network.{{ znet_network }}.netmask={{ znet_netmask }}
 - raw: uci set network.{{ znet_network }}.dns={{ znet_dns }}
 
 # DHCP server
@@ -123,28 +125,30 @@
 - raw: uci set dhcp.{{ znet_network }}.ra=server
 - raw: uci set dhcp.{{ znet_network }}.dhcp_option=6,{{ znet_dns }}
 
-# radvd server
-- raw: uci set radvd.@interface[0]=interface
-- raw: uci set radvd.@interface[0].interface={{ ap_network }}
-- raw: uci set radvd.@interface[0].AdvSendAdvert=1
-- raw: uci set radvd.@interface[0].AdvManagedFlag=1
-- raw: uci set radvd.@interface[0].AdvOtherConfigFlag=1
-- raw: uci set radvd.@interface[0].client=
-- raw: uci set radvd.@prefix[0]=prefix
-- raw: uci set radvd.@prefix[0].interface={{ ap_network }}
-- raw: uci set radvd.@prefix[0].AdvOnLink=1
-- raw: uci set radvd.@prefix[0].AdvRouterAddr=0
-- raw: uci set radvd.@prefix[0].AdvAutonomous=1
-- raw: uci set radvd.@prefix[0].prefix=
-- raw: uci set radvd.@route[0]=route
-- raw: uci set radvd.@route[0].interface={{ ap_network }}
-- raw: uci set radvd.@route[0].prefix=2607:f2c0:f00f:29b1::/64
-- raw: uci set radvd.@rdnss[0]=rdnss
-- raw: uci set radvd.@rdnss[0].interface=ap
-- raw: uci set radvd.@rdnss[0].addr=2607:f2c0:f00f:2900::1
-- raw: uci set radvd.@dnssl[0]=dnssl
-- raw: uci set radvd.@dnssl[0].interface=ap
-- raw: uci set radvd.@dnssl[0].suffix=bidon.ca
+# FIXME: in CC, radvd was replaced by odhcpd
+# https://wiki.openwrt.org/doc/uci/network6
+# # radvd server
+# - raw: uci set radvd.@interface[0]=interface
+# - raw: uci set radvd.@interface[0].interface={{ ap_network }}
+# - raw: uci set radvd.@interface[0].AdvSendAdvert=1
+# - raw: uci set radvd.@interface[0].AdvManagedFlag=1
+# - raw: uci set radvd.@interface[0].AdvOtherConfigFlag=1
+# - raw: uci set radvd.@interface[0].client=
+# - raw: uci set radvd.@prefix[0]=prefix
+# - raw: uci set radvd.@prefix[0].interface={{ ap_network }}
+# - raw: uci set radvd.@prefix[0].AdvOnLink=1
+# - raw: uci set radvd.@prefix[0].AdvRouterAddr=0
+# - raw: uci set radvd.@prefix[0].AdvAutonomous=1
+# - raw: uci set radvd.@prefix[0].prefix=
+# - raw: uci set radvd.@route[0]=route
+# - raw: uci set radvd.@route[0].interface={{ ap_network }}
+# - raw: uci set radvd.@route[0].prefix=2607:f2c0:f00f:29b1::/64
+# - raw: uci set radvd.@rdnss[0]=rdnss
+# - raw: uci set radvd.@rdnss[0].interface=ap
+# - raw: uci set radvd.@rdnss[0].addr=2607:f2c0:f00f:2900::1
+# - raw: uci set radvd.@dnssl[0]=dnssl
+# - raw: uci set radvd.@dnssl[0].interface=ap
+# - raw: uci set radvd.@dnssl[0].suffix=bidon.ca
 
 # Babeld
 - raw: rm /etc/config/babeld
@@ -176,6 +180,8 @@
 - raw: uci set babeld.@filter[1].local=true
 - raw: uci set babeld.@filter[1].action=deny
 
+- raw: uci commit
+
 # make sure services are enabled
-- raw: /etc/init.d/radvd enable
+# DEPRECATED - raw: /etc/init.d/radvd enable
 - raw: /etc/init.d/babeld enable

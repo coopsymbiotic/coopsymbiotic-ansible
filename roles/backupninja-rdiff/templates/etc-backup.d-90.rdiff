@@ -21,16 +21,16 @@ keep = 60D
 #    taken into account.
 
 # files to include in the backup
-include = /var/spool/cron/crontabs
-include = /var/backups
 include = /etc
 include = /root
 include = /home
-include = /usr/local/*bin
-include = /var/lib/dpkg/status*
-include = /var/aegir
-include = /var/lib/munin
+include = /usr/local
 include = /usr/share/coquelicot
+include = /var/
+
+# included in the above, so not necessary
+# include = /var/spool/cron/crontabs
+# include = /var/backups
 
 {% if backupincludes is defined %}
 # Includes defined for this host only
@@ -43,9 +43,14 @@ exclude = /home/*/.local/share/Trash
 exclude = /home/*/.Trash
 exclude = /home/*/.thumbnails
 exclude = /home/*/.beagle
-exclude = /home/*/gtk-gnutella-downloads
-exclude = /var/cache/backupninja/duplicity
-exclude = /var/aegir/backups/
+exclude = /var/aegir/backups
+exclude = /var/cache
+exclude = /var/lib/apt
+exclude = /var/lib/dpkg
+exclude = /var/lib/docker
+exclude = /var/lib/mlocate
+exclude = /var/log
+exclude = /var/tmp
 
 {% if backupexcludes is defined %}
 # Excludes defined for this host only

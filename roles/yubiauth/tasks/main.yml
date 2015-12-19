@@ -8,7 +8,7 @@
 
 - name: Copy the pam.d ssh configuration to /etc/pam.d/sshd
   template:
-    src: "templates/etc-pam.d-sshd-{{ ansible_distribution_major_version }}-{{ ansible_distribution_release }}"
+    src: "etc-pam.d-sshd-{{ ansible_distribution_major_version }}-{{ ansible_distribution_release }}"
     dest: "/etc/pam.d/sshd"
     owner: "root"
     group: "root"

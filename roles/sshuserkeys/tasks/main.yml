@@ -1,0 +1,17 @@
+---
+
+- name: Create users
+  user: name="{{ item | basename | regex_replace('\.pub$', '') }}"
+  with_fileglob:
+    - /etc/ansible/files/sshkeys/global/*.pub
+  tags:
+    - sshtest
+
+- name: Deploy ssh user keys
+  authorized_key: user={{ item | basename | regex_replace('\.pub$', '') }} key="{{ lookup('file', item) }}"
+  with_fileglob:
+    - /etc/ansible/files/sshkeys/global/*.pub
+  tags:
+    - sshtest
+
+# TODO: per-server, ex: /etc/ansible/files/sshkeys/{{ inventory_hostname }}/*.pub

@@ -1,4 +1,5 @@
-Installs the basic packages for icinga v1. Does not install the web interface,
-but installs the command-line tool (icli).
+Installs the basic packages for icinga v2. Does not install the web interface,
+but installs the old command-line tool (icli).
 
-This is very crude, and should probably be upgraded to icinga v2.
+This is very crude, and not up to date. The new web interface is excellent, and
+there is also a new CLI tool which is worth using instead of the old icli.

@@ -5,7 +5,13 @@
     - common-all
     - logcheck
     - logstash-forwarder
+    - munin-node
     - sslcerts
+
+- hosts: symbiotic-servers
+  sudo: yes
+  roles:
+    - sshuserkeys
 
 - hosts: kvm-hosts
   sudo: yes
@@ -40,6 +46,8 @@
 - hosts: yubiauth-managed
   sudo: yes
   roles:
+    - yubiauth
+  tags:
     - yubiauth
 
 - hosts: rdiff-backups

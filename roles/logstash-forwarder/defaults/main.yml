@@ -2,7 +2,7 @@
 # Adjust this to your infra!
 logstash_forwarder_server: localhost
 logstash_forwarder_server_port: 5000
-logstash_ssl_ca_cert: /etc/ssl/path/to/ca-certificate.crt
+logstash_ssl_ca_cert: logstash-ca-certificate.crt
 
 logstash_forwarder_files:
   - paths:

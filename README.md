@@ -1,12 +1,22 @@
-Ansible playbooks for bidon.ca
-==============================
+Ansible playbooks for Coop SymbioTIC
+====================================
 
-Ansible playbooks for my personnal servers (all running the latest stable version of Debian GNU/Linux).
+Ansible playbooks for the Coop SymbioTIC (https://www.symbiotic.coop).
 
-WARNING: I have not done a lot of reading on Ansible. My playbooks are most
-probably not a model for best practices. Copy-paste at your own risk.
+We provide CiviCRM-based services for non-profits, professional associations,
+unions and small-medium size companies. We are a worker's coop based in
+Montreal, Quebec (Canada).
 
-Feedback/suggestions welcome. Please use the github issue queue.
+Our Ansible roles/playbooks are published in the hope that they can be useful.
+Use at your own risk.
+
+We are grateful to the Ansible community, but also to all the communities of
+each project we use, such as CiviCRM, Icinga, Aegir and others, either for their
+help on IRC, online documentation, etc. We hope to "push it forward" by also
+contributing our experiences for others to learn from.
+
+Feedback/suggestions welcome. Please use the Github issue queue of this project.
+You can also contact us at info (at) symbiotic.coop.
 
 New node bootstrap
 ------------------
@@ -40,16 +50,20 @@ Running a playbook
 
 See what hosts would be affected by a playbook before you run it:
 
-    ansible-playbook main.yml --list-hosts
+    ansible-playbook site.yml --list-hosts
 
 Run the playbook:
 
-    ansible-playbook main.yml
+    ansible-playbook site.yml
 
 Run it on a specific node:
 
-    ansible-playbook -l foo.example.org main.yml
+    ansible-playbook -l foo.example.org site.yml
+
+Run only a specific role (each role is tagged in site.yml):
+
+    ansible-playbook --tags=ufw site.yml
 
 Run 10 "things" (servers?) in parallel:
 
-    ansible-playbook main.yml -f 10
+    ansible-playbook site.yml -f 10

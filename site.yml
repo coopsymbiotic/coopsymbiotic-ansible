@@ -48,9 +48,10 @@
 - hosts: icinga-servers
   sudo: yes
   roles:
-    - icinga
+    - icinga2
   tags:
     - icinga
+    - icinga2
 
 - hosts: redmine-servers
   sudo: yes

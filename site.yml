@@ -7,40 +7,56 @@
     - logstash-forwarder
     - munin-node
     - sslcerts
+  tags:
+    - minimum
 
 - hosts: symbiotic-servers
   sudo: yes
   roles:
+    - sshuserkeys
+  tags:
     - sshuserkeys
 
 - hosts: kvm-hosts
   sudo: yes
   roles:
     - common-kvmhosts
+  tags:
+    - common-kvmhosts
 
 - hosts: aegir-managed
   sudo: yes
   roles:
+    - aegir
+  tags:
     - aegir
 
 - hosts: backup-servers
   sudo: yes
   roles:
     - backupserver
+  tags:
+    - backupserver
 
 - hosts: logstash-servers
   sudo: yes
   roles:
+    - logstash
+  tags:
     - logstash
 
 - hosts: icinga-servers
   sudo: yes
   roles:
     - icinga
+  tags:
+    - icinga
 
 - hosts: redmine-servers
   sudo: yes
   roles:
+    - redmine
+  tags:
     - redmine
 
 - hosts: yubiauth-managed
@@ -54,10 +70,14 @@
   sudo: yes
   roles:
     - backupninja-rdiff
+  tags:
+    - backupninja-rdiff
 
 - hosts: civicrm-environment
   sudo: yes
   roles:
+    - civicrm-environment
+  tags:
     - civicrm-environment
 
 - hosts: openwrt-mesh-nodes
@@ -65,23 +85,33 @@
   gather_facts: no
   roles:
     - openwrt-babelmesh
+  tags:
+    - openwrt-babelmesh
 
 - hosts: munin-nodes
   sudo: yes
   roles:
+    - munin-node
+  tags:
     - munin-node
 
 - hosts: postfix-servers
   sudo: yes
   roles:
     - postfix
+  tags:
+    - postfix
 
 - hosts: dokuwiki-instances
   sudo: yes
   roles:
     - dokuwiki
+  tags:
+    - dokuwiki
 
 - hosts: ufw-managed
   sudo: yes
   roles:
+    - ufw
+  tags:
     - ufw

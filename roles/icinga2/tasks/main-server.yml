@@ -1,0 +1,31 @@
+---
+
+# nb: nagios-plugins-contrib is required for check_ssl_cert
+- apt: name={{ item }} state=present
+  with_items:
+    - icinga2
+    - icinga2-ido-mysql
+    - nsca-ng-server
+    - monitoring-plugins
+    - monitoring-plugins-basic
+    - monitoring-plugins-common
+    - monitoring-plugins-standard
+    - nagios-plugins-contrib
+  tags:
+    - packages
+
+- name: Enable command feature for nsca for icingaweb2
+  file: src=/etc/icinga2/features-available/command.conf dest=/etc/icinga2/features-enabled/command.conf state=link
+  notify: restart icinga2
+
+- name: Ensure that the nsca-ng directory exists
+  file: path=/var/run/nsca-ng state=directory owner=nagios group=nagios mode=0775
+
+- name: Permissions on ido-mysql.conf file
+  file: path=/etc/icinga2/features-available/ido-mysql.conf owner=root group=nagios mode=0640
+
+# TODO : ufw open 5668 tcp for NRPE
+
+- name: Open the Icinga2 port for our machines only (used for ssl and node communication)
+  ufw: proto=tcp port=5665 rule=allow src={{ item }}
+  with_items: icinga2_allow_ips

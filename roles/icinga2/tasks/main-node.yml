@@ -37,8 +37,11 @@
   args:
     creates: /etc/icinga2/pki/ca.crt
 
+- template: src=zones.d/symbiotic.conf dest=/etc/icinga2/zones.d/symbiotic.conf owner=root group=root mode=0644
+  notify: restart icinga2
+
 - name: Enable the Icinga2 API
   shell: icinga2 feature enable api 
   args:
     creates: /etc/icinga2/features-enabled/api.conf
-  notify: restart icinga
+  notify: restart icinga2

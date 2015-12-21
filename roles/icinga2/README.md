@@ -1,5 +1,10 @@
 Installs the basic packages for icinga v2. Does not install the web interface,
-but installs the old command-line tool (icli).
+which I strongly recommend.
 
-This is very crude, and not up to date. The new web interface is excellent, and
-there is also a new CLI tool which is worth using instead of the old icli.
+References:
+
+* https://github.com/Icinga/puppet-icinga2/blob/develop/manifests/pki/icinga.pp
+
+* http://serverfault.com/questions/647805/how-to-set-up-icinga2-remote-client-without-using-cli-wizard
+
+* https://lists.icinga.org/pipermail/icinga-users/2015-October/010337.html

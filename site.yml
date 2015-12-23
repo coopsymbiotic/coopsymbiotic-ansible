@@ -53,6 +53,14 @@
     - icinga
     - icinga2
 
+- hosts: icinga-nodes
+  sudo: yes
+  roles:
+    - icinga2
+  tags:
+    - icinga
+    - icinga2
+
 - hosts: redmine-servers
   sudo: yes
   roles:

@@ -1,7 +1,7 @@
 ---
 
 # nb: nagios-plugins-contrib is required for check_ssl_cert
-- apt: name={{ item }} state=present
+- apt: name={{ item }} state=present install_recommends=no
   with_items:
     - icinga2
     - icinga2-ido-mysql
@@ -14,7 +14,10 @@
   tags:
     - packages
 
-- name: Enable command feature for nsca for icingaweb2
+- name: Make sure we have a TicketSalt in constants.conf
+  replace: dest=/etc/icinga2/constants.conf regexp='const TicketSalt = ""' replace='const TicketSalt = "{{ icinga2_ticket_salt }}"'
+
+- name: Enable command feature for icingaweb2
   file: src=/etc/icinga2/features-available/command.conf dest=/etc/icinga2/features-enabled/command.conf state=link
   notify: restart icinga2
 
@@ -29,3 +32,12 @@
 - name: Open the Icinga2 port for our machines only (used for ssl and node communication)
   ufw: proto=tcp port=5665 rule=allow src={{ item }}
   with_items: icinga2_allow_ips
+
+# TODO : run pki new-ca ?
+
+# NB: not using "inventory_hostname" because in our case,
+# it is usually a machine name ("sillyname.example.net"), but we name our CA "icinga.example.org".
+- name: Run icinga2 pki new-cert for our host
+  shell: icinga2 pki new-cert --cn {{ icinga2_main_node }} --key /etc/icinga2/pki/{{ icinga2_main_node }}.key --cert /etc/icinga2/pki/{{ icinga2_main_node }}.crt
+  args:
+    creates: /etc/icinga2/pki/{{ icinga2_main_node }}.key

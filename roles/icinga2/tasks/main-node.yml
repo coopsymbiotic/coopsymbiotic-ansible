@@ -1,27 +1,33 @@
 ---
 
-- name: Get Debmon Apt Key
-  apt_key: url="http://debmon.org/debmon/repo.key" state=present
-
-- name: Get Debmon Apt Repo
-  apt_repository: repo="deb http://debmon.org/debmon debmon-{{ ansible_distribution_release }} main"
-                  update_cache=yes 
-                  state=present
-
 - apt: name={{ item }} state=present install_recommends=no
   with_items:
     - icinga2
     - monitoring-plugins-basic
   tags:
     - packages
+  when: ansible_distribution == "Debian"
 
-- replace: dest=/etc/icinga2/constants.conf regexp='const TicketSalt = ""' replace='const TicketSalt = "{{ icinga2_ticket_salt }}"'
+- apt: name={{ item }} state=present install_recommends=no
+  with_items:
+    - icinga2
+    - nagios-plugins
+  tags:
+    - packages
+  when: ansible_distribution == "Ubuntu"
+
+- name: Make sure we have a TicketSalt in constants.conf
+  replace: dest=/etc/icinga2/constants.conf regexp='const TicketSalt = ""' replace='const TicketSalt = "{{ icinga2_ticket_salt }}"'
 
 # TODO: the above stores the pass in /tmp/icinga2-salt of the host (where ansible is run from). Delete afterwards? Save?
 
+# REFERENCE:
+# http://docs.icinga.org/icinga2/latest/doc/module/icinga2/chapter/icinga2-client#icinga2-client-installation-client-setup-linux-manual
+
 - file: path=/etc/icinga2/pki state=directory owner=root group=nagios mode=0770
 
-- shell: icinga2 pki new-cert --cn {{ inventory_hostname }} --key /etc/icinga2/pki/{{ inventory_hostname }}.key --cert /etc/icinga2/pki/{{ inventory_hostname }}.crt
+- name: Run icinga2 pki new-cert for our host
+  shell: icinga2 pki new-cert --cn {{ inventory_hostname }} --key /etc/icinga2/pki/{{ inventory_hostname }}.key --cert /etc/icinga2/pki/{{ inventory_hostname }}.crt
   args:
     creates: /etc/icinga2/pki/{{ inventory_hostname }}.key
 
@@ -37,11 +43,24 @@
   args:
     creates: /etc/icinga2/pki/ca.crt
 
-- template: src=zones.d/symbiotic.conf dest=/etc/icinga2/zones.d/symbiotic.conf owner=root group=root mode=0644
+- template: src=zones.conf dest=/etc/icinga2/zones.conf owner=root group=root mode=0644
   notify: restart icinga2
 
 - name: Enable the Icinga2 API
   shell: icinga2 feature enable api 
   args:
     creates: /etc/icinga2/features-enabled/api.conf
+  notify: restart icinga2
+
+- template: src=features-available/api.conf dest=/etc/icinga2/features-available/api.conf owner=root group=root mode=0644
+  notify: restart icinga2
+
+- template: src=zones.d/hostzone-for-master.conf dest=/etc/icinga2/zones.d/{{ inventory_hostname }}.conf owner=root group=root mode=0644
+  delegate_to: "{{ icinga2_main_node }}"
+  notify: restart icinga2
+
+- name: Disable Icinga2 notifications
+  shell: icinga2 feature disable notification
+  args:
+    removes: /etc/icinga2/features-enabled/notification.conf
   notify: restart icinga2

@@ -16,10 +16,9 @@
     - packages
   when: ansible_distribution == "Ubuntu"
 
-- name: Make sure we have a TicketSalt in constants.conf
-  replace: dest=/etc/icinga2/constants.conf regexp='const TicketSalt = ""' replace='const TicketSalt = "{{ icinga2_ticket_salt }}"'
-
-# TODO: the above stores the pass in /tmp/icinga2-salt of the host (where ansible is run from). Delete afterwards? Save?
+# Satellites do not need a Salt. It's the private key for CSR auto-signing.
+# - name: Make sure we have a TicketSalt in constants.conf
+#   replace: dest=/etc/icinga2/constants.conf regexp='const TicketSalt = ""' replace='const TicketSalt = "{{ icinga2_ticket_salt }}"'
 
 # REFERENCE:
 # http://docs.icinga.org/icinga2/latest/doc/module/icinga2/chapter/icinga2-client#icinga2-client-installation-client-setup-linux-manual

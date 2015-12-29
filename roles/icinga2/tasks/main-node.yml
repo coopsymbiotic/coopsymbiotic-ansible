@@ -63,3 +63,6 @@
   args:
     removes: /etc/icinga2/features-enabled/notification.conf
   notify: restart icinga2
+
+- name: Disable satellite local configurations (otherwise disk/load checks will be duplicated)
+  replace: dest=/etc/icinga2/icinga2.conf regexp='^include_recursive "conf.d"' replace='# include_recursive "conf.d"'

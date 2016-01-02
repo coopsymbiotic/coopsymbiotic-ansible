@@ -6,6 +6,8 @@
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ puppet-agent\[[0-9]+\]: .* Could not delete user .*$
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ puppet-agent\[[0-9]+\]: \(\/Stage\[main\]\/Puppet::Client\/Service\[puppet\]\/ensure\) ensure changed 'running' to 'stopped'$
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ puppet-agent\[[0-9]+\]: .* Could not set password on user .*$
+^\w{3} [ :0-9]{11} [._[:alnum:]-]+ puppet-agent\[[0-9]+\]: .* Could not set gid on user .*$
+^\w{3} [ :0-9]{11} [._[:alnum:]-]+ puppet-agent\[[0-9]+\]: .* Could not set password on user .*$
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ ansible.*
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ ntpd\[[0-9]+\]: peer .* now valid
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ ntpd\[[0-9]+\]: peer .* now invalid
@@ -18,6 +20,8 @@
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ ntpd\[[0-9]+\]: is now unsynced
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ ntpd\[[0-9]+\]: is now synced
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ drupal: .*
+^\w{3} [ :0-9]{11} [._[:alnum:]-]+ icinga2: .*
+^\w{3} [ :0-9]{11} [._[:alnum:]-]+ sudo:[[:space:]]+[_[:alnum:].-]+ : TTY=(unknown|(pts/|tty|vc/)[[:digit:]]+) ; PWD=[^;]+ ; USER=aegir ; COMMAND=/var/aegir/bin/aegir-sync-prod-to-(dev|formation).sh.*$
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ logger: Applied Puppet configuration successfully.
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ logger: Pulled from client git repo.
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ logger: Pulled from client sub-modules.
@@ -70,6 +74,7 @@
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ postfix/smtpd\[[\.0-9]+\]: NOQUEUE: milter-reject: RCPT from .* Greylisting .*
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ postfix/cleanup\[[\.0-9]+\]: .* Blocked by SpamAssassin.*
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ postfix-slow/smtp\[[\.0-9]+\]: .* status=sent .*
+^\w{3} [ :0-9]{11} [._[:alnum:]-]+ postfix/smtpd\[[\.0-9]+\]: SSL_accept error from .*
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ opendkim\[[\.0-9]+\]: \[[A-Za-z0-9]+\]: message has signatures from .*
 {% if logcheckextras is defined %}
 {% for item in logcheckextras %}

@@ -30,6 +30,13 @@
   tags:
     - aegir
 
+- hosts: aegir-managed
+  sudo: yes
+  roles:
+    - civicrm-environment
+  tags:
+    - civicrm-environment
+
 - hosts: backup-servers
   sudo: yes
   roles:
@@ -80,13 +87,6 @@
     - backupninja-rdiff
   tags:
     - backupninja-rdiff
-
-- hosts: civicrm-environment
-  sudo: yes
-  roles:
-    - civicrm-environment
-  tags:
-    - civicrm-environment
 
 - hosts: openwrt-mesh-nodes
   sudo: yes

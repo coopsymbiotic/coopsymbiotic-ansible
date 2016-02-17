@@ -4,14 +4,20 @@
 - name: Create the redmine user manually, since we want a home.
   user: name=redmine
 
-- name: Install base packages for Redmine (git, mariadb-server, redmine, redmine-mysql).
-  apt: update_cache=yes
-  apt: pkg=git state=installed
-  apt: pkg=mysql-server state=installed
-  apt: pkg=nginx state=installed
-  apt: pkg=redmine=2.* state=installed default_release=wheezy-backports
-  apt: pkg=redmine-mysql state=installed
-  apt: pkg=libmysqlclient-dev state=installed
+- apt: update_cache=yes
+  tags:
+    - packages
+
+- apt: name={{ item }} state=present install_recommends=no
+  with_items:
+    - git
+    - mysql-server
+    - nginx
+    - redmine
+    - redmine-mysql
+    - libmysqlclient-dev
+  tags:
+    - packages
 
   # imagemagick is only used to export Gantt charts to PNG.
   # can be avoided by using:

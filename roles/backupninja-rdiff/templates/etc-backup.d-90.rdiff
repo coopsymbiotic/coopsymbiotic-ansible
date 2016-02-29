@@ -34,9 +34,9 @@ include = /var/
 
 {% if backupincludes is defined %}
 # Includes defined for this host only
-  {% for item in backupincludes %}
+{% for item in backupincludes %}
 include = {{ item }}
-  {% endfor %}
+{% endfor %}
 {% endif %}
 
 exclude = /home/*/.local/share/Trash
@@ -49,14 +49,15 @@ exclude = /var/lib/apt
 exclude = /var/lib/dpkg
 exclude = /var/lib/docker
 exclude = /var/lib/mlocate
+exclude = /var/lib/nginx
 exclude = /var/log
 exclude = /var/tmp
 
 {% if backupexcludes is defined %}
 # Excludes defined for this host only
-  {% for item in backupexcludes %}
+{% for item in backupexcludes %}
 exclude = {{ item }}
-  {% endfor %}
+{% endfor %}
 {% endif %}
 
 ######################################################

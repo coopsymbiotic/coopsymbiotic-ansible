@@ -22,37 +22,37 @@
 # If using Aegir
 - file: path=/var/aegir/config/ssl.d/{{ item }} state=directory owner=aegir group=aegir mode=0700
   with_items: sslcertificates
-  when: "'aegir-vm' in group_names"
+  when: "'aegir-managed' in group_names"
 
 - file: path=/var/aegir/config/server_master/ssl.d/{{ item }} state=directory owner=aegir group=aegir mode=0700
   with_items: sslcertificates
-  when: "'aegir-vm' in group_names"
+  when: "'aegir-managed' in group_names"
 
 # Copy to the root space (files used as a reference for when a site is verified, sent to the server_master later on).
 - copy: src=/etc/ansible/files/etc/ssl/private/{{ item }}.key dest=/var/aegir/config/ssl.d/{{ item }}/openssl.key owner=root group=aegir mode=0640
   with_items: sslcertificates
-  when: "'aegir-vm' in group_names"
+  when: "'aegir-managed' in group_names"
 
 - copy: src=/etc/ansible/files/etc/ssl/private/{{ item }}.crt dest=/var/aegir/config/ssl.d/{{ item }}/openssl.crt owner=root group=aegir mode=0640
   with_items: sslcertificates
-  when: "'aegir-vm' in group_names"
+  when: "'aegir-managed' in group_names"
 
 - copy: src=/etc/ansible/files/etc/ssl/private/{{ item }}.cacert.crt dest=/var/aegir/config/ssl.d/{{ item }}/openssl_chain.crt owner=root group=aegir mode=0640
   with_items: sslcertificates
-  when: "'aegir-vm' in group_names"
+  when: "'aegir-managed' in group_names"
 
 # Copy to the "server_master" (the file referenced in the vhost declaration)
 - copy: src=/etc/ansible/files/etc/ssl/private/{{ item }}.key dest=/var/aegir/config/server_master/ssl.d/{{ item }}/openssl.key owner=root group=aegir mode=0640
   with_items: sslcertificates
-  when: "'aegir-vm' in group_names"
+  when: "'aegir-managed' in group_names"
 
 - copy: src=/etc/ansible/files/etc/ssl/private/{{ item }}.crt dest=/var/aegir/config/server_master/ssl.d/{{ item }}/openssl.crt owner=root group=aegir mode=0640
   with_items: sslcertificates
-  when: "'aegir-vm' in group_names"
+  when: "'aegir-managed' in group_names"
 
 - copy: src=/etc/ansible/files/etc/ssl/private/{{ item }}.cacert.crt dest=/var/aegir/config/server_master/ssl.d/{{ item }}/openssl_chain.crt owner=root group=aegir mode=0640
   with_items: sslcertificates
-  when: "'aegir-vm' in group_names"
+  when: "'aegir-managed' in group_names"
 
 # If using Zimbra (assumes deploying only 1 cert)
 # http://wiki.zimbra.com/wiki/Installing_a_RapidSSL_Commercial_Certificate

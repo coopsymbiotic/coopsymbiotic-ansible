@@ -17,8 +17,12 @@
   ufw: proto=tcp port=4949 rule=allow src={{ item }}
   with_items: ufw_munin_allow_src
 
-- name: Allow access to NRPE from nagios servers
+- name: Allow access to NRPE 5666 from nagios servers
   ufw: proto=tcp port=5666 rule=allow src={{ item }}
+  with_items: ufw_nrpe_allow_src
+
+- name: Allow access to NRPE 5668 from nagios servers
+  ufw: proto=tcp port=5668 rule=allow src={{ item }}
   with_items: ufw_nrpe_allow_src
 
 # UFW per-host exceptions

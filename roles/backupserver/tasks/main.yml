@@ -13,7 +13,7 @@
   cron:
     name="checkbackup"
     minute="5,35"
-    job="/usr/local/bin/checkbackups -s karak.bidon.ca"
+    job="/usr/local/bin/checkbackups -s bagdad.bidon.ca"
     cron_file="checkbackups"
     user="root"
     state=present

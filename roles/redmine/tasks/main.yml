@@ -25,17 +25,23 @@
   # apt: pkg=ImageMagick state=installed
 
 - name: Install various packages required for gem compilation (libicu-dev, zlib1g-dev).
-  apt: pkg=libicu-dev state=installed
-  apt: pkg=zlib1g-dev state=installed
-  apt: pkg=libssl-dev state=installed
+  apt: name={{ item }} state=present install_recommends=no
+  with_items:
+    - libicu-dev
+    - zlib1g-dev
+    - libssl-dev
+  tags:
+    - packages
 
 # redmine_git_hosting needs this
 # http://redmine-git-hosting.io/get_started/#step-1-install-dependencies
 - name: Install more packages required for rugged-gitolite
-  apt: pkg=pkg-config state=installed
-  apt: pkg=cmake state=installed
-  apt: pkg=libssh2-1 state=installed
-  apt: pkg=libssh2-1-dev state=installed
+  apt: name={{ item }} state=present install_recommends=no
+  with_items:
+    - pkg-config
+    - cmake
+    - libssh2-1
+    - libssh2-1-dev
 
 - name: Install Puma from ruby gem.
   shell: gem install puma
@@ -68,43 +74,45 @@
 - name: Enable Redmine init script for default boot levels.
   shell: update-rc.d redmine defaults
 
-- name: Change permissions on various Redmine directories
-  shell: dpkg-statoverride --update --force --add redmine redmine 0755 /var/cache/redmine
-  shell: dpkg-statoverride --update --force --add redmine redmine 0755 /var/cache/redmine/default
-  shell: dpkg-statoverride --update --force --add redmine redmine 0755 /var/cache/redmine/default/plugin_assets
-  shell: dpkg-statoverride --update --force --add redmine redmine 0755 /var/cache/redmine/default/cache
-  shell: chown -R redmine.redmine /var/cache/redmine
-  shell: dpkg-statoverride --update --force --add redmine redmine 0750 /var/log/redmine
-  shell: chown -R redmine.redmine /var/log/redmine
-  shell: dpkg-statoverride --update --force --add redmine redmine 0755 /var/lib/redmine/default
-  shell: dpkg-statoverride --update --force --add redmine redmine 0755 /var/lib/redmine/default/files
-  shell: chown -R redmine.redmine /var/lib/redmine
+# Change permissions on various Redmine directories
+- shell: dpkg-statoverride --update --force --add redmine redmine 0755 /var/cache/redmine
+- shell: dpkg-statoverride --update --force --add redmine redmine 0755 /var/cache/redmine/default
+- shell: dpkg-statoverride --update --force --add redmine redmine 0755 /var/cache/redmine/default/plugin_assets
+- shell: dpkg-statoverride --update --force --add redmine redmine 0755 /var/cache/redmine/default/cache
+- shell: chown -R redmine.redmine /var/cache/redmine
+- shell: dpkg-statoverride --update --force --add redmine redmine 0750 /var/log/redmine
+- shell: chown -R redmine.redmine /var/log/redmine
+- shell: dpkg-statoverride --update --force --add redmine redmine 0755 /var/lib/redmine/default
+- shell: dpkg-statoverride --update --force --add redmine redmine 0755 /var/lib/redmine/default/files
+- shell: chown -R redmine.redmine /var/lib/redmine
 
-- name: Change permissions on Redmine configuration files.
+- name: Change permissions on Redmine session configuration files.
   shell: dpkg-statoverride --update --force --add redmine redmine 0640 /etc/redmine/default/session.yml
+
+- name: Change permissions on Redmine database configuration files.
   shell: dpkg-statoverride --update --force --add redmine redmine 0640 /etc/redmine/default/database.yml
 
 - name: Install the gitolite package (assuming that redmine and git are on the same server).
   apt: pkg=gitolite3 state=installed
 
-- name: Checkout plugins for redmine/git integration (redmine_bootstrap_kit, redmine_git_hosting).
+# Checkout plugins for redmine/git integration (redmine_bootstrap_kit, redmine_git_hosting).
 
-  git: repo=https://github.com/jbox-web/redmine_bootstrap_kit.git
+- git: repo=https://github.com/jbox-web/redmine_bootstrap_kit.git
        dest=/usr/share/redmine/plugins/redmine_bootstrap_kit
        version=0.2.3
        update=yes
 
-  # TODO: must "bundle install" this..
-  git: repo=https://github.com/jbox-web/gitolite-rugged.git
+ # TODO: must "bundle install" this..
+- git: repo=https://github.com/jbox-web/gitolite-rugged.git
        dest=/usr/share/redmine/plugins/gitolite_rugged
        update=yes
 
-  git: repo=https://github.com/jbox-web/redmine_git_hosting.git
+- git: repo=https://github.com/jbox-web/redmine_git_hosting.git
        dest=/usr/share/redmine/plugins/redmine_git_hosting
        version=1.1.0
        update=yes
 
-  git: repo=https://github.com/mlutfy/redmine_stealth.git
+- git: repo=https://github.com/mlutfy/redmine_stealth.git
        dest=/usr/share/redmine/plugins/redmine_stealth
        update=yes
 

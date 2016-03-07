@@ -21,29 +21,20 @@ You can also contact us at info (at) symbiotic.coop.
 New node bootstrap
 ------------------
 
-Install required packages:
+Assuming the server already runs ssh and you have either ssh root access or a
+user account that can sudo root:
 
-    apt-get install sudo openssh-server
+1- Ensure that you have the private files in /etc/ansible/files
 
-Create the ansible deployment user:
+2- Add the host to the 'production' inventory (/etc/ansible/hosts).
 
-    useradd -m -G sudo deploy
+3- Create, if necessary, the host_vars file for that host (/etc/ansible/host_vars/example.symbiotic.coop)
 
-Copy the ssh key:
+4- Run the following setup:
 
-    mkdir /home/deploy/.ssh
-    chown deploy:deploy /home/deploy/.ssh
-    chmod 0700 /home/deploy/.ssh
-    wget -O /home/deploy/.ssh/authorized_keys https://www.example.org/files/ansible-deploy.pub
-    chown deploy.deploy /home/deploy/.ssh/authorized_keys
-
-Configure sudo:
-
-    visudo -f /etc/sudoers.d/deploy
-
-Example:
-
-    deploy   ALL=(ALL:ALL) NOPASSWD: ALL
+```
+ansible-playbook -l example.symbiotic.coop -u mathieu --become-user=root --ask-become-pass ./setup.yml
+```
 
 Running a playbook
 ------------------

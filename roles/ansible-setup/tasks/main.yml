@@ -1,0 +1,21 @@
+---
+
+- name: User | create user | KoumbitVM
+  command: "useradd -m {{ deploy_user }} -G admins"
+  args:
+    creates: "/home/{{ deploy_user }}"
+  when: "'koumbit-aegir-vm' in group_names"
+
+- name: User | create user | RegularVM
+  command: "useradd -m {{ deploy_user }}"
+  args:
+    creates: "/home/{{ deploy_user }}"
+  when: "'koumbit-aegir-vm' not in group_names"
+
+- name: User | authorized key upload
+  authorized_key:
+    user="{{ deploy_user }}"
+    key="{{ lookup('file', '/etc/ansible/files/sshkeys/global/{{ deploy_user }}.pub') }}"
+
+- name: Sudoers | create deploy sudoers file
+  template: src=sudoers.j2 dest=/etc/sudoers.d/ansible owner=root group=root mode=0440

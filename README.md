@@ -18,6 +18,19 @@ contributing our experiences for others to learn from.
 Feedback/suggestions welcome. Please use the Github issue queue of this project.
 You can also contact us at info (at) symbiotic.coop.
 
+Requirements
+------------
+
+The server from where you will be running Ansible must have Ansible >= 2.0.
+
+Under Debian Jessie:
+
+```
+apt-get install -t jessie-backports ansible
+```
+
+(assuming you have configured jessie backports)
+
 New node bootstrap
 ------------------
 
@@ -35,6 +48,13 @@ user account that can sudo root:
 ```
 ansible-playbook -l example.symbiotic.coop -u mathieu --become-user=root --ask-become-pass ./setup.yml
 ```
+
+5- And finally the normal run:
+
+```
+ansible-playbook -l example.symbiotic.coop ./site.yml
+```
+
 
 Running a playbook
 ------------------

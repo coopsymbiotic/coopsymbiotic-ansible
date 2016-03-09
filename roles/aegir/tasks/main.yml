@@ -4,6 +4,10 @@
 
 - apt: pkg=pwgen state=installed
 
+# A bit off topic, but too often had the issue where mailname was misconfigured
+- copy: content="{{ inventory_hostname }}" dest=/etc/mailname
+- file: path=/etc/mailname owner=root group=root mode=0644
+
 # https://github.com/gaspaio/ansible-devbox/blob/master/roles/mysql/tasks/server.yml
 # Install server using a preseed file to set the root password
 - name: Check for previous MySQL installation

@@ -5,9 +5,13 @@
     - common-all
     - logcheck
     - logstash-forwarder
+
+- hosts: servers
+  sudo: yes
+  roles:
     - sslcerts
   tags:
-    - minimum
+    - sslcerts
 
 - hosts: symbiotic-servers
   sudo: yes

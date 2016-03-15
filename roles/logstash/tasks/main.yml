@@ -4,12 +4,12 @@
     state=present
 
 - apt_repository:
-    repo='deb http://packages.elastic.co/elasticsearch/1.7/debian stable main'
+    repo='deb http://packages.elastic.co/elasticsearch/2.x/debian stable main'
     state=present
     update_cache=yes
 
 - apt_repository:
-    repo='deb http://packages.elasticsearch.org/logstash/1.5/debian stable main'
+    repo='deb http://packages.elasticsearch.org/logstash/2.2/debian stable main'
     state=present
     update_cache=yes
 
@@ -77,8 +77,8 @@
 # Kibana (fixme: use a variable for the Kibana version)
 - name: Download Kibana
   get_url:
-    url=https://download.elastic.co/kibana/kibana/kibana-4.1.2-linux-x64.tar.gz
-    dest=/opt/kibana-4.1.2-linux-x64.tar.gz
+    url=https://download.elastic.co/kibana/kibana/kibana-4.4.2-linux-x64.tar.gz
+    dest=/opt/kibana-4.4.2-linux-x64.tar.gz
     mode=0644
   register: get_kibana
 
@@ -87,11 +87,11 @@
   when: get_kibana|changed
 
 - name: Unpack Kibana archive
-  unarchive: src=/opt/kibana-4.1.2-linux-x64.tar.gz dest=/opt copy=no
+  unarchive: src=/opt/kibana-4.4.2-linux-x64.tar.gz dest=/opt copy=no
   when: get_kibana|changed
 
-- name: Kibana symlink from /opt/kibana-4.1.2-linux-x64 to /opt/kibana
-  file: src=/opt/kibana-4.1.2-linux-x64 dest=/opt/kibana state=link
+- name: Kibana symlink from /opt/kibana-4.4.2-linux-x64 to /opt/kibana
+  file: src=/opt/kibana-4.4.2-linux-x64 dest=/opt/kibana state=link
 
 - name: Kibana old-school init script (NB we do not auto-start for now).
   template:

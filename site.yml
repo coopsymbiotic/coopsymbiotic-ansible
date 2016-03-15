@@ -5,6 +5,8 @@
     - common-all
     - logcheck
     - logstash-forwarder
+  tags:
+    - base
 
 - hosts: servers
   sudo: yes

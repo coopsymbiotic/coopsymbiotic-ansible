@@ -83,7 +83,7 @@ Increase carbon / graphite retention times:
 ```
 [icinga_default]
 pattern = ^icinga2\.
-retentions = 1m:2d,5m:10d,30m:90d,360m:2y
+retentions = 1m:2d,5m:10d,30m:90d,360m:3y
 ```
 
 http://docs.icinga.org/icinga2/snapshot/doc/module/icinga2/toc#!/icinga2/snapshot/doc/module/icinga2/chapter/icinga2-features#graphite-carbon-cache-writer  

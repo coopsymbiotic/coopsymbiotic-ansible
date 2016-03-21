@@ -78,7 +78,7 @@ systemctl start grafana-server
 
 Increase carbon / graphite retention times:
 
-/etc/carbon/storage-schemas.conf 
+/etc/carbon/storage-schemas.conf
 
 ```
 [icinga_default]
@@ -86,7 +86,8 @@ pattern = ^icinga\.
 retentions = 1m:2d,5m:10d,30m:90d,360m:4y
 ```
 
-http://docs.icinga.org/icinga2/snapshot/doc/module/icinga2/toc#!/icinga2/snapshot/doc/module/icinga2/chapter/icinga2-features#graphite-carbon-cache-writer
+http://docs.icinga.org/icinga2/snapshot/doc/module/icinga2/toc#!/icinga2/snapshot/doc/module/icinga2/chapter/icinga2-features#graphite-carbon-cache-writer  
+http://randsubrosa.blogspot.ca/2013/03/adjust-retention-time-for-carbon-and.html
 
 ### How to declare services for satellite nodes
 

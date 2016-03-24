@@ -56,6 +56,8 @@
 
 # If using Zimbra (assumes deploying only 1 cert)
 # http://wiki.zimbra.com/wiki/Installing_a_RapidSSL_Commercial_Certificate
+# FIXME: zimbra requires bundling the Global CA as well as intermediate
+# ex: https://www.geotrust.com/resources/root_certificates/certificates/GeoTrust_Global_CA.pem
 - copy: src=/etc/ansible/files/etc/ssl/private/{{ item }}.key dest=/opt/zimbra/ssl/zimbra/commercial/commercial.key owner=zimbra group=zimbra mode=0640
   with_items: sslcertificates
   when: host_zimbra_managed

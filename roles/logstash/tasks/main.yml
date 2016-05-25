@@ -1,4 +1,5 @@
 ---
+
 - apt_key:
     url=https://packages.elasticsearch.org/GPG-KEY-elasticsearch
     state=present

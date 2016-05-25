@@ -2,10 +2,18 @@
 - name: Make sure that logcheck is installed.
   apt: pkg=logcheck state=installed
 
-- name: Copy custom logcheck file.
+- name: Copy custom logcheck ignore.d.server file.
   template:
-    src: "bgm-custom-general"
+    src: "ignore.d.server/bgm-custom-general"
     dest: "/etc/logcheck/ignore.d.server/bgm-custom-general"
+    owner: "root"
+    group: "root"
+    mode: 0644
+
+- name: Copy custom logcheck violations.ignore.d file.
+  template:
+    src: "violations.ignore.d/symbiotic-general"
+    dest: "/etc/logcheck/ignore.d.server/symbiotic-general"
     owner: "root"
     group: "root"
     mode: 0644

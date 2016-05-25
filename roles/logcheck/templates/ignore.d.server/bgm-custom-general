@@ -1,3 +1,4 @@
+# {{ ansible_managed }}
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ puppet-agent\[[0-9]+\]: .*, which is a deprecated section. I'm assuming you meant.*$
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ puppet-agent\[[0-9]+\]: \(//Sshd::Client::Base/Sshkey\[ns3.koumbit.net\]/key\) key changed.*
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ puppet-agent\[[0-9]+\]: .* executed successfully$
@@ -5,9 +6,11 @@
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ puppet-agent\[[0-9]+\]: .* ensure changed 'held' to 'present'$
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ puppet-agent\[[0-9]+\]: .* Could not delete user .*$
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ puppet-agent\[[0-9]+\]: \(\/Stage\[main\]\/Puppet::Client\/Service\[puppet\]\/ensure\) ensure changed 'running' to 'stopped'$
+^\w{3} [ :0-9]{11} [._[:alnum:]-]+ puppet-agent\[[0-9]+\]: Skipping run of Puppet configuration client; administratively disabled;.*$
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ puppet-agent\[[0-9]+\]: .* Could not set password on user .*$
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ puppet-agent\[[0-9]+\]: .* Could not set gid on user .*$
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ puppet-agent\[[0-9]+\]: .* Could not set password on user .*$
+^\w{3} [ :0-9]{11} [._[:alnum:]-]+ nscd: nss_ldap: reconnected to LDAP server.*
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ ansible.*
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ ntpd\[[0-9]+\]: peer .* now valid
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ ntpd\[[0-9]+\]: peer .* now invalid
@@ -21,7 +24,7 @@
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ ntpd\[[0-9]+\]: is now synced
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ drupal: .*
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ icinga2\[[0-9]+\]: .*
-^\w{3} [ :0-9]{11} [._[:alnum:]-]+ sudo:[[:space:]]+[_[:alnum:].-]+ : TTY=(unknown|(pts/|tty|vc/)[[:digit:]]+) ; PWD=[^;]+ ; USER=aegir ; COMMAND=/var/aegir/bin/aegir-sync-prod-to-(dev|formation).sh.*$
+^\w{3} [ :0-9]{11} [._[:alnum:]-]+ sudo:[[:space:]]+[_[:alnum:].-]+ : TTY=(unknown|(pts/|tty|vc/)[[:digit:]]+) ; PWD=[^ ]+ ; USER=aegir ; COMMAND=/var/aegir/bin/aegir-sync-prod-to-(dev|formation).sh.*$
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ logger: Applied Puppet configuration successfully.
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ logger: Pulled from client git repo.
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ logger: Pulled from client sub-modules.
@@ -45,6 +48,8 @@
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ sshd\[[0-9]+\]: Accepted publickey for.*
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ sshd\[[0-9]+\]: Disconnecting: Change of username or service not allowed.*
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ sshd\[[0-9]+\]: fatal: no matching cipher found.*
+^\w{3} [ :0-9]{11} [._[:alnum:]-]+ sshd\[[0-9]+\]: Protocol major versions differ for.*
+^\w{3} [ :0-9]{11} [._[:alnum:]-]+ sshd\[[0-9]+\]: Bad protocol version identification.*
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ kernel: \[[\.0-9]+\] iptables dropped input: .*
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ kernel: \[[\.0-9]+\] ip6tables dropped input: .*
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ kernel: \[[\.0-9]+\] iptables dropped forward: .*

@@ -105,11 +105,39 @@ open(RESULT, "$FREECMD -b |")
 
 warn("Output from $FREECMD:\n") if ($verbose > 1);
 my ($used, $free);
+
+# Check for newer free output (procps-ng 3.3.10)
+my $procps_version = 'old';
+
+# Example of newer format:
+#               total        used        free      shared  buff/cache   available
+# Mem:        6111132     3600768      710020       10976     1800344     2422432
+# Swap:       4200992      666848     3534144
+
+# Example of older format:
+#              total       used       free     shared    buffers     cached
+# Mem:       1807296    1329736     477560      51288      63024     359988
+# -/+ buffers/cache:     906724     900572
+# Swap:            0          0          0
+
 while (<RESULT>) {
   warn("  $_") if ($verbose > 1);
-  next unless (m#^\-/\+\ buffers/cache:\s*(\d+)\s+(\d+)#);
-  $used = $1;
-  $free = $2;
+
+  # This is on the first line, with the column labels.
+  if (m#buff/cache#) {
+    $procps_version = 'new';
+  }
+
+  if ($procps_version eq 'new') {
+    next unless (m#^Mem:\s*(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)#);
+    $used = $5;
+    $free = $6;
+  }
+  else {
+    next unless (m#^\-/\+\ buffers/cache:\s*(\d+)\s+(\d+)#);
+    $used = $1;
+    $free = $2;
+  }
 }
 
 close(RESULT);

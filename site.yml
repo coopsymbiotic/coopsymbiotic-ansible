@@ -14,6 +14,7 @@
     - sslcerts
   tags:
     - sslcerts
+    - sslcertificates
 
 - hosts: symbiotic-servers
   sudo: yes

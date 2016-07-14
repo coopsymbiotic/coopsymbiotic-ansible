@@ -2,7 +2,26 @@
 # Installs Aegir3 (http://www.aegirproject.org)
 # Assumes Debian Jessie, with MariaDB, Nginx, php5-fpm
 
-- apt: pkg=pwgen state=installed
+- apt: update_cache=yes
+  tags:
+    - packages
+
+- apt: name={{ item }} state=present install_recommends=no
+  with_items:
+    - pwgen
+    - nginx
+    - curl
+    - gettext
+    - php5-fpm
+    - php5-gd
+    - php5-cli
+    - php5-curl
+    - php5-intl
+    - php5-ldap
+    - php5-mcrypt
+    - php5-xsl
+  tags:
+    - packages
 
 # A bit off topic, but too often had the issue where mailname was misconfigured
 - copy: content="{{ inventory_hostname }}" dest=/etc/mailname
@@ -27,12 +46,6 @@
 
 - apt: pkg=mariadb-server state=installed
 - apt: pkg=mariadb-client state=installed
-
-- apt: pkg=nginx state=installed
-- apt: pkg=curl state=installed
-- apt: pkg=php5-fpm state=installed
-- apt: pkg=php5-gd state=installed
-- apt: pkg=php5-curl state=installed
 
 - name: Making sure the drush package is removed (aegir3 installs through composer)
   apt: pkg=drush state=absent
@@ -79,3 +92,14 @@
        version=master
        dest=/var/aegir/.drush/provision_symbiotic
        update=yes
+
+- include: settings-php.yml
+
+- name: Deploy our .bashrc for the Aegir user.
+  template: src=var/aegir/dot.bashrc dest=/var/aegir/.bashrc owner=aegir group=aegir mode=0644
+
+- name: Deploy our .profile for the Aegir user (required for bashrc to be read).
+  template: src=var/aegir/dot.bashrc dest=/var/aegir/.bashrc owner=aegir group=aegir mode=0644
+
+- name: Deploy our nginx configuration overrides.
+  template: src=etc/nginx/conf.d/z-symbiotic.conf dest=/etc/nginx/conf.d/z-symbiotic.conf owner=root group=root mode=0644

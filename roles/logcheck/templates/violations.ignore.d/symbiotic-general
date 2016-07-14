@@ -1,0 +1,7 @@
+# {{ ansible_managed }}
+^\w{3} [ :0-9]{11} [._[:alnum:]-]+ sudo:[[:space:]]+[_[:alnum:].-]+ : TTY=(unknown|(pts/|tty|vc/)[[:digit:]]+) ; PWD=[^ ]+ ; USER=aegir ; COMMAND=/var/aegir/bin/aegir-sync-prod-to-(dev|formation).sh.*$
+{% if logchecksecurityextras is defined %}
+{% for item in logchecksecurityextras %}
+{{ item }}
+{% endfor %}
+{% endif %}

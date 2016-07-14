@@ -1,0 +1,21 @@
+---
+
+# Required for Grafana
+- apt: pkg=apt-transport-https state=installed
+  tags:
+    - packages
+
+- apt_key:
+    url=https://packagecloud.io/gpg.key
+    state=present
+  tags:
+    - packages
+
+# http://docs.grafana.org/installation/debian/
+- apt_repository:
+    repo='deb https://packagecloud.io/grafana/stable/debian/ jessie main'
+    state=present
+    update_cache=yes
+  tags:
+    - packages
+

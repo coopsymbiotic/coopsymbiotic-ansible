@@ -100,6 +100,3 @@
 
 - name: Deploy our .profile for the Aegir user (required for bashrc to be read).
   template: src=var/aegir/dot.bashrc dest=/var/aegir/.bashrc owner=aegir group=aegir mode=0644
-
-- name: Deploy our nginx configuration overrides.
-  template: src=etc/nginx/conf.d/z-symbiotic.conf dest=/etc/nginx/conf.d/z-symbiotic.conf owner=root group=root mode=0644

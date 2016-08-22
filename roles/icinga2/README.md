@@ -3,10 +3,64 @@
 Installs the basic packages for icinga v2. Does not install the web interface,
 which I strongly recommend (includes icingacli). Supports Debian and Ubuntu.
 
-To use this role, assign the "icinga-servers" group to a server in your inventory.
-You can also use a "icinga-nodes" group for monitored nodes, but this is mostly to
-simplify the deployment. The playbook only checks if a server is in "icinga-servers"
-or not, in order to determine whether to configure the node as a server or satellite.
+To use this role:
+
+* Assign the "icinga-servers" group to a server in your inventory (this will be the master Icinga2 server).
+* Assign the "icinga-nodes" group to monitored nodes.
+
+The playbook checks if a server is in "icinga-servers" or not, in order to
+determine whether to configure the node as a server or satellite.
+
+### Monitoring non-Debian nodes
+
+Most of the Coop SymbioTIC infrastructure runs on Debian-based servers. We also
+monitor some Redhat/CentOS-based servers. This is not yet handled by this playbook.
+
+```
+yum install https://packages.icinga.org/epel/6/release/noarch/icinga-rpm-release-6-1.el6.noarch.rpm
+yum install icinga2
+
+cd /usr/src
+wget https://www.monitoring-plugins.org/download/monitoring-plugins-2.1.2.tar.gz
+tar zxfv monitoring-plugins-2.1.2.tar.gz
+cd monitoring-plugins
+./configure
+make
+make install
+```
+
+Our icinga2 configurations assume that the monitoring plugins are in /usr/lib64/nagios/plugins,
+but they got installed in /usr/local/libexec, so lets symlink for now:
+
+```
+mkdir /usr/lib64/nagios/
+ln -s /usr/local/libexec /usr/lib64/nagios/plugins
+```
+
+The icinga2 key/cert for communication with the master will also have to be done
+manually:
+
+```
+vi /etc/icinga2/constants.conf  -> set the NodeName to the fqdn
+icinga2 node wizard
+```
+
+And finally, in the host declarations on the icinga2 master, you must set the
+distribution variable:
+
+```
+object Host "qctonline.com" {
+  import "generic-host"
+  address = "[...]
+  check_command = "ping"
+  max_check_attempts = 10
+
+  vars.distribution = "centos"
+  groups = [ "http-servers", "icinga-satellites" ]
+}
+```
+
+Although, for now, this is mostly to avoid running the "apt" and "mem" checks on CentOS.
 
 ### TODO
 

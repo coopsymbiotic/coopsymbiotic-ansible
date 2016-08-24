@@ -3,20 +3,18 @@ Ansible playbooks for Coop SymbioTIC
 
 Ansible playbooks for the Coop SymbioTIC (https://www.symbiotic.coop).
 
-We provide CiviCRM-based services for non-profits, professional associations,
-unions and small-medium size companies. We are a worker's coop based in
-Montreal, Quebec (Canada).
-
 Our Ansible roles/playbooks are published in the hope that they can be useful.
 Use at your own risk.
 
-We are grateful to the Ansible community, but also to all the communities of
-each project we use, such as CiviCRM, Icinga, Aegir and others, either for their
-help on IRC, online documentation, etc. We hope to "push it forward" by also
-contributing our experiences for others to learn from.
+We provide turn-key CiviCRM-based services for non-profits, professional
+associations, unions and small-medium size companies. We are a worker's
+coop based in Montreal, Quebec (Canada).
 
-Feedback/suggestions welcome. Please use the Github issue queue of this project.
-You can also contact us at info (at) symbiotic.coop.
+Looking for CiviCRM services? Would you like to join our team?
+Contact us at info (at) symbiotic.coop.
+
+Feedback/suggestions welcome. Please use the Github issue queue of this project
+for technical issues.
 
 Requirements
 ------------

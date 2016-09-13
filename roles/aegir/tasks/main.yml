@@ -111,8 +111,37 @@
 
 - include: settings-php.yml
 
-- name: Deploy our .bashrc for the Aegir user.
+- name: bash | Deploy our .bashrc for the Aegir user.
   template: src=var/aegir/dot.bashrc dest=/var/aegir/.bashrc owner=aegir group=aegir mode=0644
 
-- name: Deploy our .profile for the Aegir user (required for bashrc to be read).
+- name: bash | Deploy our .profile for the Aegir user (required for bashrc to be read).
   template: src=var/aegir/dot.bashrc dest=/var/aegir/.bashrc owner=aegir group=aegir mode=0644
+
+- name: ssh | Create the .ssh directory for the Aegir user
+  file: path=/var/aegir/.ssh state=directory mode=0700 owner=aegir group=aegir
+  tags:
+    - aegir-ssh
+
+- name: ssh | Copy the ssh platform pub key
+  copy: src="/etc/ansible/files/sshkeys/aegir/id_rsa_platforms.pub" dest=/var/aegir/.ssh/id_rsa_platforms.pub owner="aegir" group="aegir" mode=0600
+  tags:
+    - aegir-ssh
+
+- name: ssh | Copy the ssh platform priv key
+  copy: src="/etc/ansible/files/sshkeys/aegir/id_rsa_platforms" dest=/var/aegir/.ssh/id_rsa_platforms owner="aegir" group="aegir" mode=0600
+  tags:
+    - aegir-ssh
+
+- name: ssh | Create the .ssh/config file if necessary
+  file: path=/var/aegir/.ssh/config state=touch mode=0600 owner=aegir group=aegir
+  tags:
+    - aegir-ssh
+
+- name: ssh | Copy ssh config for this key
+  blockinfile:
+    dest: /var/aegir/.ssh/config
+    block: |
+      Host git-alt.symbiotic.coop
+        IdentityFile /var/aegir/.ssh/id_rsa_platforms
+  tags:
+    - aegir-ssh

@@ -49,8 +49,10 @@
 - name: Preseed MariaDB root password 2 of 2
   shell: echo "mariadb-server-10.0 mysql-server/root_password_again password `cat /root/.mysql.root`" | debconf-set-selections
 
-- apt: pkg=mariadb-server state=installed
-- apt: pkg=mariadb-client state=installed
+- apt: name={{ item }} state=present install_recommends=no
+  with_items:
+    - mariadb-server
+    - mariadb-client
 
 - name: Making sure the drush package is removed (aegir3 installs through composer)
   apt: pkg=drush state=absent
@@ -84,19 +86,65 @@
 
 - apt: pkg=aegir3 state=installed
 
-- name: Download provision_civicrm from Drupal.org
-  sudo_user: aegir
-  git: repo=http://git.drupal.org/project/provision_civicrm.git
-       version=6.x-2.x
-       dest=/var/aegir/.drush/provision_civicrm
-       update=yes
-
 - name: Download provision_symbiotic from Github
   sudo_user: aegir
   git: repo=https://github.com/coopsymbiotic/provision_symbiotic.git
        version=master
        dest=/var/aegir/.drush/provision_symbiotic
        update=yes
+
+- name: Aegir modules | Enable a few extra Aegir modules
+  shell: "drush @hm en hosting_ssl hosting_alias hosting_clone hosting_git hosting_git_pull hosting_tasks_extra hosting_civicrm_cron hosting_civicrm -y"
+  become: true
+  become_user: aegir
+
+- name: Aegir modules | Disable the annoying Drupal overlay
+  shell: "drush @hm dis overlay -y"
+  become: true
+  become_user: aegir
+
+- name: Aegir settings | Enable Aegir queue process
+  shell: "drush @hm vset hosting_feature_queued 1"
+  become: true
+  become_user: aegir
+  tags:
+    - aegir-settings
+
+- name: Aegir settings | Set CiviCRM default cron interval to 15 mins
+  shell: "drush @hm vset hosting_civicrm_cron_default_interval 900"
+  become: true
+  become_user: aegir
+  tags:
+    - aegir-settings
+
+- name: Aegir settings | Misc other settings
+  become: true
+  become_user: aegir
+  shell: "drush @hm vset {{ item.name }} {{ item.value }}"
+  with_items:
+    - { name: 'hosting_feature_git', value: '1' }
+    - { name: 'hosting_feature_git_pull', value: '1' }
+    - { name: 'hosting_feature_http_basic_auth', value: '1' }
+    - { name: 'hosting_feature_migrate', value: '1' }
+    - { name: 'hosting_feature_remote_import', value: '1' }
+    - { name: 'hosting_feature_ssl', value: '1' }
+    - { name: 'hosting_feature_nginx_ssl', value: '1' }
+    - { name: 'hosting_feature_sync', value: '1' }
+    - { name: 'hosting_feature_tasks_extra', value: '1' }
+    - { name: 'hosting_feature_task_gc', value: '1' }
+    - { name: 'hosting_queue_civicrm_cron_enabled', value: '1' }
+    - { name: 'hosting_queue_civicrm_cron_frequency', value: '300' }
+    - { name: 'hosting_queue_civicrm_cron_items', value: '50' }
+  tags:
+    - aegir-settings
+
+# TODO
+# - vget hosting_default_web_server, and enable nginx-ssl, then run verify.
+# - enable SSL on the hostmaster site (so that LE can later generate a cert for it)
+
+- name: Restart Aegir hosting queue
+  service: name=hosting-queued state=restarted
+
 
 - name: Download wkhtmltopdf
   get_url:
@@ -109,7 +157,9 @@
 - name: Create symlink for wkhtmltopdf
   file: src=/usr/local/wkhtmltox/bin/wkhtmltopdf dest=/usr/local/bin/wkhtmltopdf state=link
 
+- include: letsencrypt.yml
 - include: settings-php.yml
+- include: settings-mysql.yml
 
 - name: bash | Deploy our .bashrc for the Aegir user.
   template: src=var/aegir/dot.bashrc dest=/var/aegir/.bashrc owner=aegir group=aegir mode=0644
@@ -143,5 +193,19 @@
     block: |
       Host git-alt.symbiotic.coop
         IdentityFile /var/aegir/.ssh/id_rsa_platforms
+  tags:
+    - aegir-ssh
+
+- name: ssh | Run ssh-keyscan to get client fingerprint
+  shell: "ssh-keyscan -H -T 10 git-alt.symbiotic.coop"
+  register: host_fingerprint
+  changed_when: false
+  tags:
+    - aegir-ssh
+
+- name: ssh | Add git ssh host key fingerprint to known_hosts to avoid prompt
+  known_hosts:
+    name="git-alt.symbiotic.coop"
+    key="{{ host_fingerprint.stdout }}"
   tags:
     - aegir-ssh

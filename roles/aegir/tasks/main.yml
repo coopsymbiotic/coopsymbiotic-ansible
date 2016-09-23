@@ -138,6 +138,13 @@
   tags:
     - aegir-settings
 
+- name: Aegir settings | Delete a few settings
+  become: true
+  become_user: aegir
+  shell: "drush @hm vdel {{ item }}"
+  with_items:
+    - update_notify_emails
+
 # TODO
 # - vget hosting_default_web_server, and enable nginx-ssl, then run verify.
 # - enable SSL on the hostmaster site (so that LE can later generate a cert for it)

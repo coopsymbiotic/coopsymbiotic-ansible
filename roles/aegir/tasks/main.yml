@@ -93,6 +93,44 @@
        dest=/var/aegir/.drush/provision_symbiotic
        update=yes
 
+##
+## Update hosting_civicrm from git
+##
+- name: Get Hostmaster root directory
+  become: true
+  become_user: aegir
+  shell: "drush @hm status | grep 'Drupal root' | awk '{ print $4 }'"
+  register: hostmaster_root
+  tags:
+    - aegir-hosting-civicrm
+
+# Unless we check if it's already a git repo, in most cases it's static
+# since it has been updated by the aegir3 debian packages.
+- name: Delete the old hosting_civicrm directory
+  file: path="{{ hostmaster_root.stdout }}/profiles/hostmaster/modules/aegir/hosting_civicrm" state=absent
+  tags:
+    - aegir-hosting-civicrm
+
+- name: Deploy latest hosting_civicrm from Git
+  become: true
+  become_user: aegir
+  git: repo=https://git.drupal.org/project/hosting_civicrm.git
+       version=7.x-3.x
+       dest="{{ hostmaster_root.stdout }}/profiles/hostmaster/modules/aegir/hosting_civicrm"
+       update=yes
+  tags:
+    - aegir-hosting-civicrm
+
+- name: Flush Hostmaster cache
+  become: true
+  become_user: aegir
+  shell: "drush @hm cc all"
+  tags:
+    - aegir-hosting-civicrm
+
+##
+## Configurations
+##
 - name: Aegir modules | Enable a few extra Aegir modules
   shell: "drush @hm en hosting_ssl hosting_alias hosting_clone hosting_git hosting_git_pull hosting_tasks_extra hosting_civicrm_cron hosting_civicrm -y"
   become: true

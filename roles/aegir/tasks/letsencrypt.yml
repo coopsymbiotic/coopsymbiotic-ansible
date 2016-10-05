@@ -25,15 +25,15 @@
 - name: LE | Download letsencrypt.sh
   become: true
   become_user: aegir
-  git: repo=https://github.com/lukas2511/letsencrypt.sh.git
-       version=v0.3.0
+  git: repo=https://github.com/lukas2511/dehydrated.git
+       version=v0.3.1
        dest=/var/aegir/config/letsencrypt/letsencrypt
        update=yes
   tags:
     - aegir-le
 
 - name: LE | Create letsencrypt.sh symlink
-  file: src="/var/aegir/config/letsencrypt/letsencrypt/letsencrypt.sh" dest="/var/aegir/config/letsencrypt/letsencrypt.sh" owner=aegir group=aegir state=link
+  file: src="/var/aegir/config/letsencrypt/letsencrypt/dehydrated" dest="/var/aegir/config/letsencrypt/letsencrypt.sh" owner=aegir group=aegir state=link
   tags:
     - aegir-le
 

@@ -93,6 +93,13 @@
        dest=/var/aegir/.drush/provision_symbiotic
        update=yes
 
+- name: Download provision_customhtaccess from Github
+  sudo_user: aegir
+  git: repo=https://github.com/mlutfy/provision_customhtaccess.git
+       version=master
+       dest=/var/aegir/.drush/provision_customhtaccess
+       update=yes
+
 ##
 ## Update hosting_civicrm from git
 ##

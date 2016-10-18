@@ -39,19 +39,30 @@ include = {{ item }}
 {% endfor %}
 {% endif %}
 
+exclude = /home/*/.bup
 exclude = /home/*/.local/share/Trash
-exclude = /home/*/.Trash
 exclude = /home/*/.thumbnails
 exclude = /home/*/.beagle
-exclude = /var/aegir/backups
+exclude = /home/*/.npm
+exclude = /home/*/.Trash
 exclude = /var/cache
 exclude = /var/lib/apt
 exclude = /var/lib/dpkg
 exclude = /var/lib/docker
 exclude = /var/lib/mlocate
+exclude = /var/lib/mysql
 exclude = /var/lib/nginx
+exclude = /var/lib/php5
+exclude = /var/lib/puppet/clientbucket/
+exclude = /var/lib/spamassassin/.spamassassin
 exclude = /var/log
 exclude = /var/tmp
+
+exclude = /var/aegir/.drush/cache
+exclude = /var/aegir/backups
+exclude = /var/aegir/platforms/*/.git
+exclude = /var/aegir/platforms/*/sites/*/files/civicrm/templates_c
+exclude = /var/aegir/tmp
 
 {% if backupexcludes is defined %}
 # Excludes defined for this host only

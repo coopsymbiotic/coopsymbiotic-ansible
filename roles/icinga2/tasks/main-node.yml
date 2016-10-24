@@ -82,15 +82,28 @@
 # This script is from nagios-plugins-contrib
 # but that package pulls in too many dependancies.
 - file: path=/etc/icinga2/conf.d/services state=directory owner=root group=nagios mode=0775
+- file: path=/etc/icinga2/conf.d/commands state=directory owner=root group=nagios mode=0775
 - file: path=/etc/icinga2/scripts state=directory owner=root group=nagios mode=0775
 
 - name: Deploy check_mem script
   copy: src=etc/icinga2/scripts/check_memory dest=/etc/icinga2/scripts/check_memory owner=root group=root mode=0755
-  notify: restart icinga2
 
 - name: Deploy check_mem script configuration
-  copy: src=etc/icinga2/conf.d/services/mem.conf dest=/etc/icinga2/conf.d/services/mem.conf owner=root group=root mode=0644
+  copy: src=etc/icinga2/conf.d/commands/mem.conf dest=/etc/icinga2/conf.d/commands/mem.conf owner=root group=root mode=0644
   notify: restart icinga2
+
+- name: Deploy check_civicrm script
+  copy: src=etc/icinga2/scripts/check_civicrm dest=/etc/icinga2/scripts/check_civicrm owner=root group=root mode=0755
+
+- name: Deploy check_civicrm script configuration
+  copy: src=etc/icinga2/conf.d/commands/civicrm.conf dest=/etc/icinga2/conf.d/commands/civicrm.conf owner=root group=root mode=0644
+  notify: restart icinga2
+
+- template: src=etc/sudoers.d/aegir-icinga2 dest=/etc/sudoers.d/aegir-icinga2 owner=root group=root mode=0644
+
+# Remove old location for those configurations
+- file: path=/etc/icinga2/conf.d/services/civicrm.conf state=absent
+- file: path=/etc/icinga2/conf.d/services/mem.conf state=absent
 
 - lineinfile: dest=/etc/icinga2/icinga2.conf line="include_recursive \"conf.d\""
   notify: restart icinga2

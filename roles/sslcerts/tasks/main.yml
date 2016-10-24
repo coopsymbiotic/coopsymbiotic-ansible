@@ -1,7 +1,6 @@
 ---
 - name: Add ssl-cert group on Ubuntu
   group: name=ssl-cert state=present
-  when: ansible_distribution == "Ubuntu"
 
 - copy: src=/etc/ansible/files/etc/ssl/private/{{ item }}.crt dest=/etc/ssl/private/{{ item }}.crt owner=root group=ssl-cert mode=0640
   with_items: sslcertificates

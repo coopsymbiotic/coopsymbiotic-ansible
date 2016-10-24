@@ -32,6 +32,23 @@
 - copy: content="{{ inventory_hostname }}" dest=/etc/mailname
 - file: path=/etc/mailname owner=root group=root mode=0644
 
+# MariaDB 10.1
+- apt_key: keyserver=keyserver.ubuntu.com id=0xcbcb082a1bb943db
+
+- apt_repository:
+    repo="deb http://ftp.osuosl.org/pub/mariadb/repo/10.1/debian {{ ansible_distribution_release }} main"
+    update_cache=yes
+    state=present
+  tags:
+    - packages
+
+- apt: name={{ item }} state=present install_recommends=no
+  with_items:
+    - mariadb-server-10.1
+    - mariadb-client-10.1
+  tags:
+    - packages
+
 # https://github.com/gaspaio/ansible-devbox/blob/master/roles/mysql/tasks/server.yml
 # Install server using a preseed file to set the root password
 - name: Check for previous MySQL installation
@@ -44,15 +61,10 @@
   when: mysqld_exists|failed
 
 - name: Preseed MariaDB root password 1 of 2
-  shell: echo "mariadb-server-10.0 mysql-server/root_password password `cat /root/.mysql.root`" | debconf-set-selections
+  shell: echo "mariadb-server-10.1 mysql-server/root_password password `cat /root/.mysql.root`" | debconf-set-selections
 
 - name: Preseed MariaDB root password 2 of 2
-  shell: echo "mariadb-server-10.0 mysql-server/root_password_again password `cat /root/.mysql.root`" | debconf-set-selections
-
-- apt: name={{ item }} state=present install_recommends=no
-  with_items:
-    - mariadb-server
-    - mariadb-client
+  shell: echo "mariadb-server-10.1 mysql-server/root_password_again password `cat /root/.mysql.root`" | debconf-set-selections
 
 - name: Making sure the drush package is removed (aegir3 installs through composer)
   apt: pkg=drush state=absent
@@ -197,7 +209,6 @@
 - name: Restart Aegir hosting queue
   service: name=hosting-queued state=restarted
 
-
 - name: Download wkhtmltopdf
   get_url:
     url=http://download.gna.org/wkhtmltopdf/0.12/0.12.3/wkhtmltox-0.12.3_linux-generic-amd64.tar.xz
@@ -252,6 +263,8 @@
   shell: "ssh-keyscan -H -T 10 git-alt.symbiotic.coop"
   register: host_fingerprint
   changed_when: false
+  become: true
+  become_user: aegir
   tags:
     - aegir-ssh
 
@@ -259,5 +272,7 @@
   known_hosts:
     name="git-alt.symbiotic.coop"
     key="{{ host_fingerprint.stdout }}"
+  become: true
+  become_user: aegir
   tags:
     - aegir-ssh

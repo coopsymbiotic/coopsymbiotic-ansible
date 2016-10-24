@@ -24,3 +24,10 @@
   tags:
     - packages
     - common-all
+
+- name: rsyslog | Deploy conf file to avoid annoying warnings
+  template: src=etc/rsyslog.conf dest=/etc/rsyslog.conf owner=root group=root mode=0644
+  notify: restart rsyslog
+  tags:
+    - common-all
+    - common-all-rsyslog

@@ -1,6 +1,8 @@
 ---
 - name: Make sure that logcheck is installed.
   apt: pkg=logcheck state=installed
+  tags:
+    - logcheck
 
 - name: Copy custom logcheck ignore.d.server file.
   template:
@@ -9,6 +11,9 @@
     owner: "root"
     group: "root"
     mode: 0644
+  tags:
+    - logcheck
+    - logcheck-patterns
 
 - name: Copy custom logcheck violations.ignore.d file.
   template:
@@ -17,6 +22,9 @@
     owner: "root"
     group: "root"
     mode: 0644
+  tags:
+    - logcheck
+    - logcheck-patterns
 
 - name: Run logcheck only twice a day. Logrotate daily usually runs at 6:25
   lineinfile:
@@ -24,6 +32,8 @@
     regexp: '^.*/usr/sbin/logcheck;.*$'
     line: '10 6,18 * * *   logcheck    if [ -x /usr/sbin/logcheck ]; then nice -n10 /usr/sbin/logcheck; fi'
     state: present
+  tags:
+    - logcheck
 
 - name: Add comment in file for documentation.
   lineinfile:
@@ -31,3 +41,5 @@
     regexp: '^# Managed by Ansible -bgm$'
     line: '# Managed by Ansible -bgm'
     state: present
+  tags:
+    - logcheck

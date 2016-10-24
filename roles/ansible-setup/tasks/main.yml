@@ -17,5 +17,11 @@
     user="{{ deploy_user }}"
     key="{{ lookup('file', '/etc/ansible/files/sshkeys/global/{{ deploy_user }}.pub') }}"
 
+- apt: name={{ item }} state=present install_recommends=no
+  with_items:
+    - sudo
+  tags:
+    - packages
+
 - name: Sudoers | create deploy sudoers file
   template: src=sudoers.j2 dest=/etc/sudoers.d/ansible owner=root group=root mode=0440

@@ -1,7 +1,25 @@
 ---
+
+- apt: pkg=apt-transport-https state=installed
+  tags:
+    - docker
+    - packages
+
+- name: Get the Docker repo key
+  apt_key: url=https://apt.dockerproject.org/gpg state=present
+  tags:
+    - docker
+    - packages
+
 - apt_repository:
-    repo='deb http://ftp.ca.debian.org/debian jessie-backports main'
+    repo='deb https://apt.dockerproject.org/repo debian-jessie main'
     state=present
     update_cache=yes
+  tags:
+    - docker
+    - packages
 
-- apt: pkg=docker.io state=installed default_release=jessie-backports
+- apt: pkg=docker-engine state=installed
+  tags:
+    - docker
+    - packages

@@ -130,3 +130,10 @@
     - ufw
   tags:
     - ufw
+
+- hosts: docker-servers
+  sudo: yes
+  roles:
+    - docker
+  tags:
+    - docker

@@ -89,12 +89,18 @@
 
 - name: Get the Aegir repo key
   apt_key: url=http://debian.aegirproject.org/key.asc state=present
+  tags:
+    - aegir
+    - aegir-repo
 
 - name: Add the Aegir apt repository
   apt_repository:
     repo='deb http://debian.aegirproject.org stable main'
     state=present
     update_cache=yes
+  tags:
+    - aegir
+    - aegir-repo
 
 - apt: pkg=aegir3 state=installed
 

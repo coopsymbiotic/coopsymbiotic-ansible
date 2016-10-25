@@ -6,3 +6,4 @@
   notify: restart mysql
   tags:
     - aegir-mysql
+    - aegir-mariadb

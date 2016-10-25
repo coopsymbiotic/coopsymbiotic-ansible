@@ -34,6 +34,10 @@
 
 # MariaDB 10.1
 - apt_key: keyserver=keyserver.ubuntu.com id=0xcbcb082a1bb943db
+  tags:
+    - packages
+    - aegir
+    - aegir-mariadb
 
 - apt_repository:
     repo="deb http://ftp.osuosl.org/pub/mariadb/repo/10.1/debian {{ ansible_distribution_release }} main"
@@ -41,6 +45,8 @@
     state=present
   tags:
     - packages
+    - aegir
+    - aegir-mariadb
 
 - apt: name={{ item }} state=present install_recommends=no
   with_items:
@@ -48,6 +54,8 @@
     - mariadb-client-10.1
   tags:
     - packages
+    - aegir
+    - aegir-mariadb
 
 # https://github.com/gaspaio/ansible-devbox/blob/master/roles/mysql/tasks/server.yml
 # Install server using a preseed file to set the root password

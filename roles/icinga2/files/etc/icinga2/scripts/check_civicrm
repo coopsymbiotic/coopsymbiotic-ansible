@@ -31,20 +31,20 @@ if ($tmp) {
   }
 
   if ($civistatus->is_error) {
-    echo 'API call failed: ' . $output['error_message'];
+    echo 'API call failed: ' . $civistatus->error_message;
     exit(3);
   }
 
   foreach ($civistatus->values as $key => $val) {
-    if ($val->severity == 'warning') {
-      // We don't want to downgrade an error statut to warning.
+    if (in_array($val->severity, ['warning', 'error', 'critical'])) {
+      // We don't want to downgrade an 'error' status to 'warning'.
       if ($check_status == 0) {
         $check_status = 1;
       }
 
       $check_descriptions[] = $val->title;
     }
-    elseif ($val->severity == 'error') {
+    elseif ($val->severity == 'error' || $val->severity == 'critical') {
       $check_status = 2;
       $check_descriptions[] = $val->title;
     }

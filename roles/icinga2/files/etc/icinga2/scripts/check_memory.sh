@@ -43,10 +43,9 @@ memory_free=$((memory_total - memory_used))
 memory_free_human=$((memory_free / 1024))
 percentage=$((memory_used * 100 / memory_total))
 
-# Example output:
-# MEMORY OK - 35% user, 2765M free | free=2899427328b;;
+# MEMORY OK - 2765M free | free=2899427328b;;
 
-status="${percentage}% - ${memory_used} used, ${memory_free_human}M free | free=${memory_free}b;;";
+status="${percentage}% ${memory_free_human}M free | free=${memory_free}b;;";
 
 if [[ -z $percentage ]]; then
   echo "MEMORY UNKNOWN - Error"
@@ -61,4 +60,3 @@ else
   echo "MEMORY OK - ${status}"
   exit 0
 fi
-

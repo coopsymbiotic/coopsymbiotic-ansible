@@ -2,14 +2,56 @@
 # Installs Aegir3 (http://www.aegirproject.org)
 # Assumes Debian Jessie, with MariaDB, Nginx, php5-fpm
 
+# https://github.com/gaspaio/ansible-devbox/blob/master/roles/mysql/tasks/server.yml
+# Install server using a preseed file to set the root password
+- name: Check for previous MySQL installation
+  shell: "[ -f /usr/sbin/mysqld ]"
+  ignore_errors: True
+  register: mysqld_exists
+
+- name: Generate a root password for MySQL
+  shell: pwgen 15 1 > /root/.mysql.root
+  when: mysqld_exists|failed
+
+- name: Preseed Aegir Debian configurations
+  shell: "{{ item }} | debconf-set-selections"
+  with_items:
+    - echo "mariadb-server-10.1 mysql-server/root_password password `cat /root/.mysql.root`"
+    - echo "mariadb-server-10.1 mysql-server/root_password_again password `cat /root/.mysql.root`"
+    - echo "debconf aegir/site string {{ inventory_hostname }}"
+    - echo "debconf aegir/db_host string 127.0.0.1"
+    - echo "debconf aegir/db_user string root"
+    - echo "debconf aegir/db_password password `cat /root/.mysql.root`"
+    - echo "debconf aegir/webserver string nginx"
+  tags:
+    - packages
+    - aegir-nginx
+    - aegir-mariadb
+
+# "echo debconf aegir/email string $aegir_email | debconf-set-selections"
+# "echo debconf aegir/makefile string $aegir_makefile | debconf-set-selections"
+
+- name: Making sure the drush package is removed (aegir3 installs through composer)
+  apt: pkg=drush state=absent
+
 - apt: update_cache=yes
   tags:
     - packages
 
+- apt:
+    name: "{{ item }}"
+    state: present
+    install_recommends: no
+    default_release: jessie-backports
+  with_items:
+    - nginx
+  tags:
+    - packages
+    - aegir-nginx
+
 - apt: name={{ item }} state=present install_recommends=no
   with_items:
     - pwgen
-    - nginx
     - curl
     - gettext
     - php5-fpm
@@ -56,44 +98,6 @@
     - packages
     - aegir
     - aegir-mariadb
-
-# https://github.com/gaspaio/ansible-devbox/blob/master/roles/mysql/tasks/server.yml
-# Install server using a preseed file to set the root password
-- name: Check for previous MySQL installation
-  shell: "[ -f /usr/sbin/mysqld ]"
-  ignore_errors: True
-  register: mysqld_exists
-
-- name: Generate a root password for MySQL
-  shell: pwgen 15 1 > /root/.mysql.root
-  when: mysqld_exists|failed
-
-- name: Preseed MariaDB root password 1 of 2
-  shell: echo "mariadb-server-10.1 mysql-server/root_password password `cat /root/.mysql.root`" | debconf-set-selections
-
-- name: Preseed MariaDB root password 2 of 2
-  shell: echo "mariadb-server-10.1 mysql-server/root_password_again password `cat /root/.mysql.root`" | debconf-set-selections
-
-- name: Making sure the drush package is removed (aegir3 installs through composer)
-  apt: pkg=drush state=absent
-
-- name: Preseed Aegir hostmaster site url
-  shell: echo "debconf aegir/site string {{ inventory_hostname }}" | debconf-set-selections
-
-- name: Preseed Aegir hostmaster db_host
-  shell: echo "debconf aegir/db_host string 127.0.0.1" | debconf-set-selections
-
-- name: Preseed Aegir hostmaster db_user
-  shell: echo "debconf aegir/db_user string root" | debconf-set-selections
-
-- name: Preseed Aegir hostmaster db_password
-  shell: echo "debconf aegir/db_password password `cat /root/.mysql.root`" | debconf-set-selections
-
-- name: Preseed Aegir hostmaster webmaster (nginx)
-  shell: echo "debconf aegir/webserver string nginx" | debconf-set-selections
-
-# "echo debconf aegir/email string $aegir_email | debconf-set-selections"
-# "echo debconf aegir/makefile string $aegir_makefile | debconf-set-selections"
 
 - name: Get the Aegir repo key
   apt_key: url=http://debian.aegirproject.org/key.asc state=present
@@ -228,11 +232,20 @@
     url=http://download.gna.org/wkhtmltopdf/0.12/0.12.3/wkhtmltox-0.12.3_linux-generic-amd64.tar.xz
     dest=/usr/local/wkhtmltox-0.12.3_linux-generic-amd64.tar.xz
     mode=0644
+  tags:
+    - aegir
+    - aegir-wkhtmltopdf
 
 - unarchive: src=/usr/local/wkhtmltox-0.12.3_linux-generic-amd64.tar.xz dest=/usr/local/ copy=no
+  tags:
+    - aegir
+    - aegir-wkhtmltopdf
 
 - name: Create symlink for wkhtmltopdf
   file: src=/usr/local/wkhtmltox/bin/wkhtmltopdf dest=/usr/local/bin/wkhtmltopdf state=link
+  tags:
+    - aegir
+    - aegir-wkhtmltopdf
 
 - include: letsencrypt.yml
 - include: settings-php.yml

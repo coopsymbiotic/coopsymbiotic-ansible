@@ -10,7 +10,7 @@
 
 # Apparently this is enabled by default in MariaDB 10.0, but not 10.1.
 - name: MySQL | Enable the ARCHIVE engine
-  shell: "echo 'INSTALL PLUGIN archive SONAME 'ha_archive.so' | mysql --defaults-file=/etc/mysql/debian.cnf"
+  shell: "echo 'INSTALL PLUGIN archive SONAME \'ha_archive.so\'' | mysql --defaults-file=/etc/mysql/debian.cnf"
   tags:
     - aegir-mysql
     - aegir-mariadb

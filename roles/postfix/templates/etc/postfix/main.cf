@@ -60,5 +60,6 @@ recipient_delimiter = +
 inet_interfaces = all
 inet_protocols = all
 
-# Many providers will bounce IPv6 emails because my ISPs do not have proper rDNS
+# Few hosts provide proper reverse-DNS, causing issues with
+# mail hosts such as Gmail.
 smtp_address_preference=ipv4

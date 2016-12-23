@@ -88,6 +88,13 @@
   tags:
     - redmine
 
+- hosts: gitlab-servers
+  sudo: yes
+  roles:
+    - gitlab
+  tags:
+    - gitlab
+
 - hosts: yubiauth-managed
   sudo: yes
   roles:

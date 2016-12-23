@@ -1,0 +1,28 @@
+---
+
+- apt: pkg="{{ item }}" state=installed
+  with_items:
+    - debian-archive-keyring
+    - apt-transport-https
+  tags:
+    - gitlab
+    - packages
+
+- name: Get the Docker repo key
+  apt_key: url=https://packages.gitlab.com/gitlab/gitlab-ce/gpgkey state=present
+  tags:
+    - gitlab
+    - packages
+
+- apt_repository:
+    repo='deb https://packages.gitlab.com/gitlab/gitlab-ce/debian/ jessie main'
+    state=present
+    update_cache=yes
+  tags:
+    - gitlab
+    - packages
+
+- apt: pkg=gitlab-ce state=installed
+  tags:
+    - gitlab
+    - packages

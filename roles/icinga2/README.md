@@ -49,7 +49,7 @@ And finally, in the host declarations on the icinga2 master, you must set the
 distribution variable:
 
 ```
-object Host "qctonline.com" {
+object Host "example.com" {
   import "generic-host"
   address = "[...]
   check_command = "ping"

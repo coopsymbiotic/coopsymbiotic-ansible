@@ -36,6 +36,11 @@ if ($tmp) {
   }
 
   foreach ($civistatus->values as $key => $val) {
+    // Issue was acknowledged (hidden from the Status Check UI).
+    if (!$val->is_visible) {
+      continue;
+    }
+
     if (in_array($val->severity, ['warning', 'error', 'critical'])) {
       // We don't want to downgrade an 'error' status to 'warning'.
       if ($check_status == 0) {

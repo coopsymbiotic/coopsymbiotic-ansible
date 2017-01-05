@@ -18,12 +18,15 @@
     - packages
   when: ansible_distribution == "Ubuntu"
 
-# Satellites do not need a Salt. It's the private key for CSR auto-signing.
-# - name: Make sure we have a TicketSalt in constants.conf
-#   replace: dest=/etc/icinga2/constants.conf regexp='const TicketSalt = ""' replace='const TicketSalt = "{{ icinga2_ticket_salt }}"'
-
-# REFERENCE:
-# http://docs.icinga.org/icinga2/latest/doc/module/icinga2/chapter/icinga2-client#icinga2-client-installation-client-setup-linux-manual
+- name: Deploy icinga2 basic configuration files
+  template: src="etc/icinga2/{{ item }}" dest="/etc/icinga2/{{ item }}" owner=root group=root mode=0644
+  with_items:
+    - constants.conf
+    - icinga2.conf
+  notify: restart icinga2
+  tags:
+    - icinga2
+    - icinga2-base-configs
 
 - file: path=/etc/icinga2/pki state=directory owner=root group=nagios mode=0770
 
@@ -81,25 +84,40 @@
 
 # This script is from nagios-plugins-contrib
 # but that package pulls in too many dependancies.
-- file: path=/etc/icinga2/conf.d/services state=directory owner=root group=nagios mode=0775
-- file: path=/etc/icinga2/conf.d/commands state=directory owner=root group=nagios mode=0775
-- file: path=/etc/icinga2/scripts state=directory owner=root group=nagios mode=0775
+- file: path="{{ item }}" state=directory owner=root group=nagios mode=0755
+  with_items:
+    - /etc/icinga2/conf.d/services
+    - /etc/icinga2/conf.d/commands
+    - /etc/icinga2/scripts
+  tags:
+    - icinga2-custom-checks
 
-- name: Deploy check_mem script
-  copy: src=etc/icinga2/scripts/check_memory dest=/etc/icinga2/scripts/check_memory owner=root group=root mode=0755
-
-- name: Deploy check_mem script configuration
-  copy: src=etc/icinga2/conf.d/commands/mem.conf dest=/etc/icinga2/conf.d/commands/mem.conf owner=root group=root mode=0644
+- name: Deploy custom checks scripts
+  copy: src="etc/icinga2/scripts/{{ item }}" dest="/etc/icinga2/scripts/{{ item }}" owner=root group=root mode=0755
+  with_items:
+    - check_backup
+    - check_civicrm
+    - check_memory
   notify: restart icinga2
+  tags:
+    - icinga2-custom-checks
 
-- name: Deploy check_civicrm script
-  copy: src=etc/icinga2/scripts/check_civicrm dest=/etc/icinga2/scripts/check_civicrm owner=root group=root mode=0755
-
-- name: Deploy check_civicrm script configuration
-  copy: src=etc/icinga2/conf.d/commands/civicrm.conf dest=/etc/icinga2/conf.d/commands/civicrm.conf owner=root group=root mode=0644
+- name: Deploy custom checks script configurations
+  copy: src="etc/icinga2/conf.d/commands/{{ item }}.conf" dest="/etc/icinga2/conf.d/commands/{{ item }}.conf" owner=root group=root mode=0644
+  with_items:
+    - backup
+    - civicrm
+    - mem
   notify: restart icinga2
+  tags:
+    - icinga2-custom-checks
 
-- template: src=etc/sudoers.d/aegir-icinga2 dest=/etc/sudoers.d/aegir-icinga2 owner=root group=root mode=0644
+- template: src="etc/sudoers.d/{{ item }}" dest="/etc/sudoers.d/{{ item }}" owner=root group=root mode=0644
+  with_items:
+    - aegir-icinga2
+    - backup-icinga2
+  tags:
+    - icinga2-custom-checks
 
 # Remove old location for those configurations
 - file: path=/etc/icinga2/conf.d/services/civicrm.conf state=absent

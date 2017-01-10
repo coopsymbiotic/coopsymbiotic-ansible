@@ -7,13 +7,24 @@
 
 deploy_cert() {
     if [ -x /usr/sbin/apache2ctl ]; then
-      echo " + Hook: Restarting Apache..."
+      echo " + Hook: Reloading Apache configuration..."
       service apache2 reload
     fi
 
     if [ -x /usr/sbin/nginx ]; then
-      echo " + Hook: Restarting Nginx..."
+      echo " + Hook: Reloading Nginx configuration..."
       service nginx reload
+    fi
+
+    if [ -x /usr/sbin/postfix ]; then
+      echo " + Hook: Reloading Postfix configuration..."
+      service postfix reload
+    fi
+
+    if [ -x /usr/bin/doveadm ]; then
+      echo " + Hook: Reloading Dovecot configuration..."
+      # Service has no reload
+      /usr/bin/doveadm reload
     fi
 }
 
@@ -50,6 +61,10 @@ clean_challenge() {
     # files or DNS records that are no longer needed.
     #
     # The parameters are the same as for deploy_challenge.
+}
+
+invalid_challenge() {
+    echo " + Hook: Challenge is invalid..."
 }
 
 HANDLER="$1"; shift

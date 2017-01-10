@@ -138,6 +138,15 @@
   tags:
     - ufw
 
+# For hosts not running Aegir
+# or with more custom setups
+- hosts: dehydrated-manually
+  sudo: yes
+  roles:
+    - dehydrated
+  tags:
+    - dehydrated
+
 - hosts: docker-servers
   sudo: yes
   roles:

@@ -30,3 +30,6 @@ long_query_time = 2
 # NB: 360 seconds (6 mins) is a really long time for a query, but some reports
 # or exports can be very slow.
 max_statement_time = 360
+
+# https://dev.mysql.com/doc/refman/5.7/en/stored-programs-logging.html
+log_bin_trust_function_creators=1

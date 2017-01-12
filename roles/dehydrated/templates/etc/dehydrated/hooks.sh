@@ -6,9 +6,17 @@
 # and https://github.com/lukas2511/dehydrated/blob/master/docs/examples/hook.sh
 
 deploy_cert() {
+    local DOMAIN="${1}" KEYFILE="${2}" CERTFILE="${3}" FULLCHAINFILE="${4}" CHAINFILE="${5}" TIMESTAMP="${6}"
+
     if [ -x /usr/sbin/apache2ctl ]; then
       echo " + Hook: Reloading Apache configuration..."
       service apache2 reload
+    elif [ -x /usr/sbin/apachectl ]; then
+      # for Plesk (qct)
+      cat /etc/dehydrated/keys/${DOMAIN}/privkey.pem /etc/dehydrated/keys/${DOMAIN}/fullchain.pem >> /etc/dehydrated/keys/${DOMAIN}/privkey-and-fullchain.pem
+
+      echo " + Hook: Reloading Apache configuration..."
+      apachectl graceful
     fi
 
     if [ -x /usr/sbin/nginx ]; then

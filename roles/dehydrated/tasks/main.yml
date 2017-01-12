@@ -55,13 +55,39 @@
 
 # TODO nginx?
 
-- name: Deploy dehydrated Apache config file.
+- name: Test this is Apache 2.4 on Debian
+  stat: path=/etc/apache2/conf-available/
+  register: apache24debian
+
+- name: Deploy dehydrated Apache 2.4 config file.
   template: src=etc/apache2/conf-available/dehydrated.conf dest=/etc/apache2/conf-available/dehydrated.conf owner=root group=root mode=0444
+  when: apache24debian.stat.exists
   tags:
     - dehydrated
 
 - name: Enable Apache dehydrated configuration
   command: a2enconf dehydrated
   notify: reload apache2
+  when: apache24debian.stat.exists
+  tags:
+    - dehydrated
+
+- name: Test this is Apache 2.2 on Debian
+  stat: path=/etc/apache2/conf.d/
+  register: apache22debian
+
+- name: Deploy dehydrated Apache 2.2 config file for Debian.
+  template: src=etc/apache2/conf-available/dehydrated.conf dest=/etc/apache2/conf.d/dehydrated.conf owner=root group=root mode=0444
+  when: apache22debian.stat.exists
+  tags:
+    - dehydrated
+
+- name: Test this is Apache 2.2 on CentOS
+  stat: path=/etc/httpd/conf.d
+  register: apache22centos
+
+- name: Deploy dehydrated Apache 2.2 config file for CentOS.
+  template: src=etc/apache2/conf-available/dehydrated.conf dest=/etc/httpd/conf.d/dehydrated.conf owner=root group=root mode=0444
+  when: apache22centos.stat.exists
   tags:
     - dehydrated

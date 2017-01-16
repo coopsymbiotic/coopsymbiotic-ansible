@@ -27,6 +27,9 @@
   sudo: yes
   roles:
     - aegir
+    - backupninja-rdiff
+    - postfix
+    - ufw
   tags:
     - aegir
 
@@ -37,7 +40,7 @@
   tags:
     - postfix
 
-- hosts: servers
+- hosts: sslcerts
   sudo: yes
   roles:
     - sslcerts

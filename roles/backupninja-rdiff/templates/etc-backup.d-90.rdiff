@@ -62,7 +62,13 @@ exclude = /var/aegir/.drush/cache
 exclude = /var/aegir/backups
 exclude = /var/aegir/platforms/*/.git
 exclude = /var/aegir/platforms/*/sites/*/files/civicrm/templates_c
+exclude = /var/aegir/platforms/*/sites/*/files/css
+exclude = /var/aegir/platforms/*/sites/*/files/imagecache
+exclude = /var/aegir/platforms/*/sites/*/files/js
+exclude = /var/aegir/platforms/*/sites/*/files/styles
 exclude = /var/aegir/tmp
+exclude = /var/aegir/hostmaster-7.x-*
+exclude = /usr/local/wkhtmltox
 
 {% if backupexcludes is defined %}
 # Excludes defined for this host only

@@ -3,35 +3,55 @@
 # Firewall (iptables)
 - name: Install ufw
   apt: name=ufw state=installed
+  tags:
+    - ufw
 
 - name: Allow ssh
   ufw: proto=tcp port=22 rule=allow
+  tags:
+    - ufw
 
 - name: Allow http
   ufw: proto=tcp port=80 rule=allow
+  tags:
+    - ufw
 
 - name: Allow https
   ufw: proto=tcp port=443 rule=allow
+  tags:
+    - ufw
 
 - name: Allow Munin to munin servers and monitoring servers
-  ufw: proto=tcp port=4949 rule=allow src={{ item }}
-  with_items: ufw_munin_allow_src
+  ufw: proto=tcp port=4949 rule=allow src="{{ item }}"
+  with_items: "{{ ufw_munin_allow_src }}"
+  tags:
+    - ufw
 
 - name: Allow access to NRPE 5666 from nagios servers
-  ufw: proto=tcp port=5666 rule=allow src={{ item }}
-  with_items: ufw_nrpe_allow_src
+  ufw: proto=tcp port=5666 rule=allow src="{{ item }}"
+  with_items: "{{ ufw_nrpe_allow_src }}"
+  tags:
+    - ufw
 
 - name: Allow access to NRPE 5668 from nagios servers
-  ufw: proto=tcp port=5668 rule=allow src={{ item }}
-  with_items: ufw_nrpe_allow_src
+  ufw: proto=tcp port=5668 rule=allow src="{{ item }}"
+  with_items: "{{ ufw_nrpe_allow_src }}"
+  tags:
+    - ufw
 
 # UFW per-host exceptions
 # see https://github.com/ansible/ansible/issues/10047 for why the weird default.
-- ufw: proto={{ item.value.proto }} port={{ item.value.port }} src={{ item.value.src }} rule={{ item.value.rule }}
-  with_dict: ufw_extra | default({})
+- ufw: proto="{{ item.value.proto }}" port="{{ item.value.port }}" src="{{ item.value.src }}" rule="{{ item.value.rule }}"
+  with_dict: "{{ ufw_extra | default({}) }}"
+  tags:
+    - ufw
 
 - name: Set ufw policy
   ufw: state=enabled direction=incoming policy=deny
+  tags:
+    - ufw
 
 - name: Restart ufw
   service: name=ufw state=restarted
+  tags:
+    - ufw

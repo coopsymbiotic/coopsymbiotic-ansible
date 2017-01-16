@@ -13,6 +13,7 @@
 - name: MySQL | Check for the ARCHIVE plugin
   shell: "echo 'show plugins' | mysql --defaults-file=/etc/mysql/debian.cnf | grep ha_archive.so"
   register: mysqld_archive
+  ignore_errors: True
   tags:
     - aegir-mysql
     - aegir-mariadb

@@ -5,7 +5,7 @@
 # user login and sudo, but we need to create the deploy account before we can run the
 # rest of the Ansible setup.
 #
-# Ex: ansible-playbook -l foo.example.org -u mathieu --become-user=root --ask-become-pass ./setup.yml
+# Ex: ansible-playbook -l foo.example.org -u mathieu --become-user=root --ask-become-pass --ask-pass ./setup.yml
 
 - hosts: all
   become: true

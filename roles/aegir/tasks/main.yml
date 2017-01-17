@@ -257,7 +257,7 @@
 - name: bash | Deploy our .profile for the Aegir user (required for bashrc to be read).
   template: src=var/aegir/dot.bashrc dest=/var/aegir/.bashrc owner=aegir group=aegir mode=0644
 
-- name: bash | Deploy sudoers file for people who are allowed to sudo to aegir
+- name: sudo | Deploy sudoers file for people who are allowed to sudo to aegir
   template: src=etc/sudoers.d/symbiotic-aegir dest=/etc/sudoers.d/symbiotic-aegir owner=root group=root mode=0440
   tags:
     - aegir-sudoers

@@ -1,0 +1,2 @@
+User_Alias     HOSTMASTERS = {{ aegir_sudoers }}
+HOSTMASTERS ALL=(aegir) NOPASSWD: ALL

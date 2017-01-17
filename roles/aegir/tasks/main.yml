@@ -9,6 +9,10 @@
   ignore_errors: True
   register: mysqld_exists
 
+- apt: name={{ item }} state=present install_recommends=no
+  with_items:
+    - pwgen
+
 - name: Generate a root password for MySQL
   shell: pwgen 15 1 > /root/.mysql.root
   when: mysqld_exists|failed

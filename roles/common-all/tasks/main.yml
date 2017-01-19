@@ -21,12 +21,20 @@
     - git
     - libpam-yubico
     - ncdu
-    - ntpdate
     - tmux
     - unzip
     - vim
     - vnstat
     - wget
+  tags:
+    - packages
+    - common-all
+
+# KVM servers run openntpd; usually not recommended to install both.
+- apt: name={{ item }} state=present install_recommends=no
+  with_items:
+    - ntpdate
+  when: "'kvm-servers' not in group_names"
   tags:
     - packages
     - common-all

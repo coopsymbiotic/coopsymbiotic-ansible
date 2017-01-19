@@ -307,6 +307,9 @@
   tags:
     - aegir-ssh
 
+##
+## Platform management
+##
 - name: ssh | Copy the ssh platform pub key
   copy: src="/etc/ansible/files/sshkeys/aegir/id_rsa_platforms.pub" dest=/var/aegir/.ssh/id_rsa_platforms.pub owner="aegir" group="aegir" mode=0600
   tags:
@@ -348,3 +351,21 @@
   become_user: aegir
   tags:
     - aegir-ssh
+
+- name: platform | Configure the CiviCRM 4.7 SymbioTIC platform
+  shell: "drush provision-save @platform_CiviCRM47 --root=/var/aegir/platforms/civicrm-4.7 --context_type=platform --repo_url=ssh://git@git-alt.symbiotic.coop/symbiotic-platform-d7-civicrm.git --git_ref=4.7 --deploy_from_git=1"
+  args:
+    creates: /var/aegir/.drush/platform_CiviCRM47.alias.drushrc.php
+  become: true
+  become_user: aegir
+  tags:
+    - aegir-civicrm-platform
+
+- name: platform | Trigger installation of the CiviCRM 4.7 SymbioTIC platform
+  shell: "drush @hm hosting-import @platform_CiviCRM47"
+  args:
+    creates: /var/aegir/platforms/civicrm-4.7
+  become: true
+  become_user: aegir
+  tags:
+    - aegir-civicrm-platform

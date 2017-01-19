@@ -2,18 +2,13 @@
 
 # NB: netcat-openbsd is required if using virt-manager GUI (requires -U option).
 
-- apt_key:
-    url=http://zfsonlinux.org/4D5843EA.asc
-    state=present
-
-- apt_repository:
-    repo='deb http://archive.zfsonlinux.org/debian jessie main'
-    state=present
-    update_cache=yes
-
 - apt: name={{ item }} state=present install_recommends=no default_release=jessie-backports
   with_items:
-    - build-essential # for zfs
+    - linux-image-amd64
+    - linux-headers-amd64
+
+- apt: name={{ item }} state=present install_recommends=no
+  with_items:
     - openntpd
     - kvm
     - qemu-kvm
@@ -21,12 +16,10 @@
     - virtinst
     - bridge-utils
     - netcat-openbsd
-    - linux-image-amd64
-    - linux-headers-amd64
-
-- apt: name={{ item }} state=present install_recommends=no
-  with_items:
-    - debian-zfs
+#    - build-essential # for zfs
+#    - zfs-dkms
+#    - zfsutils-linux
+#    - zfs-zed
 
 - service: name=openntpd state=started enabled=yes
 
@@ -35,6 +28,24 @@
 #   boot automatically on this kernel, and this causes issues with dkms for ZFS.
 
 # - /etc/network/interfaces configuration.
+
+# TODO: grub configuration to enable serial console? (not really working)
+# http://tech.sid3windr.be/2016/02/configuring-ipmi-serial-over-lan-on-debian-8-jessie/
+# /etc/default/grub
+# GRUB_TERMINAL="serial console"
+# GRUB_SERIAL_COMMAND="serial --speed=19200 --unit=1 --word=8 --parity=no --stop=1"
+# GRUB_CMDLINE_LINUX_DEFAULT="console=tty0 console=ttyS1,19200n8"
+
+# TODO: reduce network timeout delay
+
+- name: Create networking.service.d directory
+  file: path="/etc/systemd/system/networking.service.d/" state=directory mode=0755 owner=root group=root
+
+# [Service]
+# TimeoutStartSec=15
+# TODO: reload systemd (systemctl daemon-reload)
+
+# TODO: remove OVH stuff from /etc/rc.local
 
 - name: Deploy the network interfaces configuration
   template:
@@ -48,7 +59,19 @@
 # - net.ipv4.ip_forward=1
 # - net.ipv6.conf.all.forwarding=1
 
-#
-# For more documentation on KVM server(s), see their host_vars file.
-# Ex: host_vars/padthai.civicrm.org.
-#
+- name: Create preseeds directories
+  file: path="/etc/preseeds/" state=directory mode=0750 owner=root group=root
+  tags:
+    - kvm-server-preseeds
+
+- name: Create preseed hosts directories
+  file: path="/etc/preseeds/{{ item }}" state=directory mode=0750 owner=root group=root
+  with_items: "{{ kvm_hosts }}"
+  tags:
+    - kvm-server-preseeds
+
+- name: Generate preseed files for VMs on this host
+  template: src=etc/preseeds/host/preseed.cfg dest=/etc/preseeds/{{ item }}/preseed.cfg owner=root group=root mode=0640
+  with_items: "{{ kvm_hosts }}"
+  tags:
+    - kvm-server-preseeds

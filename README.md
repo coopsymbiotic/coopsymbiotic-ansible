@@ -29,6 +29,15 @@ apt-get install -t jessie-backports ansible
 
 (assuming you have configured jessie backports)
 
+Git clone this repo with submodules
+-----------------------------------
+
+This set of Ansible playbooks/roles includes submodules. Make sure you clone recursively:
+
+```
+git clone --recursive https://github.com/coopsymbiotic/coopsymbiotic-ansible.git
+```
+
 New node bootstrap
 ------------------
 
@@ -44,7 +53,7 @@ user account that can sudo root:
 4- Run the following setup:
 
 ```
-ansible-playbook -l example.symbiotic.coop -u mathieu --become-user=root --ask-become-pass ./setup.yml
+ansible-playbook -l example.symbiotic.coop -u mathieu --become-user=root --ask-become-pass --ask-pass ./setup.yml
 ```
 
 5- And finally the normal run:

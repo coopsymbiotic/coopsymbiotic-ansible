@@ -144,6 +144,8 @@
   register: hostmaster_root
   tags:
     - aegir-hosting-civicrm
+    - aegir-hosting-https
+    - aegir-civicrm-platform
 
 # Unless we check if it's already a git repo, in most cases it's static
 # since it has been updated by the aegir3 debian packages.
@@ -170,12 +172,47 @@
     - aegir-hosting-civicrm
 
 ##
+## Deploy hosting_https
+##
+# FIXME: if hosting_https is already deployed, and Aegir has chmod 0777 everything
+# it will cause problems with the dehydrated submodule (which won't be reset by force=yes on the parent).
+- name: Deploy latest hosting_https from Git
+  become: true
+  become_user: aegir
+  git: repo=https://gitlab.com/aegir/hosting_https.git
+       version=master
+       dest="{{ hostmaster_root.stdout }}/sites/{{ inventory_hostname }}/modules/hosting_https"
+       update=yes
+       force=yes
+       recursive=yes
+  tags:
+    - aegir-hosting-https
+
+##
 ## Configurations
 ##
 - name: Aegir modules | Enable a few extra Aegir modules
-  shell: "drush @hm en hosting_ssl hosting_alias hosting_clone hosting_git hosting_git_pull hosting_tasks_extra hosting_civicrm_cron hosting_civicrm -y"
+  shell: "drush @hm en hosting_https hosting_letsencrypt hosting_alias hosting_clone hosting_git hosting_git_pull hosting_tasks_extra hosting_civicrm_cron hosting_civicrm -y"
   become: true
   become_user: aegir
+  tags:
+    - aegir-hosting-https
+
+- name: Aegir modules | Enable hosting_nginx_https
+  shell: "drush @hm en hosting_nginx_https -y"
+  become: true
+  become_user: aegir
+  when: "'aegir-apache' not in group_names"
+  tags:
+    - aegir-hosting-https
+
+- name: Aegir modules | Enable hosting_apache_https
+  shell: "drush @hm en hosting_apache_https -y"
+  become: true
+  become_user: aegir
+  when: "'aegir-apache' in group_names"
+  tags:
+    - aegir-hosting-https
 
 - name: Aegir modules | Disable the annoying Drupal overlay
   shell: "drush @hm dis overlay -y"
@@ -206,8 +243,7 @@
     - { name: 'hosting_feature_http_basic_auth', value: '1' }
     - { name: 'hosting_feature_migrate', value: '1' }
     - { name: 'hosting_feature_remote_import', value: '1' }
-    - { name: 'hosting_feature_ssl', value: '1' }
-    - { name: 'hosting_feature_nginx_ssl', value: '1' }
+    - { name: 'hosting_feature_fix_ownership', value: '1' }
     - { name: 'hosting_feature_sync', value: '1' }
     - { name: 'hosting_feature_tasks_extra', value: '1' }
     - { name: 'hosting_feature_task_gc', value: '1' }

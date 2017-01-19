@@ -146,6 +146,7 @@
     - aegir-hosting-civicrm
     - aegir-hosting-https
     - aegir-civicrm-platform
+    - aegir-fixownership
 
 # Unless we check if it's already a git repo, in most cases it's static
 # since it has been updated by the aegir3 debian packages.
@@ -286,6 +287,16 @@
   tags:
     - aegir
     - aegir-wkhtmltopdf
+
+- name: Configure the fix-ownership and fix-permissions scripts
+  shell: "bash /var/aegir/{{ hostmaster_root.stdout }}/profiles/hostmaster/modules/aegir/hosting_tasks_extra/{{ item }}/scripts/install.sh"
+  with_items:
+    - fix_ownership
+    - fix_permissions
+  args:
+    creates: /usr/local/bin/fix-drupal-site-ownership.sh
+  tags:
+    - aegir-fixownership
 
 - include: letsencrypt.yml
 - include: settings-php.yml

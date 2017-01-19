@@ -1,9 +1,7 @@
 ---
 
-- name: Create users
-  user:
-    name: "{{ item | basename | regex_replace('\.pub$', '') }}"
-    shell: /bin/bash
+- name: Create system users
+  user: name={{ item | basename | regex_replace('\.pub$', '') }} shell="/bin/bash"
   with_fileglob:
     - /etc/ansible/files/sshkeys/global/*.pub
   tags:

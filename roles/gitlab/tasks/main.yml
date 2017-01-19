@@ -26,3 +26,7 @@
   tags:
     - gitlab
     - packages
+
+## TODO:
+## /etc/gitlab/gitlab.rb
+## openssl dhparam -check -5 4096 -out /etc/gitlab/dhparams.4096

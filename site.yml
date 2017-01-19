@@ -112,14 +112,6 @@
   tags:
     - backupninja-rdiff
 
-- hosts: openwrt-mesh-nodes
-  sudo: yes
-  gather_facts: no
-  roles:
-    - openwrt-babelmesh
-  tags:
-    - openwrt-babelmesh
-
 - hosts: munin-nodes
   sudo: yes
   roles:

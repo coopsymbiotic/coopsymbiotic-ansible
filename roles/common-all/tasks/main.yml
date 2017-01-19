@@ -37,3 +37,10 @@
   tags:
     - common-all
     - common-all-rsyslog
+
+- name: network | Deploy IPv6 configuration script
+  template: src=etc/network/if-up.d/symbiotic-ipv6 dest=/etc/network/if-up.d/symbiotic-ipv6 owner=root group=root mode=0755
+  when: preseed_ipv6_address is defined
+  tags:
+    - common-all
+    - common-all-ipv6

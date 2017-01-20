@@ -289,7 +289,7 @@
     - aegir-wkhtmltopdf
 
 - name: Configure the fix-ownership and fix-permissions scripts
-  shell: "bash /var/aegir/{{ hostmaster_root.stdout }}/profiles/hostmaster/modules/aegir/hosting_tasks_extra/{{ item }}/scripts/install.sh"
+  shell: "bash {{ hostmaster_root.stdout }}/profiles/hostmaster/modules/aegir/hosting_tasks_extra/{{ item }}/scripts/install.sh"
   with_items:
     - fix_ownership
     - fix_permissions
@@ -317,6 +317,7 @@
   file: path=/var/aegir/.ssh state=directory mode=0700 owner=aegir group=aegir
   tags:
     - aegir-ssh
+    - aegir-civicrm-platform
 
 ##
 ## Platform management
@@ -325,16 +326,19 @@
   copy: src="/etc/ansible/files/sshkeys/aegir/id_rsa_platforms.pub" dest=/var/aegir/.ssh/id_rsa_platforms.pub owner="aegir" group="aegir" mode=0600
   tags:
     - aegir-ssh
+    - aegir-civicrm-platform
 
 - name: ssh | Copy the ssh platform priv key
   copy: src="/etc/ansible/files/sshkeys/aegir/id_rsa_platforms" dest=/var/aegir/.ssh/id_rsa_platforms owner="aegir" group="aegir" mode=0600
   tags:
     - aegir-ssh
+    - aegir-civicrm-platform
 
 - name: ssh | Create the .ssh/config file if necessary
   file: path=/var/aegir/.ssh/config state=touch mode=0600 owner=aegir group=aegir
   tags:
     - aegir-ssh
+    - aegir-civicrm-platform
 
 - name: ssh | Copy ssh config for this key
   blockinfile:
@@ -344,6 +348,7 @@
         IdentityFile /var/aegir/.ssh/id_rsa_platforms
   tags:
     - aegir-ssh
+    - aegir-civicrm-platform
 
 - name: ssh | Run ssh-keyscan to get client fingerprint
   shell: "ssh-keyscan -H -T 10 git-alt.symbiotic.coop"
@@ -353,6 +358,7 @@
   become_user: aegir
   tags:
     - aegir-ssh
+    - aegir-civicrm-platform
 
 - name: ssh | Add git ssh host key fingerprint to known_hosts to avoid prompt
   known_hosts:
@@ -362,6 +368,7 @@
   become_user: aegir
   tags:
     - aegir-ssh
+    - aegir-civicrm-platform
 
 - name: platform | Configure the CiviCRM 4.7 SymbioTIC platform
   shell: "drush provision-save @platform_CiviCRM47 --root=/var/aegir/platforms/civicrm-4.7 --context_type=platform --repo_url=ssh://git@git-alt.symbiotic.coop/symbiotic-platform-d7-civicrm.git --git_ref=4.7 --deploy_from_git=1"

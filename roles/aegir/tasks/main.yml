@@ -288,13 +288,21 @@
     - aegir
     - aegir-wkhtmltopdf
 
-- name: Configure the fix-ownership and fix-permissions scripts
+- name: Configure the fix-ownership scripts
   shell: "bash {{ hostmaster_root.stdout }}/profiles/hostmaster/modules/aegir/hosting_tasks_extra/{{ item }}/scripts/install.sh"
   with_items:
     - fix_ownership
-    - fix_permissions
   args:
     creates: /usr/local/bin/fix-drupal-site-ownership.sh
+  tags:
+    - aegir-fixownership
+
+- name: Configure the fix-permissions scripts
+  shell: "bash {{ hostmaster_root.stdout }}/profiles/hostmaster/modules/aegir/hosting_tasks_extra/{{ item }}/scripts/install.sh"
+  with_items:
+    - fix_permissions
+  args:
+    creates: /usr/local/bin/fix-drupal-site-permissions.sh
   tags:
     - aegir-fixownership
 

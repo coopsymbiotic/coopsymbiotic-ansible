@@ -83,6 +83,4 @@ fi
 PATH=$PATH:/var/aegir/bin:/var/aegir/.composer/vendor/bin
 
 # http://swapoff.org/ondir.html
-if [ -f /usr/share/ondir/integration/bash ]; then
-  source /usr/share/ondir/integration/bash
-fi
+source /usr/share/ondir/integration/bash

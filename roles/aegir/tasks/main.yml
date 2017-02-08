@@ -74,6 +74,14 @@
   tags:
     - packages
 
+# FIXME in Debian Stretch
+- name: Install ondir
+  apt:
+    deb: http://ftp.us.debian.org/debian/pool/main/o/ondir/ondir_0.2.3+git0.55279f03-1_amd64.deb
+  tags:
+    - packages
+    - packages-ondir
+
 # A bit off topic, but too often had the issue where mailname was misconfigured
 - copy: content="{{ inventory_hostname }}" dest=/etc/mailname
 - file: path=/etc/mailname owner=root group=root mode=0644
@@ -310,11 +318,14 @@
 - include: settings-php.yml
 - include: settings-mysql.yml
 
-- name: bash | Deploy our .bashrc for the Aegir user.
-  template: src=var/aegir/dot.bashrc dest=/var/aegir/.bashrc owner=aegir group=aegir mode=0644
-
-- name: bash | Deploy our .profile for the Aegir user (required for bashrc to be read).
-  template: src=var/aegir/dot.bashrc dest=/var/aegir/.bashrc owner=aegir group=aegir mode=0644
+- name: bash | Deploy bashrc, profile, ondir configurations
+  template: src=var/aegir/dot{{ item }} dest=/var/aegir/{{ item }} owner=aegir group=aegir mode=0644
+  with_items:
+    - .bashrc
+    - .profile
+    - .ondirrc
+  tags:
+    - aegir-bash
 
 - name: sudo | Deploy sudoers file for people who are allowed to sudo to aegir
   template: src=etc/sudoers.d/symbiotic-aegir dest=/etc/sudoers.d/symbiotic-aegir owner=root group=root mode=0440

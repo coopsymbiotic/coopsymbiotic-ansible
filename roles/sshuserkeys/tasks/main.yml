@@ -14,4 +14,10 @@
   tags:
     - sshtest
 
+- name: Add priviledged users to sudo group
+  user: name={{ item }} group="sudo" append=yes
+  with_items: "{{ root_sudoers }}"
+  tags:
+    - sshusers-sudoers
+
 # TODO: per-server, ex: /etc/ansible/files/sshkeys/{{ inventory_hostname }}/*.pub

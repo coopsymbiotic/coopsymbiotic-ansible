@@ -9,7 +9,6 @@
 #
 # (c) 2014, Benjamin Dos Santos <benjamin.dossantos@gmail.com>
 # https://github.com/bdossantos/nagios-plugins
-#
 
 while [[ -n "$1" ]]; do
   case $1 in
@@ -37,8 +36,26 @@ done
 warn=${warn:=90}
 crit=${crit:=95}
 
+# Debian 9 Stretch
+#               total        used        free      shared  buff/cache   available
+# Mem:       32630268    25341844     1382260      986152     5906164     5838536
+#
+# Debian 8 Jessie
+#              total       used       free     shared    buffers     cached
+# Mem:       2574660    2276008     298652     110856     297092     835852
+# -/+ buffers/cache:    1143064    1431596
+#
+# Ubuntu 16.04
+#               total        used        free      shared  buff/cache   available
+# Mem:        8175400     5152324      506908      214924     2516168     2451056
+
 memory_total=$(free | fgrep 'Mem:' | awk '{print $2}')
 memory_used=$(free | fgrep '/+ buffers/cache' | awk '{print $3}')
+
+if [ "$memory_used" == "" ]; then
+  memory_used=$(free | fgrep 'Mem:' | awk '{print $3}')
+fi
+
 memory_free=$((memory_total - memory_used))
 memory_free_human=$((memory_free / 1024))
 percentage=$((memory_used * 100 / memory_total))

@@ -1,0 +1,83 @@
+---
+# Assumes Debian Jessie, with MariaDB, Nginx, php5-fpm
+#
+# FIXME: duplicates a lot of things from the 'aegir' role,
+# but we might not want to add a dependency, because the aegir
+# role will probably switch to php7 before this role does.
+
+# https://github.com/gaspaio/ansible-devbox/blob/master/roles/mysql/tasks/server.yml
+# Install server using a preseed file to set the root password
+- name: Check for previous MySQL installation
+  shell: "[ -f /usr/sbin/mysqld ]"
+  ignore_errors: True
+  register: mysqld_exists
+
+- apt: name={{ item }} state=present install_recommends=no
+  with_items:
+    - pwgen
+
+- name: Generate a root password for MySQL
+  shell: pwgen 15 1 > /root/.mysql.root
+  when: mysqld_exists|failed
+
+- apt:
+    name: "{{ item }}"
+    state: present
+    install_recommends: no
+    default_release: jessie-backports
+  with_items:
+    - nginx
+  tags:
+    - packages
+
+- apt: name={{ item }} state=present install_recommends=no
+  with_items:
+    - curl
+    - gettext
+    - php5-fpm
+    - php5-gd
+    - php5-cli
+    - php5-curl
+    - php5-intl
+    - php5-ldap
+    - php5-mcrypt
+    - php5-xsl
+  tags:
+    - packages
+
+# FIXME in Debian Stretch
+- name: Install ondir
+  apt:
+    deb: http://ftp.us.debian.org/debian/pool/main/o/ondir/ondir_0.2.3+git0.55279f03-1_amd64.deb
+  tags:
+    - packages
+    - packages-ondir
+
+# A bit off topic, but too often had the issue where mailname was misconfigured
+- copy: content="{{ inventory_hostname }}" dest=/etc/mailname
+- file: path=/etc/mailname owner=root group=root mode=0644
+
+# MariaDB 10.1
+- apt_key: keyserver=keyserver.ubuntu.com id=0xcbcb082a1bb943db
+  tags:
+    - packages
+    - php56-mariadb
+
+- apt_repository:
+    repo="deb http://ftp.osuosl.org/pub/mariadb/repo/10.1/debian {{ ansible_distribution_release }} main"
+    update_cache=yes
+    state=present
+  tags:
+    - packages
+    - php56-mariadb
+
+- apt: name={{ item }} state=present install_recommends=no
+  with_items:
+    - mariadb-server-10.1
+    - mariadb-client-10.1
+  tags:
+    - packages
+    - php56-mariadb
+
+- include: settings-php.yml
+- include: settings-mysql.yml

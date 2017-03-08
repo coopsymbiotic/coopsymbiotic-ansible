@@ -71,6 +71,10 @@ clean_challenge() {
     # The parameters are the same as for deploy_challenge.
 }
 
+exit_hook() {
+    # Implemented to avoid warning messages.
+}
+
 invalid_challenge() {
     echo " + Hook: Challenge is invalid..."
 }

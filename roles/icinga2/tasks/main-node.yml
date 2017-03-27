@@ -62,6 +62,8 @@
   args:
     creates: /etc/icinga2/features-enabled/api.conf
   notify: restart icinga2
+  tags:
+    - icinga2-api
 
 - template: src=features-available/api.conf dest=/etc/icinga2/features-available/api.conf owner=root group=root mode=0644
   notify: restart icinga2
@@ -89,6 +91,7 @@
     - /etc/icinga2/conf.d/commands
     - /etc/icinga2/scripts
   tags:
+    - icinga2
     - icinga2-custom-checks
 
 - name: Deploy custom checks scripts
@@ -99,6 +102,7 @@
     - check_memory
   notify: restart icinga2
   tags:
+    - icinga2
     - icinga2-custom-checks
 
 - name: Deploy custom checks script configurations
@@ -109,6 +113,7 @@
     - mem
   notify: restart icinga2
   tags:
+    - icinga2
     - icinga2-custom-checks
 
 - template: src="etc/sudoers.d/{{ item }}" dest="/etc/sudoers.d/{{ item }}" owner=root group=root mode=0440
@@ -116,8 +121,16 @@
     - aegir-icinga2
     - backup-icinga2
   tags:
+    - icinga2
     - icinga2-custom-checks
 
 # Remove old location for those configurations
 - file: path=/etc/icinga2/conf.d/services/civicrm.conf state=absent
+  tags:
+    - icinga2
+    - icinga2-custom-checks
+
 - file: path=/etc/icinga2/conf.d/services/mem.conf state=absent
+  tags:
+    - icinga2
+    - icinga2-custom-checks

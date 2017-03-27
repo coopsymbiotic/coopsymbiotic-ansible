@@ -3,8 +3,7 @@
 - apt: name={{ item }} state=present install_recommends=no
   with_items:
     - icinga2
-    - monitoring-plugins-basic # required for check_mem
-    - libnagios-plugin-perl
+    - monitoring-plugins-basic # may not be required anymore (was for check_mem, now in bash)
   tags:
     - packages
   when: ansible_distribution == "Debian"

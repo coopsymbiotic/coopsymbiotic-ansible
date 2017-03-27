@@ -80,9 +80,6 @@
     removes: /etc/icinga2/features-enabled/notification.conf
   notify: restart icinga2
 
-- name: Disable satellite local configurations (otherwise disk/load checks will be duplicated)
-  replace: dest=/etc/icinga2/icinga2.conf regexp='^include_recursive "conf.d"' replace='# include_recursive "conf.d"'
-
 # This script is from nagios-plugins-contrib
 # but that package pulls in too many dependancies.
 - file: path="{{ item }}" state=directory owner=root group=nagios mode=0755

@@ -1,6 +1,12 @@
 ---
 # Installs Aegir3 (http://www.aegirproject.org)
 # Assumes Debian Jessie, with MariaDB, Nginx, php5-fpm
+# Experimental support for Debian Stretch (php7.0-fpm)
+
+- include_vars: "{{ ansible_distribution }}_{{ ansible_distribution_major_version }}.yml"
+  tags:
+    - packages
+    - packages-php
 
 # https://github.com/gaspaio/ansible-devbox/blob/master/roles/mysql/tasks/server.yml
 # Install server using a preseed file to set the root password
@@ -55,22 +61,50 @@
 
 - apt: name={{ item }} state=present install_recommends=no
   with_items:
-    - pwgen
-    - curl
-    - gettext
+    - "php{{ phpversion }}-fpm"
+    - "php{{ phpversion }}-gd"
+    - "php{{ phpversion }}-cli"
+    - "php{{ phpversion }}-curl"
+    - "php{{ phpversion }}-intl"
+    - "php{{ phpversion }}-json"
+    - "php{{ phpversion }}-ldap"
+    - "php{{ phpversion }}-mcrypt"
+    - "php{{ phpversion }}-mysql"
+    - "php{{ phpversion }}-xsl"
+  tags:
+    - packages
+    - packages-php
+
+# This is to help deal with Debian Stretch upgrades
+- apt: name={{ item }} state=absent install_recommends=no
+  with_items:
     - php5-fpm
     - php5-gd
     - php5-cli
+    - php5-common
     - php5-curl
     - php5-intl
+    - php5-json  
     - php5-ldap
     - php5-mcrypt
+    - php5-mysql 
     - php5-xsl
+  when: ansible_distribution_release == "stretch"
+  tags:
+    - packages
+    - packages-php
+
+- apt: name={{ item }} state=present install_recommends=no
+  with_items:
+    - pwgen
+    - curl
+    - gettext
     - xauth
     - xvfb
     - libxrender1
     - ttf-mscorefonts-installer
     - fonts-dejavu-core
+    - imagemagick
   tags:
     - packages
 

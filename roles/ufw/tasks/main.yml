@@ -57,6 +57,12 @@
   tags:
     - ufw
 
+- name: Disable logging
+  ufw:
+    logging: off
+  tags:
+    - ufw
+
 - name: Restart ufw
   service: name=ufw state=restarted
   tags:

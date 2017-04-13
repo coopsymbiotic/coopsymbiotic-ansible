@@ -13,7 +13,7 @@ deploy_cert() {
       service apache2 reload
     elif [ -x /usr/sbin/apachectl ]; then
       # for Plesk (qct)
-      cat /etc/dehydrated/keys/${DOMAIN}/privkey.pem /etc/dehydrated/keys/${DOMAIN}/fullchain.pem >> /etc/dehydrated/keys/${DOMAIN}/privkey-and-fullchain.pem
+      cat /etc/dehydrated/keys/${DOMAIN}/privkey.pem /etc/dehydrated/keys/${DOMAIN}/fullchain.pem > /etc/dehydrated/keys/${DOMAIN}/privkey-and-fullchain.pem
 
       echo " + Hook: Reloading Apache configuration..."
       apachectl graceful

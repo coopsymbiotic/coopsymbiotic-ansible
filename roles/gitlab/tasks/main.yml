@@ -8,7 +8,7 @@
     - gitlab
     - packages
 
-- name: Get the Docker repo key
+- name: Get the Gitlab repo key
   apt_key: url=https://packages.gitlab.com/gitlab/gitlab-ce/gpgkey state=present
   tags:
     - gitlab

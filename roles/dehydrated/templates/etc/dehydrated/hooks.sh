@@ -72,7 +72,7 @@ clean_challenge() {
 }
 
 exit_hook() {
-    # Implemented to avoid warning messages.
+    echo " + Hook: exit"
 }
 
 invalid_challenge() {

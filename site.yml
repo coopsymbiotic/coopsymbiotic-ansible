@@ -6,6 +6,8 @@
     - icinga2
     - logcheck
     - filebeat
+    - backupninja-rdiff
+    - ufw
     - unattended-upgrades
   tags:
     - base
@@ -28,9 +30,7 @@
   sudo: yes
   roles:
     - aegir
-    - backupninja-rdiff
     - postfix
-    - ufw
   tags:
     - aegir
 
@@ -98,6 +98,13 @@
     - gitlab
   tags:
     - gitlab
+
+- hosts: php56-servers
+  sudo: yes
+  roles:
+    - php56fpm
+  tags:
+    - php56fpm
 
 - hosts: yubiauth-managed
   sudo: yes

@@ -1,7 +1,11 @@
 ---
-- apt: pkg=postfix state=installed
-- apt: pkg=opendkim state=installed
-- apt: pkg=opendkim-tools state=installed
+- apt: name={{ item }} state=present install_recommends=no
+  with_items:
+    - postfix
+    - opendkim
+    - opendkim-tools
+  tags:
+    - packages
 
 - name: Test if the bidon.ca key is present.
   stat: path=/etc/ssl/private/wildcard.bidon.ca.key

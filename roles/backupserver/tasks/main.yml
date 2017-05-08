@@ -1,19 +1,5 @@
 ---
-- apt: pkg=nsca-ng-client state=installed update_cache=yes
 
-- name: Deploy checkbackups script in /usr/local/bin/checkbackups.
-  template:
-    src: "checkbackups"
-    dest: "/usr/local/bin/checkbackups"
-    owner: "root"
-    group: "root"
-    mode: 0755
-
-- name: Configure cron for checkbackup.
-  cron:
-    name="checkbackup"
-    minute="5,35"
-    job="/usr/local/bin/checkbackups -s bagdad.bidon.ca"
-    cron_file="checkbackups"
-    user="root"
-    state=present
+# Nothing here now.
+# This use to deploy the check_backup/nsca script,
+# but it's now either in icinga2 or deprecated.

@@ -1,5 +1,8 @@
 ---
 
+# Installs Gitlab using Omnibus packages
+# https://about.gitlab.com/downloads/#debian8
+
 - apt: pkg="{{ item }}" state=installed
   with_items:
     - debian-archive-keyring

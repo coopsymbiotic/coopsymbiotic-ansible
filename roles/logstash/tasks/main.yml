@@ -3,31 +3,43 @@
 - apt_key:
     url=https://packages.elasticsearch.org/GPG-KEY-elasticsearch
     state=present
+  tags:
+    - packages
+    - packages-logstash
 
 - apt_repository:
-    repo='deb http://packages.elastic.co/elasticsearch/2.x/debian stable main'
+    repo='deb https://artifacts.elastic.co/packages/5.x/apt stable main'
     state=present
     update_cache=yes
+  tags:
+    - packages
+    - packages-logstash
 
 - apt_repository:
-    repo='deb http://packages.elasticsearch.org/logstash/2.2/debian stable main'
+    repo='deb http://packages.elastic.co/curator/4/debian stable main'
     state=present
     update_cache=yes
-
-# Ubuntu 12.05 LTS only has openjdk 7
-- apt: pkg=openjdk-7-jre state=installed
-  when: ansible_distribution == "Ubuntu" and ansible_lsb.major_release == "12"
+  tags:
+    - packages
+    - packages-logstash
 
 # Debian Jessie
 - apt: pkg=openjdk-8-jre state=installed
   when: ansible_distribution == "Debian"
+  tags:
+    - packages
+    - packages-logstash
 
-- apt: pkg=logstash state=installed
-- apt: pkg=elasticsearch state=installed
-
-# To generate maps of the clientips.
-- apt: pkg=geoip-database state=installed
-- apt: pkg=geoip-database-extra state=installed
+- apt: pkg="{{ item }}" state=installed
+  with_items:
+    - elasticsearch
+    - elasticsearch-curator
+    - logstash
+    - geoip-database
+    - geoip-database-extra
+  tags:
+    - packages
+    - packages-logstash
 
 - name: Logstash conf.d configurations
   template:
@@ -37,7 +49,7 @@
     group: "root"
     mode: 0644
   with_items:
-    - 01-lumberjack-input.conf
+    - 01-filebeat-input.conf
     - 02-syslogopenwrt-input.conf
     - 10-syslog.conf
     - 11-nginx.conf
@@ -59,12 +71,16 @@
     - apache-aegir
 
 - name: Open the lumberjack port for our machines only
-  ufw: proto=tcp port=5000 rule=allow src={{ item }}
-  with_items: logstash_server_allow_ips
+  ufw: proto=tcp port=5000 rule=allow src="{{ item }}"
+  with_items: "{{ logstash_server_allow_ips }}"
+  tags:
+    - logstash-ufw
 
 - name: Open the rsyslog port for our machines only
-  ufw: proto=udp port=5544 rule=allow src={{ item }}
-  with_items: logstash_server_allow_ips
+  ufw: proto=udp port=5544 rule=allow src="{{ item }}"
+  with_items: "{{ logstash_server_allow_ips }}"
+  tags:
+    - logstash-ufw
 
 - name: Add logstash user to the ssl-cert group.
   user: name=logstash groups="ssl-cert" append=yes
@@ -142,3 +158,5 @@
 - name: Enable the vhost (create a symlink).
   file: src=/etc/nginx/sites-available/{{ logstash_server_name }} dest=/etc/nginx/sites-enabled/{{ logstash_server_name }} state=link
   notify: restart nginx
+
+- include: curator.yml

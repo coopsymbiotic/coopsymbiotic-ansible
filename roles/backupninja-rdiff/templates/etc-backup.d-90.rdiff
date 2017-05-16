@@ -25,7 +25,6 @@ include = /etc
 include = /root
 include = /home
 include = /usr/local
-include = /usr/share/coquelicot
 include = /var/
 
 # included in the above, so not necessary

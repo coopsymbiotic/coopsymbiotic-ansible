@@ -56,7 +56,7 @@
 # TODO nginx?
 
 - name: Test this is Apache 2.4 on Debian
-  stat: path=/etc/apache2/conf-available/
+  stat: path=/etc/apache2/conf-available/apache2.conf
   register: apache24debian
 
 - name: Deploy dehydrated Apache 2.4 config file.

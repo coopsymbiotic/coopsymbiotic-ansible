@@ -90,5 +90,9 @@ invalid_challenge() {
     echo " + Hook: Challenge is invalid..."
 }
 
+request_failure() {
+    echo " + Hook: Request failed..."
+}
+
 HANDLER="$1"; shift
 "$HANDLER" "$@"

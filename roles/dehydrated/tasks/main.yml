@@ -30,6 +30,11 @@
   tags:
     - dehydrated
 
+- name: Deploy the X3 root CA for applications such as Zimbra.
+  template: src="etc/dehydrated/keys/root-ca-x3.pem" dest="/etc/dehydrated/keys/root-ca-x3.pem" owner=root group=root mode=0444
+  tags:
+    - dehydrated
+
 - name: Create dehydrated www directory.
   file: path="/var/www/dehydrated" state=directory mode=0755 owner=root group=root
   tags:
@@ -85,9 +90,28 @@
 - name: Test this is Apache 2.2 on CentOS
   stat: path=/etc/httpd/conf.d
   register: apache22centos
+  tags:
+    - dehydrated
 
 - name: Deploy dehydrated Apache 2.2 config file for CentOS.
   template: src=etc/apache2/conf-available/dehydrated.conf dest=/etc/httpd/conf.d/dehydrated.conf owner=root group=root mode=0444
   when: apache22centos.stat.exists
   tags:
     - dehydrated
+
+- name: Test this is a Zimbra server
+  stat: path=/opt/zimbra
+  register: zimbra
+  tags:
+    - dehydrated
+    - dehydrated-zimbra
+
+- name: Zimbra-specific dehydrated configurations
+  file: path="/opt/zimbra/ssl/dehydrated/keys" state=directory mode=0700 owner=zimbra group=zimbra
+  with_items:
+    - /opt/zimbra/ssl
+    - /opt/zimbra/ssl/letsencrypt
+  when: zimbra.stat.exists
+  tags:
+    - dehydrated
+    - dehydrated-zimbra

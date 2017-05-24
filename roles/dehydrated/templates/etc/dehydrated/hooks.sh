@@ -34,6 +34,17 @@ deploy_cert() {
       # Service has no reload
       /usr/bin/doveadm reload
     fi
+
+    # https://wiki.zimbra.com/wiki/Installing_a_LetsEncrypt_SSL_Certificate
+    if [ -x /opt/zimbra/bin/zmcontrol ]; then
+      echo " + Hook: Deploying certificate in Zimbra..."
+      cat /etc/dehydrated/keys/root-ca-x3.pem /etc/dehydrated/keys/${DOMAIN}/fullchain.pem > /opt/zimbra/ssl/dehydrated/root-and-fullchain.pem
+      cp /etc/dehydrated/keys/${DOMAIN}/{cert,fullchain,privkey}.pem /opt/zimbra/ssl/dehydrated/
+      chown zimbra.zimbra /opt/zimbra/ssl/dehydrated/*.pem
+      sudo -i -u zimbra /opt/zimbra/bin/zmcertmgr verifycrt comm /opt/zimbra/ssl/dehydrated/privkey.pem /opt/zimbra/ssl/dehydrated/cert.pem /opt/zimbra/ssl/dehydrated/root-and-fullchain.pem
+      cp /opt/zimbra/ssl/dehydrated/privkey.pem /opt/zimbra/ssl/zimbra/commercial/commercial.key
+      sudo -i -u zimbra /opt/zimbra/bin/zmcertmgr deploycrt comm /opt/zimbra/ssl/dehydrated/cert.pem /opt/zimbra/ssl/dehydrated/root-and-fullchain.pem
+    fi
 }
 
 unchanged_cert() {

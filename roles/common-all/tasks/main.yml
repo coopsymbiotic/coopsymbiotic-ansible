@@ -15,6 +15,7 @@
   with_items:
     - apt-transport-https
     - ca-certificates
+    - curl
     - etckeeper
     - fail2ban
     - gawk

@@ -71,6 +71,13 @@ deploy_challenge() {
     #   validation, this is what you want to put in the _acme-challenge
     #   TXT record. For HTTP validation it is the value that is expected
     #   be found in the $TOKEN_FILENAME file.
+
+    if [ -x /opt/zimbra/bin/zmcontrol ]; then
+      echo " + Hook: Stopping Zimbra..."
+      sudo -i -u zimbra zmmailboxdctl stop
+      systemctl enable nginx
+      systemctl start nginx
+    fi
 }
 
 clean_challenge() {
@@ -81,6 +88,13 @@ clean_challenge() {
     # files or DNS records that are no longer needed.
     #
     # The parameters are the same as for deploy_challenge.
+
+    if [ -x /opt/zimbra/bin/zmcontrol ]; then
+      echo " + Hook: Restarting Zimbra..."
+      systemctl stop nginx
+      systemctl disable nginx
+      sudo -i -u zimbra zmmailboxdctl start
+    fi
 }
 
 exit_hook() {

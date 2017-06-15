@@ -33,9 +33,11 @@
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ /etc/mysql/debian-start\[[0-9]+\]: Looking for 'mysql' as: /usr/bin/mysql
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ /etc/mysql/debian-start\[[0-9]+\]: Upgrading MySQL tables if necessary.
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ mysqld: [0-9]+ [:0-9]{8} InnoDB: 5.[0-9]+.[0-9]+ started; log sequence number [0-9]+
-^\w{3} [ :0-9]{11} [._[:alnum:]-]+ mysqld: [0-9]+ [:0-9]{8} [Note] Event Scheduler: Loaded [0-9]+ events
-^\w{3} [ :0-9]{11} [._[:alnum:]-]+ mysqld: [0-9]+ [:0-9]{8} [Note] /usr/sbin/mysqld: ready for connections.
-^\w{3} [ :0-9]{11} [._[:alnum:]-]+ mysqld: [0-9]+ [:0-9]{8} [Warning] Checking table: .*
+^\w{3} [ :0-9]{11} [._[:alnum:]-]+ mysqld: [0-9]+ [:0-9]{8} \[Note\] Event Scheduler: Loaded [0-9]+ events
+^\w{3} [ :0-9]{11} [._[:alnum:]-]+ mysqld: [0-9]+ [:0-9]{8} \[Note\] /usr/sbin/mysqld: ready for connections.
+^\w{3} [ :0-9]{11} [._[:alnum:]-]+ mysqld: [0-9]+ [:0-9]{8} \[Warning\] Checking table: .*
+^\w{3} [ :0-9]{11} [._[:alnum:]-]+ mysqld: [0-9]+ [:0-9]{8} \[Warning\] Aborted connection .*
+^\w{3} [ :0-9]{11} [._[:alnum:]-]+ mysqld: [-0-9]+ [:0-9]+ [0-9]+ [Warning] Aborted connection .*
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ sshd\[[0-9]+\]: Corrupted MAC on input. \[preauth\]
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ sshd\[[0-9]+\]: Disconnecting: Packet corrupt \[preauth\]
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ sshd\[[0-9]+\]: Disconnecting: Too many authentication failures for .*
@@ -43,13 +45,16 @@
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ sshd\[[0-9]+\]: subsystem request for sftp by user .*
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ sshd\[[0-9]+\]: fatal: Read from socket failed: Connection reset by peer \[preauth\]
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ sshd\[[0-9]+\]: fatal: Unable to negotiate a key exchange method \[preauth\]
+^\w{3} [ :0-9]{11} [._[:alnum:]-]+ sshd\[[0-9]+\]: fatal: Write failed: Broken pipe \[preauth\]
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ sshd\[[0-9]+\]: Received disconnect from .*
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ sshd\[[0-9]+\]: error: Received disconnect from .*
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ sshd\[[0-9]+\]: Accepted publickey for.*
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ sshd\[[0-9]+\]: Disconnecting: Change of username or service not allowed.*
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ sshd\[[0-9]+\]: fatal: no matching cipher found.*
+^\w{3} [ :0-9]{11} [._[:alnum:]-]+ sshd\[[0-9]+\]: fatal: no matching mac found.*
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ sshd\[[0-9]+\]: Protocol major versions differ for.*
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ sshd\[[0-9]+\]: Bad protocol version identification.*
+^\w{3} [ :0-9]{11} [._[:alnum:]-]+ sshd\[[0-9]+\]: Address 2607:f2c0:.* maps to.*
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ kernel: \[[\.0-9]+\] iptables dropped input: .*
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ kernel: \[[\.0-9]+\] ip6tables dropped input: .*
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ kernel: \[[\.0-9]+\] iptables dropped forward: .*
@@ -67,11 +72,13 @@
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ systemd\[[\.0-9]+\]: Removed slice.*
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ systemd\[[\.0-9]+\]: Reloading LSB: Apache2 web server.
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ systemd\[[\.0-9]+\]: Reloaded LSB: Apache2 web server.
+^\w{3} [ :0-9]{11} [._[:alnum:]-]+ systemd\[[\.0-9]+\]: Reloading A high performance webserver and a reverse proxy server.
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ systemd: pam_unix\(systemd-user:session\): session closed for user.*
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ systemd: pam_unix\(systemd-user:session\): session opened for user.*
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ systemd-logind\[[\.0-9]+\]: Removed session.*
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ systemd-logind\[[\.0-9]+\]: New session.*
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ apache2\[[\.0-9]+\]: Reloading web server: apache2.
+^\w{3} [ :0-9]{11} [._[:alnum:]-]+ nginx\[[\.0-9]+\]: nginx: \[warn\] conflicting server name "_" on.*ignored
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ dovecot: .*
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ milter-greylist: .*
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ spamd.*

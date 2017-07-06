@@ -26,8 +26,8 @@
 - name: Preseed Aegir Debian configurations
   shell: "{{ item }} | debconf-set-selections"
   with_items:
-    - echo "mariadb-server-10.1 mysql-server/root_password password `cat /root/.mysql.root`"
-    - echo "mariadb-server-10.1 mysql-server/root_password_again password `cat /root/.mysql.root`"
+    - echo "mariadb-server-10.2 mysql-server/root_password password `cat /root/.mysql.root`"
+    - echo "mariadb-server-10.2 mysql-server/root_password_again password `cat /root/.mysql.root`"
     - echo "debconf aegir/site string {{ inventory_hostname }}"
     - echo "debconf aegir/db_host string 127.0.0.1"
     - echo "debconf aegir/db_user string root"
@@ -55,13 +55,24 @@
     default_release: jessie-backports
   with_items:
     - nginx
+  when: ("'aegir-apache' not in group_names") and (ansible_distribution_release == "jessie")
+  tags:
+    - packages
+    - aegir-nginx
+
+- apt:
+    name: "{{ item }}"
+    state: present
+    install_recommends: no
+  with_items:
+    - nginx
+  when: ("'aegir-apache' not in group_names") and (ansible_distribution_release == "stretch")
   tags:
     - packages
     - aegir-nginx
 
 - apt: name={{ item }} state=present install_recommends=no
   with_items:
-    - "php{{ phpversion }}-fpm"
     - "php{{ phpversion }}-gd"
     - "php{{ phpversion }}-cli"
     - "php{{ phpversion }}-curl"
@@ -71,6 +82,14 @@
     - "php{{ phpversion }}-mcrypt"
     - "php{{ phpversion }}-mysql"
     - "php{{ phpversion }}-xsl"
+  tags:
+    - packages
+    - packages-php
+
+- apt: name={{ item }} state=present install_recommends=no
+  with_items:
+    - "php{{ phpversion }}-fpm"
+  when: "'aegir-apache' not in group_names"
   tags:
     - packages
     - packages-php
@@ -121,14 +140,14 @@
 - file: path=/etc/mailname owner=root group=root mode=0644
 
 # MariaDB 10.1
-- apt_key: keyserver=keyserver.ubuntu.com id=0xcbcb082a1bb943db
+- apt_key: keyserver=keyserver.ubuntu.com id=0xF1656F24C74CD1D8
   tags:
     - packages
     - aegir
     - aegir-mariadb
 
 - apt_repository:
-    repo="deb http://ftp.osuosl.org/pub/mariadb/repo/10.1/debian {{ ansible_distribution_release }} main"
+    repo="deb http://ftp.osuosl.org/pub/mariadb/repo/10.2/debian {{ ansible_distribution_release }} main"
     update_cache=yes
     state=present
   tags:
@@ -138,8 +157,8 @@
 
 - apt: name={{ item }} state=present install_recommends=no
   with_items:
-    - mariadb-server-10.1
-    - mariadb-client-10.1
+    - mariadb-server-10.2
+    - mariadb-client-10.2
   tags:
     - packages
     - aegir

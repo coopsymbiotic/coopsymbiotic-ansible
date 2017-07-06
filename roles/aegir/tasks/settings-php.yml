@@ -5,8 +5,8 @@
 
 - name: Symlink PHP5 configuration directory, for Debian-Jessie support
   file:
-    src="/etc/php/5"
-    dest="/etc/php5"
+    src="/etc/php5"
+    dest="/etc/php/5"
     owner=root group=root state=link
   when: ansible_distribution_release == "jessie"
   tags:
@@ -15,7 +15,7 @@
 - name: Apache | Deploy our PHP ini overrides.
   template:
     src="etc/php{{ phpversion }}/mods-available/90-symbiotic.ini"
-    dest="/etc/php{{ phpversion }}/mods-available/90-symbiotic.ini"
+    dest="/etc/php{{ phpversion }}/mods-enabled/90-symbiotic.ini"
     owner=root group=root mode=0644
   notify: restart apache2
   when: "'aegir-apache' in group_names"

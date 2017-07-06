@@ -10,6 +10,7 @@
   tags:
     - packages
     - packages-backports
+  when: ansible_distribution_release == "jessie"
 
 - apt: name={{ item }} state=present install_recommends=no
   with_items:
@@ -46,6 +47,13 @@
   tags:
     - common-all
     - common-all-rsyslog
+
+- name: network | Deploy IPv4 configuration
+  template: src=etc/network/interfaces dest=/etc/network/interfaces owner=root group=root mode=0644
+  when: preseed_ipv4_address is defined
+  tags:
+    - common-all
+    - common-all-ipv4
 
 - name: network | Deploy IPv6 configuration script
   template: src=etc/network/if-up.d/symbiotic-ipv6 dest=/etc/network/if-up.d/symbiotic-ipv6 owner=root group=root mode=0755

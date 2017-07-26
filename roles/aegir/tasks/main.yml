@@ -152,7 +152,7 @@
 - copy: content="{{ inventory_hostname }}" dest=/etc/mailname
 - file: path=/etc/mailname owner=root group=root mode=0644
 
-# MariaDB 10.1
+# MariaDB 10.2
 - apt_key: keyserver=keyserver.ubuntu.com id=0xF1656F24C74CD1D8
   tags:
     - packages
@@ -168,10 +168,9 @@
     - aegir
     - aegir-mariadb
 
-- apt: name={{ item }} state=present install_recommends=no
+- apt: name={{ item }} state=present
   with_items:
-    - mariadb-server-10.2
-    - mariadb-client-10.2
+    - mariadb-server
   tags:
     - packages
     - aegir

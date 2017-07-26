@@ -86,6 +86,16 @@
   tags:
     - packages
     - packages-php
+    - aegir-php
+
+- apt: name={{ item }} state=present install_recommends=no
+  with_items:
+    - "php{{ phpversion }}-mbstring"
+  when: phpversion >= 7.0
+  tags:
+    - packages
+    - packages-php
+    - aegir-php
 
 - apt: name={{ item }} state=present install_recommends=no
   with_items:
@@ -94,6 +104,7 @@
   tags:
     - packages
     - packages-php
+    - aegir-php
 
 # This is to help deal with Debian Stretch upgrades
 - apt: name={{ item }} state=absent install_recommends=no
@@ -113,6 +124,7 @@
   tags:
     - packages
     - packages-php
+    - aegir-php
 
 - apt: name={{ item }} state=present install_recommends=no
   with_items:

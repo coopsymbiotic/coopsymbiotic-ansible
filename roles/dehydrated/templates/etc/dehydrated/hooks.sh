@@ -97,6 +97,10 @@ clean_challenge() {
     fi
 }
 
+startup_hook() {
+    echo " + Hook: startup"
+}
+
 exit_hook() {
     echo " + Hook: exit"
 }

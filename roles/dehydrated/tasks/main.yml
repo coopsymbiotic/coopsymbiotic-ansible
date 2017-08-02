@@ -45,7 +45,6 @@
     name="dehydrated"
     minute="35"
     hour="9"
-    day="5,25"
     job="/usr/local/bin/dehydrated -c -f /etc/dehydrated/config.txt -o /etc/dehydrated/keys/ >/dev/null"
     cron_file="dehydrated"
     user="root"
@@ -61,7 +60,7 @@
 # TODO nginx?
 
 - name: Test this is Apache 2.4 on Debian
-  stat: path=/etc/apache2/conf-available/apache2.conf
+  stat: path=/etc/apache2/apache2.conf
   register: apache24debian
 
 - name: Deploy dehydrated Apache 2.4 config file.

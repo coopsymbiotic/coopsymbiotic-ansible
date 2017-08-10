@@ -213,7 +213,7 @@
 - name: Get Hostmaster root directory
   become: true
   become_user: aegir
-  shell: "drush @hm status | grep 'Drupal root' | awk '{ print $4 }'"
+  shell: "drush @hostmaster status | grep 'Drupal root' | awk '{ print $4 }'"
   register: hostmaster_root
   tags:
     - aegir-hosting-civicrm
@@ -241,7 +241,7 @@
 - name: Flush Hostmaster cache
   become: true
   become_user: aegir
-  shell: "drush @hm cc all"
+  shell: "drush @hostmaster cc all"
   tags:
     - aegir-hosting-civicrm
 
@@ -266,14 +266,14 @@
 ## Configurations
 ##
 - name: Aegir modules | Enable a few extra Aegir modules
-  shell: "drush @hm en hosting_https hosting_letsencrypt hosting_alias hosting_clone hosting_git hosting_git_pull hosting_tasks_extra hosting_civicrm_cron hosting_civicrm -y"
+  shell: "drush @hostmaster en hosting_https hosting_letsencrypt hosting_alias hosting_clone hosting_git hosting_git_pull hosting_tasks_extra hosting_civicrm_cron hosting_civicrm -y"
   become: true
   become_user: aegir
   tags:
     - aegir-hosting-https
 
 - name: Aegir modules | Enable hosting_nginx_https
-  shell: "drush @hm en hosting_nginx_https -y"
+  shell: "drush @hostmaster en hosting_nginx_https -y"
   become: true
   become_user: aegir
   when: "'aegir-apache' not in group_names"
@@ -281,7 +281,7 @@
     - aegir-hosting-https
 
 - name: Aegir modules | Enable hosting_apache_https
-  shell: "drush @hm en hosting_apache_https -y"
+  shell: "drush @hostmaster en hosting_apache_https -y"
   become: true
   become_user: aegir
   when: "'aegir-apache' in group_names"
@@ -289,19 +289,19 @@
     - aegir-hosting-https
 
 - name: Aegir modules | Disable the annoying Drupal overlay
-  shell: "drush @hm dis overlay -y"
+  shell: "drush @hostmaster dis overlay -y"
   become: true
   become_user: aegir
 
 - name: Aegir settings | Enable Aegir queue process
-  shell: "drush @hm vset hosting_feature_queued 1"
+  shell: "drush @hostmaster vset hosting_feature_queued 1"
   become: true
   become_user: aegir
   tags:
     - aegir-settings
 
 - name: Aegir settings | Set CiviCRM default cron interval to 15 mins
-  shell: "drush @hm vset hosting_civicrm_cron_default_interval 900"
+  shell: "drush @hostmaster vset hosting_civicrm_cron_default_interval 900"
   become: true
   become_user: aegir
   tags:
@@ -310,7 +310,7 @@
 - name: Aegir settings | Misc other settings
   become: true
   become_user: aegir
-  shell: "drush @hm vset {{ item.name }} {{ item.value }}"
+  shell: "drush @hostmaster vset {{ item.name }} {{ item.value }}"
   with_items:
     - { name: 'hosting_feature_git', value: '1' }
     - { name: 'hosting_feature_git_pull', value: '1' }
@@ -330,7 +330,7 @@
 - name: Aegir settings | Delete a few settings
   become: true
   become_user: aegir
-  shell: "drush @hm vdel {{ item }}"
+  shell: "drush @hostmaster vdel {{ item }}"
   with_items:
     - update_notify_emails
 
@@ -464,7 +464,7 @@
     - aegir-civicrm-platform
 
 - name: platform | Trigger installation of the CiviCRM 4.7 SymbioTIC platform
-  shell: "drush @hm hosting-import @platform_CiviCRM47"
+  shell: "drush @hostmaster hosting-import @platform_CiviCRM47"
   args:
     creates: /var/aegir/platforms/civicrm-4.7
   become: true

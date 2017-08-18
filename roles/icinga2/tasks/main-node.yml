@@ -96,6 +96,7 @@
   with_items:
     - check_backup
     - check_civicrm
+    - check_file_content
     - check_memory
   notify: restart icinga2
   tags:
@@ -107,6 +108,7 @@
   with_items:
     - backup
     - civicrm
+    - file_content
     - mem
   notify: restart icinga2
   tags:

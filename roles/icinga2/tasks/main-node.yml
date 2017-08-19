@@ -80,19 +80,21 @@
     removes: /etc/icinga2/features-enabled/notification.conf
   notify: restart icinga2
 
-# This script is from nagios-plugins-contrib
-# but that package pulls in too many dependancies.
+## Custom scripts
+##
+## We deploy the scripts to /usr/local/lib/icinga2-plugins
+## because some are run by less-privileged users and might not have access to /etc/icinga2
 - file: path="{{ item }}" state=directory owner=root group=nagios mode=0755
   with_items:
     - /etc/icinga2/conf.d/services
     - /etc/icinga2/conf.d/commands
-    - /etc/icinga2/scripts
+    - /usr/local/lib/icinga2-plugins
   tags:
     - icinga2
     - icinga2-custom-checks
 
-- name: Deploy custom checks scripts
-  copy: src="etc/icinga2/scripts/{{ item }}" dest="/etc/icinga2/scripts/{{ item }}" owner=root group=root mode=0755
+- name: Deploy custom checks
+  copy: src="etc/icinga2/scripts/{{ item }}" dest="/usr/local/lib/icinga2-plugins/{{ item }}" owner=root group=root mode=0755
   with_items:
     - check_backup
     - check_civicrm
@@ -103,7 +105,7 @@
     - icinga2
     - icinga2-custom-checks
 
-- name: Deploy custom checks script configurations
+- name: Deploy custom checks configurations
   copy: src="etc/icinga2/conf.d/commands/{{ item }}.conf" dest="/etc/icinga2/conf.d/commands/{{ item }}.conf" owner=root group=root mode=0644
   with_items:
     - backup

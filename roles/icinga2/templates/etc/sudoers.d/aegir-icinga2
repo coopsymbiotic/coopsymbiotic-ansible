@@ -1,2 +1,3 @@
 # {{ ansible_managed }}
 nagios ALL=(aegir) NOPASSWD: /usr/local/bin/drush * cvapi System.check --out=json
+nagios ALL=(aegir) NOPASSWD: /usr/local/lib/icinga2-plugins/check_file_content

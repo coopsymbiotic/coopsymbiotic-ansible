@@ -82,6 +82,7 @@
     - "php{{ phpversion }}-ldap"
     - "php{{ phpversion }}-mcrypt"
     - "php{{ phpversion }}-mysql"
+    - "php{{ phpversion }}-soap"
     - "php{{ phpversion }}-xsl"
   tags:
     - packages
@@ -91,6 +92,7 @@
 - apt: name={{ item }} state=present install_recommends=no
   with_items:
     - "php{{ phpversion }}-mbstring"
+    - "php{{ phpversion }}-zip"
   when: phpversion >= 7.0
   tags:
     - packages
@@ -115,10 +117,11 @@
     - php5-common
     - php5-curl
     - php5-intl
-    - php5-json  
+    - php5-json
     - php5-ldap
     - php5-mcrypt
-    - php5-mysql 
+    - php5-mysql
+    - php5-soap
     - php5-xsl
   when: ansible_distribution_release == "stretch"
   tags:

@@ -5,6 +5,7 @@
     - icinga2
     - monitoring-plugins-basic # may not be required anymore (was for check_mem, now in bash)
   tags:
+    - icinga2
     - packages
   when: ansible_distribution == "Debian"
 
@@ -14,6 +15,7 @@
     - nagios-plugins
     - libnagios-plugin-perl
   tags:
+    - icinga2
     - packages
   when: ansible_distribution == "Ubuntu"
 
@@ -34,24 +36,28 @@
   args:
     creates: /etc/icinga2/pki/{{ inventory_hostname }}.key
   tags:
+    - icinga2
     - icinga2-cert
 
 - shell: icinga2 pki save-cert --key /etc/icinga2/pki/{{ inventory_hostname }}.key --cert /etc/icinga2/pki/{{ inventory_hostname }}.crt --trustedcert /etc/icinga2/pki/trusted-master.crt --host {{ icinga2_main_node }}
   args:
     creates: /etc/icinga2/pki/trusted-master.crt
   tags:
+    - icinga2
     - icinga2-cert
 
 - shell: icinga2 pki ticket --cn {{ inventory_hostname }}
   delegate_to: "{{ icinga2_main_node }}"
   register: ticket
   tags:
+    - icinga2
     - icinga2-cert
 
 - shell: icinga2 pki request --host {{ icinga2_main_node }} --ticket {{ ticket.stdout }} --key /etc/icinga2/pki/{{ inventory_hostname }}.key --cert /etc/icinga2/pki/{{ inventory_hostname }}.crt --trustedcert /etc/icinga2/pki/trusted-master.crt --ca /etc/icinga2/pki/ca.crt
   args:
     creates: /etc/icinga2/pki/ca.crt
   tags:
+    - icinga2
     - icinga2-cert
 
 - template: src=zones.conf dest=/etc/icinga2/zones.conf owner=root group=root mode=0644
@@ -63,6 +69,7 @@
     creates: /etc/icinga2/features-enabled/api.conf
   notify: restart icinga2
   tags:
+    - icinga2
     - icinga2-api
 
 - template: src=features-available/api.conf dest=/etc/icinga2/features-available/api.conf owner=root group=root mode=0644
@@ -72,6 +79,7 @@
   delegate_to: "{{ icinga2_main_node }}"
   notify: restart icinga2
   tags:
+    - icinga2
     - icinga2-cert
 
 - name: Disable Icinga2 notifications
@@ -79,6 +87,8 @@
   args:
     removes: /etc/icinga2/features-enabled/notification.conf
   notify: restart icinga2
+  tags:
+    - icinga2
 
 ## Custom scripts
 ##

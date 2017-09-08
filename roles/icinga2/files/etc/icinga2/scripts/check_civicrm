@@ -52,9 +52,9 @@ if ($tmp) {
 
       $check_descriptions[] = $val->title;
     }
-    elseif ($val->severity == 'error' || $val->severity == 'critical') {
+
+    if ($val->severity == 'error' || $val->severity == 'critical') {
       $check_status = 2;
-      $check_descriptions[] = $val->title;
     }
   }
 

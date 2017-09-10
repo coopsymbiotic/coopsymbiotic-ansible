@@ -433,12 +433,15 @@
     block: |
       Host git-alt.symbiotic.coop
         IdentityFile /var/aegir/.ssh/id_rsa_platforms
+      Host lab-platform-key.symbiotic.coop
+        HostName lab.symbiotic.coop
+        IdentityFile /var/aegir/.ssh/id_rsa_platforms
   tags:
     - aegir-ssh
     - aegir-civicrm-platform
 
 - name: ssh | Run ssh-keyscan to get client fingerprint
-  shell: "ssh-keyscan -H -T 10 git-alt.symbiotic.coop"
+  shell: "ssh-keyscan -H -T 10 lab-platform-key.symbiotic.coop"
   register: host_fingerprint
   changed_when: false
   become: true
@@ -449,7 +452,7 @@
 
 - name: ssh | Add git ssh host key fingerprint to known_hosts to avoid prompt
   known_hosts:
-    name="git-alt.symbiotic.coop"
+    name="lab-platform-key.symbiotic.coop"
     key="{{ host_fingerprint.stdout }}"
   become: true
   become_user: aegir
@@ -458,7 +461,7 @@
     - aegir-civicrm-platform
 
 - name: platform | Configure the CiviCRM 4.7 SymbioTIC platform
-  shell: "drush provision-save @platform_CiviCRM47 --root=/var/aegir/platforms/civicrm-4.7 --context_type=platform --repo_url=ssh://git@git-alt.symbiotic.coop/symbiotic-platform-d7-civicrm.git --git_ref=4.7 --deploy_from_git=1"
+  shell: "drush provision-save @platform_CiviCRM47 --root=/var/aegir/platforms/civicrm-4.7 --context_type=platform --repo_url=git@lab-platform-key.symbiotic.coop:coopsymbiotic/symbiotic-platform-d7-civicrm.git --git_ref=4.7 --deploy_from_git=1"
   args:
     creates: /var/aegir/.drush/platform_CiviCRM47.alias.drushrc.php
   become: true

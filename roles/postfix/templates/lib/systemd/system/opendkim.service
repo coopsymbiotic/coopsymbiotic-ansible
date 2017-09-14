@@ -1,0 +1,20 @@
+# {{ ansible_managed }}
+# https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=864162
+#
+[Unit]
+Description=OpenDKIM DomainKeys Identified Mail (DKIM) Milter
+Documentation=man:opendkim(8) man:opendkim.conf(5) man:opendkim-genkey(8) man:opendkim-genzone(8) man:opendkim-testadsp(8) man:opendkim-testkey http://www.opendkim.org/docs.html
+After=network.target nss-lookup.target
+
+[Service]
+Type=forking
+EnvironmentFile=-/etc/default/opendkim
+PIDFile=/var/run/opendkim/opendkim.pid
+User=opendkim
+UMask=0007
+ExecStart=/usr/sbin/opendkim -P /var/run/opendkim/opendkim.pid -p $SOCKET
+Restart=on-failure
+ExecReload=/bin/kill -USR1 $MAINPID
+
+[Install]
+WantedBy=multi-user.target

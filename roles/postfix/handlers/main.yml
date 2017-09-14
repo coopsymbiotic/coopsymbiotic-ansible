@@ -1,0 +1,12 @@
+---
+
+- name: restart opendkim
+  systemd:
+    state: restarted
+    daemon_reload: yes
+    name: opendkim
+
+- name: restart postfix
+  systemd:
+    state: restarted
+    name: postfix

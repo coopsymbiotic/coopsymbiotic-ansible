@@ -39,8 +39,12 @@
     - php70-cli
     - php70-curl
     - php70-intl
+    - php70-json
     - php70-ldap
     - php70-mcrypt
+    - php70-mysql
+    - php70-soap
+    - php70-zip
     - php70-xsl
   tags:
     - packages

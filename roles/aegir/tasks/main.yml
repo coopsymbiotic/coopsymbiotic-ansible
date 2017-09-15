@@ -83,6 +83,7 @@
     - "php{{ phpversion }}-mcrypt"
     - "php{{ phpversion }}-mysql"
     - "php{{ phpversion }}-soap"
+    - "php{{ phpversion }}-zip"
     - "php{{ phpversion }}-xsl"
   tags:
     - packages

@@ -1,5 +1,5 @@
 ---
-# Assumes Debian Jessie, with MariaDB, Nginx, php5-fpm
+# Assumes Debian Jessie, with MariaDB, Nginx, php70-fpm
 #
 # FIXME: duplicates a lot of things from the 'aegir' role,
 # but we might not want to add a dependency, because the aegir
@@ -34,14 +34,14 @@
   with_items:
     - curl
     - gettext
-    - php5-fpm
-    - php5-gd
-    - php5-cli
-    - php5-curl
-    - php5-intl
-    - php5-ldap
-    - php5-mcrypt
-    - php5-xsl
+    - php70-fpm
+    - php70-gd
+    - php70-cli
+    - php70-curl
+    - php70-intl
+    - php70-ldap
+    - php70-mcrypt
+    - php70-xsl
   tags:
     - packages
 
@@ -61,23 +61,23 @@
 - apt_key: keyserver=keyserver.ubuntu.com id=0xcbcb082a1bb943db
   tags:
     - packages
-    - php56-mariadb
+    - php70-mariadb
 
 - apt_repository:
-    repo="deb http://ftp.osuosl.org/pub/mariadb/repo/10.1/debian {{ ansible_distribution_release }} main"
+    repo="deb http://ftp.osuosl.org/pub/mariadb/repo/10.2/debian {{ ansible_distribution_release }} main"
     update_cache=yes
     state=present
   tags:
     - packages
-    - php56-mariadb
+    - php70-mariadb
 
 - apt: name={{ item }} state=present install_recommends=no
   with_items:
-    - mariadb-server-10.1
-    - mariadb-client-10.1
+    - mariadb-server
+    - mariadb-client
   tags:
     - packages
-    - php56-mariadb
+    - php70-mariadb
 
 - include: settings-php.yml
 - include: settings-mysql.yml

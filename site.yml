@@ -99,12 +99,12 @@
   tags:
     - gitlab
 
-- hosts: php56-servers
+- hosts: php70-servers
   sudo: yes
   roles:
-    - php56fpm
+    - php70fpm
   tags:
-    - php56fpm
+    - php70fpm
 
 - hosts: yubiauth-managed
   sudo: yes

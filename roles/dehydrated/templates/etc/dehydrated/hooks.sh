@@ -10,7 +10,7 @@ deploy_cert() {
 
     if [ -x /usr/sbin/apache2ctl ]; then
       echo " + Hook: Reloading Apache configuration..."
-      service apache2 reload
+      systemctl reload apache2
     elif [ -x /usr/sbin/apachectl ]; then
       # for Plesk (qct)
       cat /etc/dehydrated/keys/${DOMAIN}/privkey.pem /etc/dehydrated/keys/${DOMAIN}/fullchain.pem > /etc/dehydrated/keys/${DOMAIN}/privkey-and-fullchain.pem
@@ -21,12 +21,12 @@ deploy_cert() {
 
     if [ -x /usr/sbin/nginx ]; then
       echo " + Hook: Reloading Nginx configuration..."
-      service nginx reload
+      systemctl reload nginx
     fi
 
     if [ -x /usr/sbin/postfix ]; then
       echo " + Hook: Reloading Postfix configuration..."
-      service postfix reload
+      systemctl reload postfix
     fi
 
     if [ -x /usr/bin/doveadm ]; then

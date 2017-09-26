@@ -72,11 +72,13 @@
     - packages
     - aegir-nginx
 
+# nb: imagick is required by Mosaico
 - apt: name={{ item }} state=present install_recommends=no
   with_items:
     - "php{{ phpversion }}-gd"
     - "php{{ phpversion }}-cli"
     - "php{{ phpversion }}-curl"
+    - "php{{ phpversion }}-imagick"
     - "php{{ phpversion }}-intl"
     - "php{{ phpversion }}-json"
     - "php{{ phpversion }}-ldap"

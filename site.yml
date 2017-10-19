@@ -59,9 +59,9 @@
 - hosts: backup-servers
   sudo: yes
   roles:
-    - backupserver
+    - backup-server
   tags:
-    - backupserver
+    - backup-server
 
 - hosts: logstash-servers
   sudo: yes

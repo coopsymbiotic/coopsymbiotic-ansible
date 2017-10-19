@@ -125,14 +125,14 @@
     - postfix-opendkim
 
 - name: Deploy the public OpenDKIM key
-  copy: src=/etc/ansible/files/etc/opendkim/201409.txt dest=/etc/opendkim/201409.txt owner=opendkim group=opendkim mode=0600
+  copy: src=/etc/ansible/files/etc/opendkim/201409.txt dest=/etc/opendkim/201409.txt owner=root group=root mode=0600
   notify: restart opendkim
   tags:
     - postfix
     - postfix-opendkim
 
 - name: Deploy the private OpenDKIM key
-  copy: src=/etc/ansible/files/etc/opendkim/201409.private dest=/etc/opendkim/201409.private owner=opendkim group=opendkim mode=0600
+  copy: src=/etc/ansible/files/etc/opendkim/201409.private dest=/etc/opendkim/201409.private owner=root group=root mode=0600
   notify: restart opendkim
   tags:
     - postfix
@@ -145,7 +145,7 @@
     - postfix-opendkim
 
 - name: Set OpenDKIM private key permissions.
-  file: path=/etc/opendkim/201409.private owner=opendkim group=opendkim mode=0600
+  file: path=/etc/opendkim/201409.private owner=root group=root mode=0600
   when: (stkey.stat.exists == true)
   notify: restart opendkim
   tags:
@@ -153,7 +153,7 @@
     - postfix-opendkim
 
 - name: Set OpenDKIM public key permissions.
-  file: path=/etc/opendkim/201409.txt owner=opendkim group=opendkim mode=0600
+  file: path=/etc/opendkim/201409.txt owner=root group=root mode=0600
   when: (stkey.stat.exists == true)
   notify: restart opendkim
   tags:

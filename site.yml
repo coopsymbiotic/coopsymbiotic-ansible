@@ -7,6 +7,7 @@
     - logcheck
     - filebeat
     - backupninja-rdiff
+    - mysqlbackup
     - ufw
     - unattended-upgrades
   tags:

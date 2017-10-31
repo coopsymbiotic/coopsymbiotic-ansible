@@ -362,13 +362,13 @@
 - name: Download wkhtmltopdf
   get_url:
     url=https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.4/wkhtmltox-0.12.4_linux-generic-amd64.tar.xz
-    dest=/usr/local/wkhtmltox-0.12.3_linux-generic-amd64.tar.xz
+    dest=/usr/local/wkhtmltox-0.12.4_linux-generic-amd64.tar.xz
     mode=0644
   tags:
     - aegir
     - aegir-wkhtmltopdf
 
-- unarchive: src=/usr/local/wkhtmltox-0.12.3_linux-generic-amd64.tar.xz dest=/usr/local/ copy=no
+- unarchive: src=/usr/local/wkhtmltox-0.12.4_linux-generic-amd64.tar.xz dest=/usr/local/ copy=no
   tags:
     - aegir
     - aegir-wkhtmltopdf

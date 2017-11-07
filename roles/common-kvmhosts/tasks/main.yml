@@ -1,3 +1,0 @@
----
-- apt: pkg=openntpd state=installed
-- service: name=openntpd state=started enabled=yes

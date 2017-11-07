@@ -75,12 +75,14 @@
   with_items: "{{ logstash_server_allow_ips }}"
   tags:
     - logstash-ufw
+    - ufw
 
 - name: Open the rsyslog port for our machines only
   ufw: proto=udp port=5544 rule=allow src="{{ item }}"
   with_items: "{{ logstash_server_allow_ips }}"
   tags:
     - logstash-ufw
+    - ufw
 
 - name: Add logstash user to the ssl-cert group.
   user: name=logstash groups="ssl-cert" append=yes

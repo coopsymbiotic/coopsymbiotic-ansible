@@ -43,8 +43,6 @@
 - name: Permissions on ido-mysql.conf file
   file: path=/etc/icinga2/features-available/ido-mysql.conf owner=root group=nagios mode=0640
 
-# TODO : ufw open 5668 tcp for NRPE
-
 ###
 ### PKI setup for satellite setup.
 ###
@@ -55,6 +53,7 @@
   tags:
     - icinga2
     - icinga2-ufw
+    - ufw
 
 # TODO : run pki new-ca ?
 

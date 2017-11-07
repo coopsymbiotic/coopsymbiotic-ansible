@@ -48,6 +48,11 @@
     - common-all
     - common-all-rsyslog
 
+- name: common | Deploy keyboard default conf
+  template: src=etc/default/keyboard dest=/etc/default/keyboard owner=root group=root mode=0644
+  tags:
+    - common-all
+
 - name: network | Deploy IPv4 configuration
   template: src=etc/network/interfaces dest=/etc/network/interfaces owner=root group=root mode=0644
   when: preseed_ipv4_address is defined

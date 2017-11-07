@@ -224,6 +224,7 @@
   tags:
     - aegir-hosting-civicrm
     - aegir-hosting-https
+    - aegir-hosting-wordpress
     - aegir-civicrm-platform
     - aegir-fixownership
 
@@ -252,6 +253,19 @@
     - aegir-hosting-civicrm
 
 ##
+## Deploy hosting_wordpress
+##
+- name: Deploy latest hosting_wordpress from Git
+  become: true
+  become_user: aegir
+  git: repo=https://github.com/mlutfy/hosting_wordpress.git
+       version=7.x-3.x
+       dest="{{ hostmaster_root.stdout }}/profiles/hostmaster/modules/aegir/hosting_wordpress"
+       update=yes
+  tags:
+    - aegir-hosting-wordpress
+
+##
 ## Deploy hosting_https
 ##
 # FIXME: if hosting_https is already deployed, and Aegir has chmod 0777 everything
@@ -272,11 +286,13 @@
 ## Configurations
 ##
 - name: Aegir modules | Enable a few extra Aegir modules
-  shell: "drush @hostmaster en hosting_https hosting_letsencrypt hosting_alias hosting_clone hosting_git hosting_git_pull hosting_tasks_extra hosting_civicrm_cron hosting_civicrm -y"
+  shell: "drush @hostmaster en hosting_https hosting_letsencrypt hosting_alias hosting_clone hosting_git hosting_git_pull hosting_tasks_extra hosting_civicrm_cron hosting_civicrm hosting_wpsite -y"
   become: true
   become_user: aegir
   tags:
     - aegir-hosting-https
+    - aegir-hosting-civicrm
+    - aegir-hosting-wordpress
 
 - name: Aegir modules | Enable hosting_nginx_https
   shell: "drush @hostmaster en hosting_nginx_https -y"

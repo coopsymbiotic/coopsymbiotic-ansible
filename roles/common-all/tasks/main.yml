@@ -1,5 +1,11 @@
 ---
-# Only install basic things which must be everywhere.
+
+# We deploy our sources.list to include "contrib"
+- name: common-all | Deploy apt sources.list
+  template: src=etc/apt/sources.list dest=/etc/apt/sources.list owner=root group=root mode=0644
+  tags:
+    - common-all
+
 - apt: update_cache=yes
   tags:
     - packages

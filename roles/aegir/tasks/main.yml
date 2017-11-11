@@ -417,6 +417,10 @@
 - include: settings-php.yml
 - include: settings-mysql.yml
 
+- include: civicrm.yml
+  tags:
+    - aegir-civicrm
+
 - name: bash | Deploy bashrc, profile, ondir configurations
   template: src=var/aegir/dot{{ item }} dest=/var/aegir/{{ item }} owner=aegir group=aegir mode=0644
   with_items:

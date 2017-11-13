@@ -124,8 +124,8 @@
     - php5-ldap
     - php5-mcrypt
     - php5-mysql
-    - php5-soap
     - php5-xsl
+    - php-soap
   when: ansible_distribution_release == "stretch"
   tags:
     - packages

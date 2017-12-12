@@ -1,0 +1,40 @@
+---
+
+- apt: pkg=apt-transport-https state=installed
+  tags:
+    - packages
+    - filebeat
+
+- apt_key:
+    url=https://artifacts.elastic.co/GPG-KEY-elasticsearch
+    state=present
+    validate_certs=false # on stretch, running into weird invalid cert error?
+  tags:
+    - packages
+    - filebeat
+
+- apt_repository:
+    repo='deb https://packages.elastic.co/beats/apt stable main'
+    state=present
+    update_cache=yes
+  tags:
+    - packages
+    - filebeat
+
+- apt: pkg=filebeat state=installed install_recommends=no
+  tags:
+    - packages
+    - filebeat
+
+- service: name=filebeat state=started enabled=yes
+
+- name: Deploy the filebeat configuration.
+  template:
+    src: "filebeat.yml"
+    dest: "/etc/filebeat/filebeat.yml"
+    owner: "root"
+    group: "root"
+    mode: 0644
+  notify: restart filebeat
+  tags:
+    - filebeat

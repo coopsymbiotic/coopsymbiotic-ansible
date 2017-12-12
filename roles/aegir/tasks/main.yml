@@ -475,22 +475,16 @@
     - aegir-ssh
     - aegir-civicrm-platform
 
-- name: ssh | Run ssh-keyscan to get client fingerprint
-  shell: "ssh-keyscan -H -T 10 lab-platform-key.symbiotic.coop"
-  register: host_fingerprint
-  changed_when: false
-  become: true
-  become_user: aegir
-  tags:
-    - aegir-ssh
-    - aegir-civicrm-platform
-
-- name: ssh | Add git ssh host key fingerprint to known_hosts to avoid prompt
+- name: ssh | Add git ssh host key fingerprints to known_hosts to avoid prompts
   known_hosts:
-    name="lab-platform-key.symbiotic.coop"
-    key="{{ host_fingerprint.stdout }}"
-  become: true
-  become_user: aegir
+    path='/etc/ssh/ssh_known_hosts'
+    host='{{ item }}'
+    key="{{ lookup('pipe', 'ssh-keyscan ' + item) }}"
+  with_items:
+    - lab.symbiotic.coop
+    - lab-platform-key.symbiotic.coop
+    - git.symbiotic.coop
+    - git-alt.symbiotic.coop
   tags:
     - aegir-ssh
     - aegir-civicrm-platform

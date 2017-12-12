@@ -59,12 +59,12 @@
 # - net.ipv4.ip_forward=1
 # - net.ipv6.conf.all.forwarding=1
 
-- name: Create preseeds directories
-  file: path="/etc/preseeds/" state=directory mode=0750 owner=root group=root
+- name: kvm preseeds | Create preseed directory
+  file: path="/etc/preseeds" state=directory mode=0750 owner=root group=root
   tags:
     - kvm-server-preseeds
 
-- name: Create preseed hosts directories
+- name: kvm preseeds | Create preseed hosts directories
   file: path="/etc/preseeds/{{ item }}" state=directory mode=0750 owner=root group=root
   with_items: "{{ kvm_hosts }}"
   tags:

@@ -6,20 +6,38 @@
   with_items:
     - linux-image-amd64
     - linux-headers-amd64
+  when: ansible_distribution_release == "jessie"
 
+- apt: name={{ item }} state=present install_recommends=no
+  with_items:
+    - linux-image-amd64
+    - linux-headers-amd64
+  when: ansible_distribution_release != "jessie"
+
+# FIXME: on Stretch, requires "contrib"
 - apt: name={{ item }} state=present install_recommends=no
   with_items:
     - openntpd
     - kvm
     - qemu-kvm
-    - libvirt-bin
     - virtinst
     - bridge-utils
     - netcat-openbsd
-#    - build-essential # for zfs
-#    - zfs-dkms
-#    - zfsutils-linux
-#    - zfs-zed
+    - zfs-dkms
+    - zfsutils-linux
+    - zfs-zed
+
+- apt: name={{ item }} state=present install_recommends=no
+  with_items:
+    - libvirt-bin
+    - libvirt-daemon
+    - libvirt-daemon-system
+  when: ansible_distribution_release == "jessie"
+
+- apt: name={{ item }} state=present install_recommends=no
+  with_items:
+    - libvirt-clients
+  when: ansible_distribution_release == "stretch"
 
 - service: name=openntpd state=started enabled=yes
 

@@ -32,8 +32,16 @@
   roles:
     - aegir
     - postfix
+    - gitlab-runner
   tags:
     - aegir
+
+- hosts: aegir-managed
+  sudo: yes
+  roles:
+    - gitlab-runner
+  tags:
+    - gitlab-runner
 
 - hosts: postfix-servers
   sudo: yes
@@ -49,13 +57,6 @@
   tags:
     - sslcerts
     - sslcertificates
-
-- hosts: aegir-managed
-  sudo: yes
-  roles:
-    - civicrm-environment
-  tags:
-    - civicrm-environment
 
 - hosts: backup-servers
   sudo: yes

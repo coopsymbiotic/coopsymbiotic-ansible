@@ -15,12 +15,19 @@
     - packages
 
 # Stretch does not have npm
+- name: Get the nodejs repo key
+  apt_key: url=https://deb.nodesource.com/gpgkey/nodesource.gpg.key state=present
+  tags:
+    - nodejs
+    - packages
+
 - apt_repository:
     repo='deb https://deb.nodesource.com/node_6.x stretch main'
     state=present
     update_cache=yes
   when: ansible_distribution_release == "stretch"
   tags:
+    - nodejs
     - packages
 
 - apt: name={{ item }} state=present install_recommends=no
@@ -28,6 +35,7 @@
     - nodejs
   when: ansible_distribution_release == "stretch"
   tags:
+    - nodejs
     - packages
 
 # libssl-dev from jessie-backports required for nodejs-dev, for node-gyp, for node, for npm..

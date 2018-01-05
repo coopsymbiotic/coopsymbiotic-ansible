@@ -5,7 +5,7 @@
   with_items:
     - icinga2
     - icinga2-ido-mysql
-    - nsca-ng-server
+    - icingacli
     - monitoring-plugins
     - monitoring-plugins-basic
     - monitoring-plugins-common
@@ -19,6 +19,7 @@
     - uwsgi-plugin-python
     - php7.0-fpm # otherwise apache gets installed
     - icingaweb2
+    - icingaweb2-module-monitoring
   tags:
     - packages
 
@@ -26,7 +27,7 @@
   template:
     src="{{ item }}"
     dest="/{{ item }}"
-    owner=root group=root mode=0640
+    owner=root group=nagios mode=0640
   with_items:
     - etc/icinga2/constants.conf
     - etc/icinga2/icinga2.conf
@@ -38,9 +39,6 @@
 - name: Enable command feature for icingaweb2
   file: src=/etc/icinga2/features-available/command.conf dest=/etc/icinga2/features-enabled/command.conf state=link
   notify: restart icinga2
-
-- name: Ensure that the nsca-ng directory exists
-  file: path=/var/run/nsca-ng state=directory owner=nagios group=nagios mode=0775
 
 - name: Permissions on ido-mysql.conf file
   file: path=/etc/icinga2/features-available/ido-mysql.conf owner=root group=nagios mode=0640
@@ -58,6 +56,8 @@
     - ufw
 
 # TODO : run pki new-ca ?
+# icinga2 pki new-ca
+# then copy the cert: cp -i /var/lib/icinga2/ca/ca.crt /etc/icinga2/pki/ca.crt # ?
 
 # NB: not using "inventory_hostname" because in our case,
 # it is usually a machine name ("sillyname.example.net"), but we name our CA "icinga.example.org".
@@ -76,20 +76,37 @@
   notify: restart icinga2
 
 ###
-### Graphite module setup
+### Icingaweb2 and Graphite module setup
 ###
 - name: Setup module directory in /var/lib/icingaweb2
   file: path=/var/lib/icingaweb2 state=directory owner=root group=root mode=0755
+  tags:
+    - icinga-icingaweb2
 
 - name: Setup module directory in /var/lib/icingaweb2/modules
   file: path=/var/lib/icingaweb2/modules state=directory owner=root group=root mode=0755
+  tags:
+    - icinga-icingaweb2
+
+- name: Deploy PHP configuration overrides
+  template:
+    src=etc/php/7.0/mods-available/symbiotic-icinga.ini
+    dest=/etc/php/7.0/mods-available/symbiotic-icinga.ini
+    owner=root group=root mode=0644
+  notify: restart php-fpm
+  tags:
+    - icingaweb2
+
+- name: Symlink PHP configuration to fpm
+  file: src="/etc/php/7.0/mods-available/symbiotic-icinga.ini" dest="/etc/php/7.0/fpm/conf.d/90-symbiotic-icinga.ini" owner=root group=root state=link
+  notify: restart php-fpm
+  tags:
+    - icingaweb2
 
 - name: Icingaweb2 symlinks for core modules
   file: src="{{ item.path }}" dest="{{ item.dest }}" owner=root group=root state=link
   with_items:
-    - { path: '/usr/share/icingaweb2/modules/doc', dest: '/var/lib/icingaweb2/modules/doc' }
-    - { path: '/usr/share/icingaweb2/modules/monitoring', dest: '/var/lib/icingaweb2/modules/monitoring' }
-    - { path: '/usr/share/icingaweb2/modules/setup', dest: '/var/lib/icingaweb2/modules/setup' }
+    - { path: '/usr/share/icingaweb2/modules/monitoring', dest: '/etc/icingaweb2/enabledModules/monitoring' }
 
 - name: Download the graphite module
   git: repo=https://github.com/findmypast/icingaweb2-module-graphite.git

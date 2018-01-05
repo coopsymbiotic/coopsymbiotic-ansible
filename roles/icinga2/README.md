@@ -64,7 +64,10 @@ Although, for now, this is mostly to avoid running the "apt" and "mem" checks on
 
 ### TODO
 
-* The configuration of the server is missing some bits to configure icingaweb2.
+* The configuration of the server is missing some bits to configure icingaweb2:
+  * nginx vhost configuration
+  * letsencrypt https cert (c.f. dehydrated role)
+  * icingaweb2 installation itself (which also requires creating a mysql user/db)
 
 * Master server should include zones.d/* (see icinga2.conf and uncomment the line).
 

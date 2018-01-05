@@ -68,6 +68,10 @@ Although, for now, this is mostly to avoid running the "apt" and "mem" checks on
   * nginx vhost configuration
   * letsencrypt https cert (c.f. dehydrated role)
   * icingaweb2 installation itself (which also requires creating a mysql user/db)
+  * enable features-available/ido-mysql
+  * create the icinga2 database (see ido-mysql, should have credentials with random pass)
+  * import the icinga2 schema: mysql --defaults-file=/etc/mysql/debian.cnf icinga2 < /usr/share/icinga2-ido-mysql/schema/mysql.sql
+  * configure the Monitoring Backend: https://www.icinga.com/docs/icinga2/latest/doc/02-getting-started/#enabling-the-ido-mysql-module
 
 * Master server should include zones.d/* (see icinga2.conf and uncomment the line).
 

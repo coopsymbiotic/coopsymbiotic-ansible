@@ -13,10 +13,12 @@
     - nagios-plugins-contrib
     - nginx-full
     - graphite-carbon
-    - graphite-web
     - graphite-api
+    - ufw
     - uwsgi
     - uwsgi-plugin-python
+    - php7.0-fpm # otherwise apache gets installed
+    - icingaweb2
   tags:
     - packages
 
@@ -26,7 +28,7 @@
     dest="/{{ item }}"
     owner=root group=root mode=0640
   with_items:
-    - etc/icinga2/constant.conf
+    - etc/icinga2/constants.conf
     - etc/icinga2/icinga2.conf
   notify: restart icinga2
   tags:

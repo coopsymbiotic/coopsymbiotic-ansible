@@ -33,6 +33,7 @@
     - aegir
     - postfix
     - gitlab-runner
+    - dehydrated
   tags:
     - aegir
 

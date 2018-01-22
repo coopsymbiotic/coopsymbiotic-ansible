@@ -62,6 +62,8 @@
 - name: Test this is Apache 2.4 on Debian
   stat: path=/etc/apache2/apache2.conf
   register: apache24debian
+  tags:
+    - dehydrated
 
 - name: Deploy dehydrated Apache 2.4 config file.
   template: src=etc/apache2/conf-available/dehydrated.conf dest=/etc/apache2/conf-available/dehydrated.conf owner=root group=root mode=0444
@@ -79,6 +81,8 @@
 - name: Test this is Apache 2.2 on Debian
   stat: path=/etc/apache2/conf.d/
   register: apache22debian
+  tags:
+    - dehydrated
 
 - name: Deploy dehydrated Apache 2.2 config file for Debian.
   template: src=etc/apache2/conf-available/dehydrated.conf dest=/etc/apache2/conf.d/dehydrated.conf owner=root group=root mode=0444

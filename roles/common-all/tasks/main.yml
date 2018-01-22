@@ -27,6 +27,7 @@
     - fail2ban
     - gawk
     - git
+    - less
     - libpam-yubico
     - ncdu
     - tmux

@@ -260,7 +260,7 @@
   become_user: aegir
   git: repo=https://github.com/mlutfy/hosting_wordpress.git
        version=7.x-3.x
-       dest="{{ hostmaster_root.stdout }}/profiles/hostmaster/modules/aegir/hosting_wordpress"
+       dest="{{ hostmaster_root.stdout }}/sites/{{ inventory_hostname }}/modules/hosting_wordpress"
        update=yes
   tags:
     - aegir-hosting-wordpress

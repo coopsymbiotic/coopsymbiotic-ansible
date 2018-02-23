@@ -3,6 +3,7 @@
 # nb: nagios-plugins-contrib is required for check_ssl_cert
 - apt: name={{ item }} state=present install_recommends=no
   with_items:
+    - dnsutils # required for check_dig
     - icinga2
     - icinga2-ido-mysql
     - icingacli
@@ -76,6 +77,23 @@
 
 - template: src=features-available/api.conf dest=/etc/icinga2/features-available/api.conf owner=root group=root mode=0644
   notify: restart icinga2
+
+# Custom checks
+- file: path="{{ item }}" state=directory owner=root group=nagios mode=0755
+  with_items:
+    - /usr/local/lib/icinga2-plugins
+  tags:
+    - icinga2
+    - icinga2-custom-checks
+
+- name: Deploy custom checks
+  copy: src="etc/icinga2/scripts/{{ item }}" dest="/usr/local/lib/icinga2-plugins/{{ item }}" owner=root group=root mode=0755
+  with_items:
+    - check_ssl_cert
+  notify: restart icinga2
+  tags:
+    - icinga2
+    - icinga2-custom-checks
 
 ###
 ### Icingaweb2 and Graphite module setup

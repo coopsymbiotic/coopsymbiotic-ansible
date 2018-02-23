@@ -51,14 +51,6 @@
   tags:
     - postfix
 
-- hosts: sslcerts
-  sudo: yes
-  roles:
-    - sslcerts
-  tags:
-    - sslcerts
-    - sslcertificates
-
 - hosts: backup-servers
   sudo: yes
   roles:

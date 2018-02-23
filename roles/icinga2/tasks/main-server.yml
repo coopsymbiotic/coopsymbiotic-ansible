@@ -58,7 +58,8 @@
 
 # TODO : run pki new-ca ?
 # icinga2 pki new-ca
-# then copy the cert: cp -i /var/lib/icinga2/ca/ca.crt /etc/icinga2/pki/ca.crt # ?
+# [no] then copy the cert: cp -i /var/lib/icinga2/ca/ca.crt /etc/icinga2/pki/ca.crt # ?
+# since v2.8, certs are in /var/lib/icinga2/{ca,pki} and the api.conf settings are deprecated.
 
 # NB: not using "inventory_hostname" because in our case,
 # it is usually a machine name ("sillyname.example.net"), but we name our CA "icinga.example.org".

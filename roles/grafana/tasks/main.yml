@@ -4,18 +4,39 @@
 - apt: pkg=apt-transport-https state=installed
   tags:
     - packages
+    - grafana
 
 - apt_key:
     url=https://packagecloud.io/gpg.key
     state=present
   tags:
     - packages
+    - grafana
 
 # http://docs.grafana.org/installation/debian/
 - apt_repository:
-    repo='deb https://packagecloud.io/grafana/stable/debian/ jessie main'
+    repo='deb https://packagecloud.io/grafana/stable/debian/ stretch main'
     state=present
     update_cache=yes
   tags:
     - packages
+    - grafana
 
+- apt: name={{ item }} state=present install_recommends=no
+  with_items:
+    - grafana
+  tags:
+    - packages
+    - grafana
+
+- name: Deploy the grafana basic configuration files
+  template:
+    src="{{ item }}"
+    dest="/{{ item }}"
+    owner=root group=grafana mode=0640
+  with_items:
+    - etc/grafana/grafana.ini
+  notify: restart grafana
+  tags:
+    - grafana
+    - grafana-base-configs

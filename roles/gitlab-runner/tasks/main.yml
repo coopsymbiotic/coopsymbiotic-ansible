@@ -5,13 +5,13 @@
     - debian-archive-keyring
     - apt-transport-https
   tags:
-    - gitlab
+    - gitlab-runner
     - packages
 
 - name: Get the Gitlab repo key
   apt_key: url=https://packages.gitlab.com/runner/gitlab-ci-multi-runner/gpgkey state=present
   tags:
-    - gitlab
+    - gitlab-runner
     - packages
 
 - apt_repository:
@@ -19,12 +19,12 @@
     state=present
     update_cache=yes
   tags:
-    - gitlab
+    - gitlab-runner
     - packages
 
 - apt: pkg=gitlab-ci-multi-runner state=installed
   tags:
-    - gitlab
+    - gitlab-runner
     - packages
 
 # Register the Runner with the Gitlab server
@@ -35,7 +35,7 @@
   register: configured_runners
   changed_when: False
   tags:
-    - gitlab
+    - gitlab-runner
 
 - name: Register runner to GitLab
   command: gitlab-runner register >
@@ -47,4 +47,17 @@
     --executor "{{ gitlab_runner_executor }}"
   when: configured_runners.stdout == ""
   tags:
-    - gitlab
+    - gitlab-runner
+
+- name: Reduce the check_interval to avoid DDoS the server
+  lineinfile:
+    path: /etc/gitlab-runner/config.toml
+    regexp: '^check_interval = \d+'
+    line: 'check_interval = 10'
+    owner: root
+    group: root
+    mode: 0600
+  notify: restart gitlab-runner
+  tags:
+    - gitlab-runner
+    - gitlab-runner-interval

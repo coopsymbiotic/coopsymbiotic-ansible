@@ -130,11 +130,15 @@
 
 - name: Download the graphite module
   git: repo=https://github.com/findmypast/icingaweb2-module-graphite.git
-       dest=/var/lib/icingaweb2/modules/graphite
+       dest=/usr/share/icingaweb2/modules/graphite
        update=yes
+  tags:
+    - icinga-graphite
 
 - name: Setup graphite icingaweb2 module configuration in /etc/icingaweb2/modules/graphite
   file: path=/etc/icingaweb2/modules/graphite state=directory owner=root group=root mode=0755
+  tags:
+    - icinga-graphite
 
 - name: Deploy the graphite retention configuration
   template:

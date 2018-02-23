@@ -14,6 +14,7 @@
     - nginx-full
     - graphite-carbon
     - graphite-api
+    - gunicorn3 # for graphite
     - ufw
     - uwsgi
     - uwsgi-plugin-python
@@ -115,6 +116,15 @@
 
 - name: Setup graphite icingaweb2 module configuration in /etc/icingaweb2/modules/graphite
   file: path=/etc/icingaweb2/modules/graphite state=directory owner=root group=root mode=0755
+
+- name: Deploy the graphite retention configuration
+  template:
+    src=etc/carbon/storage-schemas.conf
+    dest=/etc/carbon/storage-schemas.conf
+    owner=root group=root mode=0644
+  notify: restart graphite
+  tags:
+    - icinga-graphite
 
 - name: Deploy graphite icingaweb2 config file
   template:

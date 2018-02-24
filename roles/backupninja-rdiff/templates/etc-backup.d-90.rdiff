@@ -44,6 +44,7 @@ exclude = /home/*/.thumbnails
 exclude = /home/*/.beagle
 exclude = /home/*/.npm
 exclude = /home/*/.Trash
+exclude = /home/gitlab-runner/builds
 exclude = /var/cache
 exclude = /var/lib/apt
 exclude = /var/lib/dpkg

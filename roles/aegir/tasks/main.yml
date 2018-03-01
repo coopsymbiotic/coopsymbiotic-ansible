@@ -266,23 +266,6 @@
     - aegir-hosting-wordpress
 
 ##
-## Deploy hosting_https
-##
-# FIXME: if hosting_https is already deployed, and Aegir has chmod 0777 everything
-# it will cause problems with the dehydrated submodule (which won't be reset by force=yes on the parent).
-- name: Deploy latest hosting_https from Git
-  become: true
-  become_user: aegir
-  git: repo=https://gitlab.com/aegir/hosting_https.git
-       version=master
-       dest="{{ hostmaster_root.stdout }}/sites/{{ inventory_hostname }}/modules/hosting_https"
-       update=yes
-       force=yes
-       recursive=yes
-  tags:
-    - aegir-hosting-https
-
-##
 ## Configurations
 ##
 - name: Aegir modules | Enable a few extra Aegir modules

@@ -5,19 +5,20 @@
   with_fileglob:
     - /etc/ansible/files/sshkeys/global/*.pub
   tags:
-    - sshtest
+    - sshuserkeys
 
 - name: Deploy ssh user keys
   authorized_key: user={{ item | basename | regex_replace('\.pub$', '') }} key="{{ lookup('file', item) }}"
   with_fileglob:
     - /etc/ansible/files/sshkeys/global/*.pub
   tags:
-    - sshtest
+    - sshuserkeys
 
 - name: Add priviledged users to sudo group
   user: name={{ item }} group="sudo" append=yes
   with_items: "{{ root_sudoers }}"
   tags:
-    - sshusers-sudoers
+    - sshuserskeys
+    - sshuserskeys-sudoers
 
 # TODO: per-server, ex: /etc/ansible/files/sshkeys/{{ inventory_hostname }}/*.pub

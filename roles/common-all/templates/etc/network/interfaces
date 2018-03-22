@@ -4,11 +4,19 @@
 
 source /etc/network/interfaces.d/*
 
-# The loopback network interface
 auto lo
 iface lo inet loopback
 
-# The primary network interface
+{% if preseed_ipv4_bridged_gateway is defined %}
+allow-hotplug {{ preseed_network_interface }}
+iface {{ preseed_network_interface }} inet static
+        address {{ preseed_ipv4_address }}/32
+        broadcast {{ preseed_ipv4_address }}
+        post-up  /sbin/ip route add {{ preseed_ipv4_bridged_gateway }} dev {{ preseed_network_interface }}
+        post-up  /sbin/ip route add default via {{ preseed_ipv4_bridged_gateway }} dev {{ preseed_network_interface }}
+        dns-nameservers 8.8.8.8
+        dns-search {{ preseed_domain }}
+{% else %}
 allow-hotplug {{ preseed_network_interface }}
 iface {{ preseed_network_interface }} inet static
         address {{ preseed_ipv4_address }}
@@ -18,4 +26,5 @@ iface {{ preseed_network_interface }} inet static
         post-up  /sbin/ip route add {{ preseed_ipv4_gateway }} dev {{ preseed_network_interface }}
         post-up  /sbin/ip route add default via {{ preseed_ipv4_gateway }} dev {{ preseed_network_interface }}
         dns-nameservers 8.8.8.8
-        dns-search symbiotic.coop
+        dns-search {{ preseed_domain }}
+{% endif %}

@@ -176,6 +176,8 @@
 
 - apt: name={{ item }} state=present
   with_items:
+    - mariadb-client-10.2
+    - mariadb-server-10.2
     - mariadb-server
   tags:
     - packages
@@ -466,8 +468,6 @@
   with_items:
     - lab.symbiotic.coop
     - lab-platform-key.symbiotic.coop
-    - git.symbiotic.coop
-    - git-alt.symbiotic.coop
   tags:
     - aegir-ssh
     - aegir-civicrm-platform

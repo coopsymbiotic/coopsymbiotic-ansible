@@ -2,7 +2,7 @@
 
 [source]
 type = local
-keep = 60D
+keep = {{ backupninja_rdiff_keep }}
 
 # A few notes about includes and excludes:
 # 1. include, exclude and vsinclude statements support globbing with '*'

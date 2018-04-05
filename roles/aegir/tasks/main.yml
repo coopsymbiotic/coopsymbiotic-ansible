@@ -421,10 +421,11 @@
     - aegir-sudoers
 
 - name: ssh | Create the .ssh directory for the Aegir user
-  file: path=/var/aegir/.ssh state=directory mode=0700 owner=aegir group=aegir
+  file: path=/var/aegir/.ssh state=directory mode="{{ aegir_ssh_dir_permission }}" owner=aegir group="{{ aegir_ssh_dir_group }}"
   tags:
     - aegir-ssh
     - aegir-civicrm-platform
+    - aegir-ssh-test
 
 ##
 ## Platform management

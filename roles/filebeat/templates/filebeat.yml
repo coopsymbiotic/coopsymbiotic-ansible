@@ -8,7 +8,7 @@ filebeat:
         - /var/log/daemon.log
         - /var/log/apache2/error.log
         - /var/log/nginx/error.log
-      input_type: log
+      document_type: log
       ignore_older: 1h
       exclude_lines: [
         # CiviCRM security checks
@@ -81,13 +81,4 @@ filebeat:
 output:
   logstash:
     hosts: ["{{ filebeat_logstash_server }}:{{ filebeat_logstash_port }}"]
-
-    tls:
-      # Controls whether the client verifies server certificates and host name.
-      # If insecure is set to true, all server host names and certificates will be
-      # accepted. In this mode TLS based connections are susceptible to
-      # man-in-the-middle attacks. Use only for testing.
-      insecure: true
-
-      #cipher_suites: []
-      #curve_types: []
+    ssl.enabled: true

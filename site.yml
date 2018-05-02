@@ -70,6 +70,7 @@
   roles:
     - icinga2
     - grafana
+    - gitlab-runner
   tags:
     - icinga
     - icinga2

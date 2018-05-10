@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# {{ ansible_managed }}
+
 # Help menu
 print_help() {
 cat <<-HELP
@@ -65,5 +67,11 @@ find ./private -type f -exec chmod 660 '{}' \+
 
 printf "Changing permissions of all directories inside \"private\" directory in \"${site_path}\" to \"770\"...\n"
 find ./private -type d -exec chmod 770 '{}' \+
+
+printf "Changing permissions of all directories inside \"templates_c\" directory in \"${site_path}\" to \"2770\" (setgid)...\n"
+find ./files/civicrm/templates_c -type d -exec chmod 02770 '{}' \+
+
+printf "Changing permissions of all directories inside \"ConfigAndLog\" directory in \"${site_path}\" to \"2770\" (setgid)...\n"
+find ./files/civicrm/ConfigAndLog -type d -exec chmod 02770 '{}' \+
 
 echo "Done setting proper permissions on site files and directories."

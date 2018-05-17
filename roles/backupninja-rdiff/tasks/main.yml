@@ -52,6 +52,17 @@
   tags:
     - backupninja-rdiff
 
+- name: Update home directory permissions
+  delegate_to: "{{ backupserver }}"
+  file:
+    path="/backup/{{ inventory_hostname }}"
+    state=directory
+    owner="backups-{{ ansible_hostname }}"
+    group="backups-{{ ansible_hostname }}"
+    mode=0700
+  tags:
+    - backupninja-rdiff
+
 - name: Create the backup directory on backup server
   delegate_to: "{{ backupserver }}"
   file:
@@ -59,6 +70,7 @@
     state=directory
     owner="backups-{{ ansible_hostname }}"
     group="backups-{{ ansible_hostname }}"
+    mode=0700
   tags:
     - backupninja-rdiff
 

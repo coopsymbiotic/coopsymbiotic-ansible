@@ -9,12 +9,11 @@
 # Contact: wypychemil at gmail.com
 #
 # SOURCE: https://raw.githubusercontent.com/ewypych/icinga-domain-expiration-plugin/
-# [ML] changed warning to 20 days (instead of 30).
 #
 #############################################
 
 # default days for warning (can change with -w cmd)
-WARNING=20
+WARNING=30
  
 # default days for critical (can change with -c cmd)
 ALARM=10
@@ -74,6 +73,16 @@ check_domain()
 		then
 			EXDATE=$(${WHOIS} -h whois.dns.pl "${1}" | ${AWK} '/expiration date:/ { gsub("[:.]","-"); print $3 }') 
 		fi
+		EXP_DAYS=$(( ( $(date -ud ${EXDATE} +'%s') - $(date -ud `date +%Y-%m-%d` +'%s') )/60/60/24 ))
+	elif [ "$DTYPE" == "ca" ]
+	then
+		EXDATE_TMP=$(${WHOIS} -h whois.cira.ca "${1}" | ${AWK} '/Expiry date:/ { print $3 }')
+                EXDATE=`date -d"$EXDATE_TMP" +%Y-%m-%d`
+		EXP_DAYS=$(( ( $(date -ud ${EXDATE} +'%s') - $(date -ud `date +%Y-%m-%d` +'%s') )/60/60/24 ))
+	elif [ "$DTYPE" == "coop" ]
+	then
+		EXDATE_TMP=$(${WHOIS} "${1}" | ${AWK} '/Registry Expiry Date:/ { print $4 }')
+		EXDATE=`date -d"$EXDATE_TMP" +%Y-%m-%d`
 		EXP_DAYS=$(( ( $(date -ud ${EXDATE} +'%s') - $(date -ud `date +%Y-%m-%d` +'%s') )/60/60/24 ))
 	else
 		echo "UNKNOWN - "$DTYPE" unsupported"

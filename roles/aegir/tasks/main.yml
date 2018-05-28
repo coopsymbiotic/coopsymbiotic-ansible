@@ -488,19 +488,19 @@
     - aegir-ssh
     - aegir-civicrm-platform
 
-- name: platform | Configure the CiviCRM 4.7 SymbioTIC platform
-  shell: "drush provision-save @platform_CiviCRM47 --root=/var/aegir/platforms/civicrm-4.7 --context_type=platform --repo_url=git@lab-platform-key.symbiotic.coop:coopsymbiotic/symbiotic-platform-d7-civicrm.git --git_ref=4.7 --deploy_from_git=1"
+- name: platform | Configure the CiviCRM Drupal7 SymbioTIC platform
+  shell: "drush provision-save @platform_CiviCRMd7 --root=/var/aegir/platforms/civicrm-d7 --context_type=platform --repo_url=git@lab-platform-key.symbiotic.coop:coopsymbiotic/symbiotic-platform-d7-civicrm.git --git_ref=master --deploy_from_git=1"
   args:
-    creates: /var/aegir/.drush/platform_CiviCRM47.alias.drushrc.php
+    creates: /var/aegir/.drush/platform_CiviCRMd7.alias.drushrc.php
   become: true
   become_user: aegir
   tags:
     - aegir-civicrm-platform
 
-- name: platform | Trigger installation of the CiviCRM 4.7 SymbioTIC platform
-  shell: "drush @hostmaster hosting-import @platform_CiviCRM47"
+- name: platform | Trigger installation of the CiviCRM Drupal7 SymbioTIC platform
+  shell: "drush @hostmaster hosting-import @platform_CiviCRMd7"
   args:
-    creates: /var/aegir/platforms/civicrm-4.7
+    creates: /var/aegir/platforms/civicrm-d7
   become: true
   become_user: aegir
   tags:

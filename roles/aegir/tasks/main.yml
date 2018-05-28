@@ -383,26 +383,30 @@
     - aegir
     - aegir-wkhtmltopdf
 
+# c.f. https://www.drupal.org/project/hosting_civicrm/issues/2972031
+# We mostly execute these scripts so that it deploys the sudo files.
+# We override the shell scripts below.
 - name: Configure the fix-ownership scripts
   shell: "bash {{ hostmaster_root.stdout }}/profiles/hostmaster/modules/aegir/hosting_tasks_extra/{{ item }}/scripts/install.sh"
   with_items:
     - fix_ownership
   args:
-    creates: /usr/local/bin/fix-drupal-site-ownership.sh
+    creates: /etc/sudoers.d/fix-drupal-site-ownership
   tags:
     - aegir-fixownership
 
+- name: Configure the fix-permissions scripts
+  shell: "bash {{ hostmaster_root.stdout }}/profiles/hostmaster/modules/aegir/hosting_tasks_extra/{{ item }}/scripts/install.sh"
+  with_items:
+    - fix_permissions
+  args:
+    creates: /etc/sudoers.d/fix-drupal-site-permissions
+  tags:
+    - aegir-fixownership
+
+#
 # c.f. https://www.drupal.org/project/hosting_civicrm/issues/2972031
 #
-# - name: Configure the fix-permissions scripts
-#   shell: "bash {{ hostmaster_root.stdout }}/profiles/hostmaster/modules/aegir/hosting_tasks_extra/{{ item }}/scripts/install.sh"
-#   with_items:
-#     - fix_permissions
-#   args:
-#     creates: /usr/local/bin/fix-drupal-site-permissions.sh
-#   tags:
-#     - aegir-fixownership
-
 - name: Deploy our version of fix-drupal-site-permissions.sh
   template: src=usr/local/bin/fix-drupal-site-permissions.sh dest=/usr/local/bin/fix-drupal-site-permissions.sh owner=root group=root mode=0755
   tags:

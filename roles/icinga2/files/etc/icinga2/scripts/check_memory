@@ -52,6 +52,7 @@ crit=${crit:=95}
 memory_total=$(free | grep 'Mem:' | awk '{print $2}')
 memory_used=$(free | grep 'Mem:' | awk '{print $3}')
 memory_used_cache=$(free | fgrep '/+ buffers/cache' | awk '{print $3}')
+memory_free_cache=$(free | fgrep '/+ buffers/cache' | awk '{print $4}')
 
 if [ "$memory_used_cache" == "" ]; then
   # new-style formatting
@@ -59,11 +60,11 @@ if [ "$memory_used_cache" == "" ]; then
   memory_used=$(free | fgrep 'Mem:' | awk '{print $3}')
   memory_available=$(free | fgrep 'Mem:' | awk '{print $7}')
 else
-  memory_available=$((memory_total - memory_used))
+  memory_available=$((memory_total - memory_used + memory_free_cache))
 fi
 
 memory_available_human=$((memory_available / 1024))
-percentage=$((memory_used * 100 / memory_total))
+percentage=$(((memory_total - memory_available) * 100 / memory_total))
 
 # MEMORY OK - 2765M free | free=2899427328b;;
 

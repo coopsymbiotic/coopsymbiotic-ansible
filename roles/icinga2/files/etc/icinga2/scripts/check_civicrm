@@ -20,11 +20,18 @@ elseif ($cms == 'wordpress') {
 }
 elseif ($cms == 'joomla') {
   global $civicrm_cli;
+  global $civicrm_cli_ini; // required if TZ is not the same as the server
   global $civicrm_cron_user;
   global $civicrm_cron_pass;
 
   require_once '/etc/civicrm/' . $host . '.php';
-  exec('sudo -u www-data /usr/bin/env php ' . escapeshellarg($civicrm_cli) . ' -s ' . escapeshellarg($host) . ' -u ' . escapeshellarg($civicrm_cron_user) . ' -p ' . escapeshellarg($civicrm_cron_pass) . ' -e System -a check --json', $tmp);
+
+  if ($civicrm_cli_ini) {
+    exec('sudo -u www-data /usr/bin/env php -c ' . escapeshellarg($civicrm_cli_ini) . ' ' . escapeshellarg($civicrm_cli) . ' -s ' . escapeshellarg($host) . ' -u ' . escapeshellarg($civicrm_cron_user) . ' -p ' . escapeshellarg($civicrm_cron_pass) . ' -e System -a check --json', $tmp);
+  }
+  else {
+    exec('sudo -u www-data /usr/bin/env php ' . escapeshellarg($civicrm_cli) . ' -s ' . escapeshellarg($host) . ' -u ' . escapeshellarg($civicrm_cron_user) . ' -p ' . escapeshellarg($civicrm_cron_pass) . ' -e System -a check --json', $tmp);
+  }
 }
 else {
   echo 'Unsupported CMS: ' . $cms;

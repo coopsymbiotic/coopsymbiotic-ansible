@@ -19,15 +19,7 @@ for technical issues.
 Requirements
 ------------
 
-The server from where you will be running Ansible must have Ansible >= 2.0.
-
-Under Debian Jessie:
-
-```
-apt-get install -t jessie-backports ansible
-```
-
-(assuming you have configured jessie backports)
+The server from where you will be running Ansible must have Ansible >= 2.0 on Debian 9.
 
 Git clone this repo with submodules
 -----------------------------------

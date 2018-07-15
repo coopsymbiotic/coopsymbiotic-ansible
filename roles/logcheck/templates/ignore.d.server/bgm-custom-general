@@ -63,6 +63,7 @@
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ sshd\[[0-9]+\]: Unable to negotiate with .*
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ sshd\[[0-9]+\]: input_userauth_request: invalid user .*
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ sshd\[[0-9]+\]: packet_write_wait: Connection from .*
+^\w{3} [ :0-9]{11} [._[:alnum:]-]+ sshd\[[0-9]+\]: Connection reset by .*
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ kernel: \[[\.0-9]+\] iptables dropped input: .*
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ kernel: \[[\.0-9]+\] ip6tables dropped input: .*
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ kernel: \[[\.0-9]+\] iptables dropped forward: .*
@@ -99,7 +100,7 @@
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ postfix-slow/smtp\[[\.0-9]+\]: .* status=sent .*
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ postfix/smtpd\[[\.0-9]+\]: SSL_accept error from .*
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ opendkim\[[\.0-9]+\]: \[[A-Za-z0-9]+\]: message has signatures from .*
-^\w{3} [ :0-9]{11} [._[:alnum:]-]+ liblogging-stdlog:  \[origin software="rsyslogd" swVersion="[\.0-9]+" x-pid="\d+" x-info="http://www.rsyslog.com"\] rsyslogd was HUPed
+^\w{3} [ :0-9]{11} [._[:alnum:]-]+ liblogging-stdlog: .* rsyslogd was HUPed
 {% if logcheckextras is defined %}
 {% for item in logcheckextras %}
 {{ item }}

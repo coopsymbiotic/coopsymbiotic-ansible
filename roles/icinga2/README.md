@@ -119,10 +119,34 @@ nginx vhost:
   }
 ```
 
-Misc:
+grafana:
 
-* Grafana: see the 'grafana' role.
-* Graphite: Increase carbon / graphite retention times (/etc/carbon/storage-schemas.conf, now in this role).
+```
+apt-get install apt-transport-https
+
+# add repo (package for wheezy works on jessie)
+cat <<EOF >/etc/apt/sources.list.d/grafana.list
+deb https://packagecloud.io/grafana/stable/debian/ jessie main
+EOF
+
+wget -O - https://packagecloud.io/gpg.key 2>/dev/null | apt-key add - 
+apt-get update
+
+apt-get install grafana
+
+systemctl enable grafana-server.service
+systemctl start grafana-server
+```
+
+Increase carbon / graphite retention times:
+
+/etc/carbon/storage-schemas.conf
+
+```
+[icinga_default]
+pattern = ^icinga2\.
+retentions = 1m:2d,5m:10d,30m:90d,360m:3y
+```
 
 http://docs.icinga.org/icinga2/snapshot/doc/module/icinga2/toc#!/icinga2/snapshot/doc/module/icinga2/chapter/icinga2-features#graphite-carbon-cache-writer  
 http://randsubrosa.blogspot.ca/2013/03/adjust-retention-time-for-carbon-and.html

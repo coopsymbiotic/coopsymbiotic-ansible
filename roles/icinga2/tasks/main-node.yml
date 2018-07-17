@@ -148,6 +148,7 @@
     - mysql_uptime
   notify: restart icinga2
   tags:
+    - icinga2
     - icinga2-mysql
 
 - template: src="etc/sudoers.d/{{ item }}" dest="/etc/sudoers.d/{{ item }}" owner=root group=root mode=0440

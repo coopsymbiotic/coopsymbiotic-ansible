@@ -131,6 +131,7 @@
   template: src="etc/icinga2/conf.d/commands/{{ item }}.conf" dest="/etc/icinga2/conf.d/commands/{{ item }}.conf" owner=root group=root mode=0644
   with_items:
     - backup
+    - bandwidth
     - civicrm
     - cmsversion
     - file_content

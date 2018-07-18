@@ -1,0 +1,15 @@
+# {{ ansible_managed }}
+
+[Unit]
+Description=Mattermost
+After=network.target
+
+[Service]
+User=mattermost
+ExecStart=/opt/mattermost/bin/mattermost
+WorkingDirectory=/opt/mattermost/
+Restart=always
+RestartSec=30
+
+[Install]
+WantedBy=multi-user.target

@@ -151,6 +151,15 @@
   tags:
     - icinga-graphite
 
+- name: Deploy the graphite aggregation configuration
+  template:
+    src=etc/carbon/storage-aggregation.conf
+    dest=/etc/carbon/storage-aggregation.conf
+    owner=root group=root mode=0644
+  notify: restart graphite
+  tags:
+    - icinga-graphite
+
 - name: Deploy graphite icingaweb2 config file
   template:
     src=icingaweb2/modules/graphite/config.ini

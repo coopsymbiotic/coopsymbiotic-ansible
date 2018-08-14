@@ -1,9 +1,31 @@
 ---
 # Installs Aegir3 (http://www.aegirproject.org)
-# Assumes Debian Jessie, with MariaDB, Nginx, php5-fpm
-# Experimental support for Debian Stretch (php7.0-fpm)
+# Assumes Debian Stretch, with MariaDB, Nginx, php7-fpm
 
 - include_vars: "{{ ansible_distribution }}_{{ ansible_distribution_major_version }}.yml"
+  when: phpversion is undefined
+  tags:
+    - packages
+    - packages-php
+    - aegir-php
+
+- name: Debian | Add Sury.org apt reporitory key
+  apt_key:
+    url: "https://packages.sury.org/php/apt.gpg"
+    state: present
+    keyring: /etc/apt/trusted.gpg.d/php.gpg
+  when: phpversion == 7.2 and ansible_distribution == "Debian" and ansible_distribution_major_version == "9"
+  tags:
+    - packages
+    - packages-php
+    - aegir-php
+
+- name: Debian | Add Sury.org repository
+  apt_repository:
+    repo: deb https://packages.sury.org/php/ {{ ansible_distribution_release }} main
+    state: present
+    update_cache: yes
+  when: phpversion == 7.2 and ansible_distribution == "Debian" and ansible_distribution_major_version == "9"
   tags:
     - packages
     - packages-php
@@ -82,11 +104,19 @@
     - "php{{ phpversion }}-intl"
     - "php{{ phpversion }}-json"
     - "php{{ phpversion }}-ldap"
-    - "php{{ phpversion }}-mcrypt"
     - "php{{ phpversion }}-mysql"
     - "php{{ phpversion }}-soap"
     - "php{{ phpversion }}-zip"
     - "php{{ phpversion }}-xsl"
+  tags:
+    - packages
+    - packages-php
+    - aegir-php
+
+- apt: name={{ item }} state=present install_recommends=no
+  with_items:
+    - "php{{ phpversion }}-mcrypt"
+  when: phpversion <= 7.0
   tags:
     - packages
     - packages-php

@@ -274,6 +274,7 @@
        version=7.x-3.x
        dest="{{ hostmaster_root.stdout }}/profiles/hostmaster/modules/aegir/hosting_civicrm"
        update=yes
+  ignore_errors: yes
   tags:
     - aegir-hosting-civicrm
 
@@ -294,6 +295,7 @@
        version=7.x-3.x
        dest="{{ hostmaster_root.stdout }}/sites/{{ inventory_hostname }}/modules/hosting_wordpress"
        update=yes
+  ignore_errors: yes
   tags:
     - aegir-hosting-wordpress
 
@@ -519,18 +521,18 @@
     - aegir-civicrm-platform
 
 - name: platform | Configure the CiviCRM Drupal7 SymbioTIC platform
-  shell: "drush provision-save @platform_CiviCRMd7 --root=/var/aegir/platforms/civicrm-d7 --context_type=platform --repo_url=git@lab-platform-key.symbiotic.coop:coopsymbiotic/symbiotic-platform-d7-civicrm.git --git_ref=master --deploy_from_git=1"
+  shell: "drush provision-save @platform_CiviCRMd{{ aegir_platform_drupal_version }} --root=/var/aegir/platforms/civicrm-d{{ aegir_platform_drupal_version }} --context_type=platform --repo_url=git@lab-platform-key.symbiotic.coop:coopsymbiotic/symbiotic-platform-d{{ aegir_platform_drupal_version }}-civicrm.git --git_ref=master --deploy_from_git=1"
   args:
-    creates: /var/aegir/.drush/platform_CiviCRMd7.alias.drushrc.php
+    creates: "/var/aegir/.drush/platform_CiviCRMd{{ aegir_platform_drupal_version }}.alias.drushrc.php"
   become: true
   become_user: aegir
   tags:
     - aegir-civicrm-platform
 
-- name: platform | Trigger installation of the CiviCRM Drupal7 SymbioTIC platform
-  shell: "drush @hostmaster hosting-import @platform_CiviCRMd7"
+- name: platform | Trigger installation of the CiviCRM Drupal SymbioTIC platform
+  shell: "drush @hostmaster hosting-import @platform_CiviCRMd{{ aegir_platform_drupal_version }}"
   args:
-    creates: /var/aegir/platforms/civicrm-d7
+    creates: /var/aegir/platforms/civicrm-d{{ aegir_platform_drupal_version }}
   become: true
   become_user: aegir
   tags:

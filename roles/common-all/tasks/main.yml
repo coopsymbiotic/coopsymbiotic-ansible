@@ -11,13 +11,6 @@
     - packages
     - common-all
 
-- name: Configure jessie-backports
-  apt_repository: repo='deb http://ftp.ca.debian.org/debian jessie-backports main contrib' state=present
-  tags:
-    - packages
-    - packages-backports
-  when: ansible_distribution_release == "jessie"
-
 - apt: name={{ item }} state=present install_recommends=no
   with_items:
     - apt-transport-https

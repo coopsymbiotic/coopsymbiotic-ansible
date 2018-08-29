@@ -153,3 +153,10 @@
     - docker
   tags:
     - docker
+
+- hosts: mattermost-servers
+  sudo: yes
+  roles:
+    - mattermost
+  tags:
+    - mattermost

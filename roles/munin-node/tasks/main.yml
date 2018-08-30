@@ -1,7 +1,9 @@
 ---
+
 # Based on https://github.com/geerlingguy/ansible-role-munin-node/
 
 - apt: pkg=munin-node state=installed
+- apt: pkg=munin-libvirt-plugins state=installed
 
 - name: Copy our munin-node configuration.
   template:
@@ -15,29 +17,49 @@
 - name: Remove some plugins which are rarely used or sensitive info.
   file: name=/etc/munin/plugins/{{ item.path }} state=absent
   with_items:
+    - { path: 'df' }
     - { path: 'df_inode' }
     - { path: 'entropy' }
     - { path: 'exim_mailstats' }
+    - { path: 'exim_mailqueue' }
+    - { path: 'fail2ban' }
+    - { path: 'forks' }
+    - { path: 'fw_forwarded_local' }
+    - { path: 'if_err_vnet0' }
+    - { path: 'if_err_vnet1' }
+    - { path: 'if_err_vnet2' }
+    - { path: 'if_err_vnet3' }
+    - { path: 'if_vnet0' }
+    - { path: 'if_vnet1' }
+    - { path: 'if_vnet2' }
+    - { path: 'if_vnet3' }
     - { path: 'interrupts' }
     - { path: 'irqstats' }
     - { path: 'load' }
+    - { path: 'netstat' }
     - { path: 'nfs4_client' }
     - { path: 'nfs_client' }
     - { path: 'nfsd' }
+    - { path: 'open_files' }
+    - { path: 'open_inodes' }
+    - { path: 'proc_pri' }
     - { path: 'uptime' }
     - { path: 'users' }
+    - { path: 'swap' }
+    - { path: 'threads' }
   notify: restart munin-node
 
 - name: Ensure that some plugins are enabled (this is only partial, is missing some network graphs).
   file: src=/usr/share/munin/plugins/{{ item.path }} dest=/etc/munin/plugins/{{ item.path }} state=link
   with_items:
     - { path: 'cpu' }
-    - { path: 'df' }
     - { path: 'diskstats' }
+    - { path: 'libvirt-blkstat' }
+    - { path: 'libvirt-cputime' }
+    - { path: 'libvirt-ifstat' }
+    - { path: 'libvirt-mem' }
     - { path: 'memory' }
-    - { path: 'open_files' }
     - { path: 'vmstat' }
-    - { path: 'fail2ban' }
   notify: restart munin-node
 
 - name: Ensure munin-node is running.

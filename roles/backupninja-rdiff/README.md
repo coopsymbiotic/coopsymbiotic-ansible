@@ -20,18 +20,20 @@ user = backups-foo
 See files changed in the past day:
 
 ```
-# rdiff-backup --list-changed-since 1D backups-foo@backups.example.org::/backup/foo.symbiotic.coop/rdiff-backup/var/backups/mysql/sqldump/
-changed var/backups/mysql/sqldump/example.sql
+# rdiff-backup --list-changed-since 1D backups-foo@backups.example.org::/backup/foo.symbiotic.coop/rdiff-backup/var/backups/mysql/
+changed var/backups/mysql/example.sql
 ```
 
 To restore the last version of a specific file:
 
 ```
-# rdiff-backup --restore-as-of now backups-foo@backups.example.org::/backup/foo.symbiotic.coop/rdiff-backup/var/backups/mysql/sqldump/example.sql /root/restore/example.sql
+# rdiff-backup -v5 --restore-as-of now backups-foo@backups.example.org::/backup/foo.symbiotic.coop/rdiff-backup/var/backups/mysql/example.sql /root/restore/example.sql
 ```
 
 To restore a file from 2 days (2D) ago:
 
 ```
-# rdiff-backup --restore-as-of 2D backups-foo@backups.example.org::/backup/foo.symbiotic.coop/rdiff-backup/var/backups/mysql/sqldump/example.sql /root/restore/example.sql
+# rdiff-backup -v5 --restore-as-of 2D backups-foo@backups.example.org::/backup/foo.symbiotic.coop/rdiff-backup/var/backups/mysql/example.sql /root/restore/example.sql
 ```
+
+(the `-v5` option is for `verbose` mode, to make it easier to see what's happening)

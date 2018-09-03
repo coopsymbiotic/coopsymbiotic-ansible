@@ -35,6 +35,14 @@ deploy_cert() {
       /usr/bin/doveadm reload
     fi
 
+    if [ -x /usr/share/logstash/bin/logstash ]; then
+      echo " + Hook: Restarting logstash..."
+      openssl pkcs8 -topk8 -inform PEM -outform PEM -nocrypt -in /etc/dehydrated/keys/${DOMAIN}/privkey.pem -out /etc/dehydrated/keys/${DOMAIN}/privkey.key8
+      chgrp -R logstash /etc/dehydrated/keys/${DOMAIN}
+      chmod -R g+r /etc/dehydrated/keys/${DOMAIN}
+      systemctl restart logstash
+    fi
+
     # https://wiki.zimbra.com/wiki/Installing_a_LetsEncrypt_SSL_Certificate
     if [ -x /opt/zimbra/bin/zmcontrol ]; then
       echo " + Hook: Deploying certificate in Zimbra..."

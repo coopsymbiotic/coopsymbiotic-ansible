@@ -24,7 +24,7 @@ filebeat:
         # Other boring system stuff
         'systemd',
         'monkeysphere',
-        'icinga2.* information/',
+        'icinga2',
         'COMMAND=/opt/zimbra/libexec/zmmailboxdmgr status'
       ]
 

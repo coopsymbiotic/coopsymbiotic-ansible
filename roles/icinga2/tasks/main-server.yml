@@ -76,6 +76,14 @@
     creates: /etc/icinga2/features-enabled/api.conf
   notify: restart icinga2
 
+# Mainlog is very chatty (includes 'information' statements)
+# can be useful for debugging, but otherwise warnings are logged in daemon.log
+- name: Disable the Icinga2 mainlog
+  shell: icinga2 feature disable mainlog
+  args:
+    removes: /etc/icinga2/features-enabled/mainlog.conf
+  notify: restart icinga2
+
 - template: src=features-available/api.conf dest=/etc/icinga2/features-available/api.conf owner=root group=root mode=0644
   notify: restart icinga2
 

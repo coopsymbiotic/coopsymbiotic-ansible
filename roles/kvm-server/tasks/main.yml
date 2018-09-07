@@ -46,7 +46,28 @@
 # - had to "rm /boot/bzImage-3.14.32-xxxx-grs-ipv6-64" otherwise it would
 #   boot automatically on this kernel, and this causes issues with dkms for ZFS.
 
-# - /etc/network/interfaces configuration.
+# - network interface configuration
+
+- name: Deploy the network interfaces configuration
+  template:
+    src: "etc/systemd/network/{{ item }}"
+    dest: "/etc/systemd/network/{{ item }}"
+    owner: "root"
+    group: "root"
+    mode: 0644
+  with_items:
+    - 50-br0.netdev
+    - 50-default.network
+    - 50-network-interface.network
+  tags:
+    - kvm-server-networkd
+
+- name: Ensure that OVH defaults are absent
+  file: path="/etc/systemd/network/{{ item }}" state=absent
+  with_items:
+    - 50-br0.netdev
+    - 50-default.network
+    - 50-public-interface.link
 
 # TODO: grub configuration to enable serial console? (not really working)
 # http://tech.sid3windr.be/2016/02/configuring-ipmi-serial-over-lan-on-debian-8-jessie/
@@ -60,6 +81,7 @@
 - name: Create networking.service.d directory
   file: path="/etc/systemd/system/networking.service.d/" state=directory mode=0755 owner=root group=root
 
+# File: /etc/systemd/system/networking.service.d/reduce-timeout.conf
 # [Service]
 # TimeoutStartSec=15
 # TODO: reload systemd (systemctl daemon-reload)

@@ -104,6 +104,14 @@
   tags:
     - dehydrated
 
+- name: Accept the Letsencrypt TOS
+  shell: dehydrated --register --accept-terms -f /etc/dehydrated/config.txt
+  args:
+    creates: /etc/dehydrated/accounts/
+  tags:
+    - dehydrated
+    - dehydrated-tos
+
 - name: Test this is a Zimbra server
   stat: path=/opt/zimbra
   register: zimbra

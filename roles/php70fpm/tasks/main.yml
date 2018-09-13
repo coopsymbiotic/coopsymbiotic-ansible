@@ -1,5 +1,5 @@
 ---
-# Assumes Debian Jessie, with MariaDB, Nginx, php70-fpm
+# Assumes Debian Jessie, with MariaDB, Nginx, php7.0-fpm
 #
 # FIXME: duplicates a lot of things from the 'aegir' role,
 # but we might not want to add a dependency, because the aegir
@@ -27,6 +27,7 @@
     default_release: jessie-backports
   with_items:
     - nginx
+  when: ansible_distribution_release == "jessie"
   tags:
     - packages
 
@@ -34,35 +35,27 @@
   with_items:
     - curl
     - gettext
-    - php70-fpm
-    - php70-gd
-    - php70-cli
-    - php70-curl
-    - php70-intl
-    - php70-json
-    - php70-ldap
-    - php70-mcrypt
-    - php70-mysql
-    - php70-soap
-    - php70-zip
-    - php70-xsl
+    - php7.0-fpm
+    - php7.0-gd
+    - php7.0-cli
+    - php7.0-curl
+    - php7.0-intl
+    - php7.0-json
+    - php7.0-ldap
+    - php7.0-mcrypt
+    - php7.0-mysql
+    - php7.0-soap
+    - php7.0-zip
+    - php7.0-xsl
   tags:
     - packages
-
-# FIXME in Debian Stretch
-- name: Install ondir
-  apt:
-    deb: http://ftp.us.debian.org/debian/pool/main/o/ondir/ondir_0.2.3+git0.55279f03-1_amd64.deb
-  tags:
-    - packages
-    - packages-ondir
 
 # A bit off topic, but too often had the issue where mailname was misconfigured
 - copy: content="{{ inventory_hostname }}" dest=/etc/mailname
 - file: path=/etc/mailname owner=root group=root mode=0644
 
-# MariaDB 10.1
-- apt_key: keyserver=keyserver.ubuntu.com id=0xcbcb082a1bb943db
+# MariaDB
+- apt_key: keyserver=keyserver.ubuntu.com id=0xF1656F24C74CD1D8
   tags:
     - packages
     - php70-mariadb

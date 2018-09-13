@@ -5,8 +5,8 @@
     owner=root group=root mode=0644
   notify: restart mysql
   tags:
-    - aegir-mysql
-    - aegir-mariadb
+    - php70-mysql
+    - php70-mariadb
 
 # Apparently the ARCHIVE plugin is enabled by default in MariaDB 10.0, but not 10.1.
 # Required by CiviCRM.
@@ -15,12 +15,12 @@
   register: mysqld_archive
   ignore_errors: True
   tags:
-    - aegir-mysql
-    - aegir-mariadb
+    - php70-mysql
+    - php70-mariadb
 
 - name: MySQL | Enable the ARCHIVE engine
   shell: "echo \"INSTALL PLUGIN archive SONAME 'ha_archive.so'\" | mysql --defaults-file=/etc/mysql/debian.cnf"
   when: mysqld_archive.stdout == ""
   tags:
-    - aegir-mysql
-    - aegir-mariadb
+    - php70-mysql
+    - php70-mariadb

@@ -70,7 +70,7 @@ find ./private -type d -exec chmod 770 '{}' \+
 
 # SYMBIOTIC additions for
 # https://www.drupal.org/project/hosting_civicrm/issues/2972031
-if [ -d ./files/civicrm/templates_c]; then
+if [ -d ./files/civicrm/templates_c ]; then
   printf "Changing permissions of all directories inside \"templates_c\" directory in \"${site_path}\" to \"2770\" (setgid)...\n"
   find ./files/civicrm/templates_c -type d -exec chmod 02770 '{}' \+
 

@@ -308,6 +308,15 @@
   tags:
     - aegir-hosting-civicrm
 
+- name: Install wp-cli-bundle
+  become: true
+  become_user: aegir
+  shell: "composer global require wp-cli/wp-cli-bundle"
+  args:
+    creates: /var/aegir/.composer/vendor/wp-cli/db-command/composer.json
+  tags:
+    - aegir-hosting-civicrm
+
 ##
 ## Configurations
 ##

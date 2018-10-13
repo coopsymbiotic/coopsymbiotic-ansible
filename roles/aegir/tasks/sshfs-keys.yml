@@ -1,0 +1,8 @@
+---
+
+- name: Deploy ssh user keys
+  authorized_key: user=aegir key="{{ lookup('file', item) }}"
+  with_fileglob:
+    - /etc/ansible/files/sshkeys/aegir-sshfs/*.pub
+  tags:
+    - aegir-sshfs

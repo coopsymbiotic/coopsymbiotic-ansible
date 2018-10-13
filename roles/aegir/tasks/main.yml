@@ -555,3 +555,7 @@
   become_user: aegir
   tags:
     - aegir-civicrm-platform
+
+- include: sshfs-keys.yml
+  tags:
+    - aegir-sshfs

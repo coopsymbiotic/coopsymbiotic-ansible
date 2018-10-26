@@ -58,7 +58,12 @@ exclude = /var/lib/spamassassin/.spamassassin
 exclude = /var/log
 exclude = /var/tmp
 
+exclude = /var/aegir/.composer
 exclude = /var/aegir/.drush/cache
+exclude = /var/aegir/.npm
+exclude = /var/aegir/.nvm
+exclude = /var/aegir/.vimundo
+exclude = /var/aegir/.vimbackup
 exclude = /var/aegir/backups
 exclude = /var/aegir/platforms/*/.git
 exclude = /var/aegir/platforms/*/sites/*/files/civicrm/templates_c

@@ -103,6 +103,13 @@
   tags:
     - php
 
+- hosts: buildkit-servers
+  sudo: yes
+  roles:
+    - buildkit
+  tags:
+    - buildkit
+
 - hosts: yubiauth-managed
   sudo: yes
   roles:

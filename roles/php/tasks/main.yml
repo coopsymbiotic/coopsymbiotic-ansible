@@ -1,5 +1,5 @@
 ---
-# Assumes Debian Jessie, with MariaDB, Nginx, php7.0-fpm
+# Assumes Debian, with MariaDB, Nginx, php-7.x-fpm
 #
 # FIXME: duplicates a lot of things from the 'aegir' role,
 # but we might not want to add a dependency, because the aegir
@@ -35,18 +35,22 @@
   with_items:
     - curl
     - gettext
-    - php7.0-fpm
-    - php7.0-gd
-    - php7.0-cli
-    - php7.0-curl
-    - php7.0-intl
-    - php7.0-json
-    - php7.0-ldap
-    - php7.0-mcrypt
-    - php7.0-mysql
-    - php7.0-soap
-    - php7.0-zip
-    - php7.0-xsl
+    - "php{{ php_version }}-fpm"
+    - "php{{ php_version }}-gd"
+    - "php{{ php_version }}-cli"
+    - "php{{ php_version }}-curl"
+    - "php{{ php_version }}-intl"
+    - "php{{ php_version }}-json"
+    - "php{{ php_version }}-ldap"
+    - "php{{ php_version }}-mcrypt"
+    - "php{{ php_version }}-mysql"
+    - "php{{ php_version }}-mbstring"
+    - "php{{ php_version }}-soap"
+    - "php{{ php_version }}-zip"
+    - "php{{ php_version }}-xsl"
+    - "php{{ php_version }}-bcmath"
+    - "php{{ php_version }}-imap"
+    - "php-imagick"
   tags:
     - packages
 
@@ -58,7 +62,7 @@
 - apt_key: keyserver=keyserver.ubuntu.com id=0xF1656F24C74CD1D8
   tags:
     - packages
-    - php70-mariadb
+    - php-mariadb
 
 - apt_repository:
     repo="deb http://ftp.osuosl.org/pub/mariadb/repo/10.2/debian {{ ansible_distribution_release }} main"
@@ -66,7 +70,7 @@
     state=present
   tags:
     - packages
-    - php70-mariadb
+    - php-mariadb
 
 - apt: name={{ item }} state=present install_recommends=no
   with_items:
@@ -74,7 +78,7 @@
     - mariadb-client
   tags:
     - packages
-    - php70-mariadb
+    - php-mariadb
 
 - include: settings-php.yml
 - include: settings-mysql.yml

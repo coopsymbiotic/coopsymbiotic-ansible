@@ -19,9 +19,9 @@ filebeat.inputs:
     # These are usually bots hitting the Yubiauth
     'sshd.[0-9]+.: Connection closed by .* .preauth',
     # Cron-related messages
-    'sudo: pam_unix.sudo:session.: session opened for user aegir by \\(uid=0\\)',
-    'sudo: pam_unix.sudo:session.: session closed for user (root|aegir)',
-    'CRON.[0-9]+.: pam_unix.cron:session.: session (opened|closed) for user [a-z0-9]+ by .uid=0.',
+    'pam_unix.sudo:session.: session opened for user aegir by \\(uid=0\\)',
+    'pam_unix.sudo:session.: session closed for user (root|aegir)',
+    'CRON.[0-9]+.: pam_unix.cron:session.: session (opened|closed) for user [a-z0-9]+',
     # Ansible
     'sudo:[[:space:]]+deploy[[:space:]]*TTY=pts/0[[:space:]]*;[[:space:]]* PWD=/home/deploy.*ansible-tmp',
     # Other boring system stuff

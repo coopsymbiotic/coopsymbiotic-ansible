@@ -17,18 +17,23 @@ filebeat.inputs:
     # CiviCRM security checks
     'AH01797: client denied by server configuration: .*delete-this',
     # These are usually bots hitting the Yubiauth
+    # and we generally don't care about brute-force attempts because we have fail2ban and yubiauth
     'sshd.[0-9]+.: Connection closed by .* .preauth',
+    'sshd.[0-9]+.: Disconnected from .* .preauth',
+    'sshd.[0-9]+.: authentication failure',
     # Cron-related messages
     'pam_unix.sudo:session.: session opened for user aegir by \\(uid=0\\)',
     'pam_unix.sudo:session.: session closed for user (root|aegir)',
     'CRON.[0-9]+.: pam_unix.cron:session.: session (opened|closed) for user [a-z0-9]+',
     # Ansible
-    'sudo:[[:space:]]+deploy[[:space:]]*TTY=pts/0[[:space:]]*;[[:space:]]* PWD=/home/deploy.*ansible-tmp',
+    'sudo:[[:space:]]+deploy[[:space:]]*TTY=pts/[[:digit:]][[:space:]]*;[[:space:]]* PWD=/home/deploy.*ansible-tmp',
     # Other boring system stuff
     'systemd',
     'monkeysphere',
     'icinga2.* information/',
     'COMMAND=/opt/zimbra/libexec/zmmailboxdmgr status',
+    # monitoring scripts
+    'sudo.*icinga2-plugins',
     # nginx: bots who can't do SSL properly
     'routines:tls_process_client_hello:unsupported protocol',
     'routines:tls_process_client_hello:version too low'

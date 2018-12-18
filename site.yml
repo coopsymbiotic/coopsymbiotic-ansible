@@ -158,6 +158,7 @@
   sudo: yes
   roles:
     - docker
+    - gitlab-runner
   tags:
     - docker
 

@@ -20,6 +20,7 @@ filebeat.inputs:
     # and we generally don't care about brute-force attempts because we have fail2ban and yubiauth
     'sshd.[0-9]+.: Connection closed by .* .preauth',
     'sshd.[0-9]+.: Disconnected from .* .preauth',
+    'sshd.[0-9]+.: Received disconnect from .* .preauth',
     'sshd.[0-9]+.: authentication failure',
     # Cron-related messages
     'pam_unix.sudo:session.: session opened for user aegir by \\(uid=0\\)',

@@ -21,7 +21,11 @@ filebeat.inputs:
     'sshd.[0-9]+.: Connection closed by .* .preauth',
     'sshd.[0-9]+.: Disconnected from .* .preauth',
     'sshd.[0-9]+.: Received disconnect from .* .preauth',
-    'sshd.[0-9]+.: authentication failure',
+    'sshd.[0-9]+.: input_userauth_request: invalid user anish .preauth',
+    'sshd.[0-9]+.: .*authentication failure',
+    'sshd.[0-9]+.: Failed password for invalid user',
+    'sshd.[0-9]+.: Invalid user',
+    'sshd.[0-9]+.: pam_unix.*check pass; user unknown',
     # Cron-related messages
     'pam_unix.sudo:session.: session opened for user aegir by \\(uid=0\\)',
     'pam_unix.sudo:session.: session closed for user (root|aegir)',
@@ -35,6 +39,7 @@ filebeat.inputs:
     'COMMAND=/opt/zimbra/libexec/zmmailboxdmgr status',
     # monitoring scripts
     'sudo.*icinga2-plugins',
+    'sudo.*nagions.plugins',
     # nginx: bots who can't do SSL properly
     'routines:tls_process_client_hello:unsupported protocol',
     'routines:tls_process_client_hello:version too low'

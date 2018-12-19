@@ -53,7 +53,7 @@
   lineinfile:
     path: /etc/gitlab-runner/config.toml
     regexp: '^check_interval = \d+'
-    line: 'check_interval = 10'
+    line: 'check_interval = 15'
     owner: root
     group: root
     mode: 0600

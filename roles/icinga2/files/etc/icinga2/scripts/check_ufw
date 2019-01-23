@@ -7,7 +7,7 @@
 # Based on: https://exchange.nagios.org/directory/Plugins/Security/check_ufw-(edouard-2Elamoine)/details
 #################################################################
 
-STATE=$(ufw status)
+STATE=$(env LANGUAGE=C ufw status)
 
 if [[ ! $STATE =~ "active" ]]; then
   echo "UNKNOWN - Impossible to determine UFW status"

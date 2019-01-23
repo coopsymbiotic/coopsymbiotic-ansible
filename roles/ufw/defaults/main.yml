@@ -2,3 +2,5 @@
 # If your infrastructure is dual-stack ipv6/ipv4, make sure to include all IPs.
 ufw_munin_allow_src:
   - 127.0.0.1
+
+fail2ban_ignoreip: 127.0.0.1/8

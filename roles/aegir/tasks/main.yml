@@ -463,6 +463,25 @@
     - aegir-fixownership
     - aegir-fixpermission-override
 
+- name: Deploy our version of BOA's weekly.sh
+  template: src=usr/local/bin/aegir-weekly.sh dest=/usr/local/bin/aegir-weekly.sh owner=root group=root mode=0755
+  tags:
+    - aegir-weekly
+
+- name: Setup a cron for our version of BOA's weekly.sh
+  cron:
+    name="aegir-weekly"
+    minute="35"
+    hour="18"
+    hour="18"
+    weekday="6"
+    job="/usr/local/bin/aegir-weekly.sh"
+    cron_file="aegir-weekly"
+    user="root"
+    state=present
+  tags:
+    - aegir-weekly
+
 - include: letsencrypt.yml
 - include: settings-php.yml
 - include: settings-mysql.yml

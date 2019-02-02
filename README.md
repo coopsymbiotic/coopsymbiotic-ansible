@@ -8,13 +8,19 @@ Use at your own risk.
 
 We provide turn-key CiviCRM-based services for non-profits, professional
 associations, unions and small-medium size companies. We are a worker's
-coop based in Montreal, Quebec (Canada).
+co-op based in Montreal, Quebec (Canada).
 
-Looking for CiviCRM services? Would you like to join our team?
+Looking for CiviCRM services? Would you like to join our team?  
 Contact us at info (at) symbiotic.coop.
 
 Feedback/suggestions welcome. Please use the Github issue queue of this project
 for technical issues.
+
+This repository is maintained at:  
+https://lab.symbiotic.coop/coopsymbiotic/coopsymbiotic-ansible
+
+Mirror:  
+https://github.com/coopsymbiotic/coopsymbiotic-ansible
 
 Requirements
 ------------

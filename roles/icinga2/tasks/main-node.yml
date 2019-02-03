@@ -118,6 +118,14 @@
   with_items:
     - check_aegir_disk
     - check_aegir_sql
+    - check_aegir_civicrm_contacts
+    - check_aegir_civicrm_activities
+    - check_aegir_civicrm_contributions
+    - check_aegir_civicrm_memberships
+    - check_aegir_civicrm_mailings
+    - check_aegir_civicrm_cases
+    - check_aegir_civicrm_events
+    - check_aegir_civicrm_participants
     - check_backup
     - check_bandwidth
     - check_civicrm
@@ -137,6 +145,14 @@
   with_items:
     - aegir_disk
     - aegir_sql
+    - aegir_civicrm_contacts
+    - aegir_civicrm_activities
+    - aegir_civicrm_contributions
+    - aegir_civicrm_memberships
+    - aegir_civicrm_mailings
+    - aegir_civicrm_cases
+    - aegir_civicrm_events
+    - aegir_civicrm_participants
     - backup
     - bandwidth
     - civicrm

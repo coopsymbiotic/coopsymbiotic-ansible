@@ -24,6 +24,7 @@ while read -r line; do
 
   # Match the first field
   site_name=${line%%,*}
+  site_name=${site_name//./_}
 
   # Match the last field
   site_size=${line##*DatSize:}

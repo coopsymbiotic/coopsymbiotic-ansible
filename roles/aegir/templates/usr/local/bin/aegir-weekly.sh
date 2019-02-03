@@ -34,7 +34,10 @@ count() {
       *.tmp.*) _DEV_URL=YES ;;
       *.test.*) _DEV_URL=YES ;;
       *.staging.*) _DEV_URL=YES ;;
-      crm-dev.*) _DEV_URL=YES ;;
+      *-dev.*) _DEV_URL=YES ;;
+      dev-.*) _DEV_URL=YES ;;
+      test-.*) _DEV_URL=YES ;;
+      *.symbiodev.xyz) _DEV_URL=YES ;;
       *)
       ;;
     esac
@@ -74,7 +77,11 @@ count() {
             | awk '{ print $1}' \
             | sed "s/[\/\s+]//g" 2>&1)
           SumDir=$(( SumDir + DirSize ))
-          echo "${_THIS_U},${Dom},DirSize:${DirSize}"
+          if [ "${_DEV_URL}" = "YES" ]; then
+            echo "${_THIS_U},${Dom},DirSize:${DirSize},skip"
+          else
+            echo "${_THIS_U},${Dom},DirSize:${DirSize}"
+          fi
         fi
         if [ ! -z "${Dat}" ] && [ -e "/var/lib/mysql/${Dat}" ]; then
           DatSize=$(du -s /var/lib/mysql/${Dat} 2>&1)

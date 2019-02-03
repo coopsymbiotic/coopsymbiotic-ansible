@@ -116,6 +116,8 @@
 - name: Deploy custom checks
   copy: src="etc/icinga2/scripts/{{ item }}" dest="/usr/local/lib/icinga2-plugins/{{ item }}" owner=root group=root mode=0755
   with_items:
+    - check_aegir_disk
+    - check_aegir_sql
     - check_backup
     - check_bandwidth
     - check_civicrm
@@ -133,6 +135,8 @@
 - name: Deploy custom checks configurations
   template: src="etc/icinga2/conf.d/commands/{{ item }}.conf" dest="/etc/icinga2/conf.d/commands/{{ item }}.conf" owner=root group=root mode=0644
   with_items:
+    - aegir_disk
+    - aegir_sql
     - backup
     - bandwidth
     - civicrm

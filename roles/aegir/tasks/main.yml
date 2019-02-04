@@ -238,6 +238,8 @@
        version=master
        dest=/var/aegir/.drush/provision_symbiotic
        update=yes
+  tags:
+    - aegir-provision-symbiotic
 
 - name: Download provision_customhtaccess from Github
   sudo_user: aegir
@@ -245,6 +247,8 @@
        version=master
        dest=/var/aegir/.drush/provision_customhtaccess
        update=yes
+  tags:
+    - aegir-provision-customhtaccess
 
 ##
 ## Update hosting_civicrm from git

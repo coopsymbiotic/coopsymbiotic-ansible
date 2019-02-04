@@ -126,6 +126,7 @@
   with_items:
     - "php{{ phpversion }}-mbstring"
     - "php{{ phpversion }}-zip"
+    - "php-imagick"
   when: phpversion >= 7.0
   tags:
     - packages

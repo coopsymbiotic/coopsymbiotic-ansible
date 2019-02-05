@@ -487,6 +487,11 @@
   tags:
     - aegir-weekly
 
+- name: Deploy the civicrm-pull-patch script
+  template: src=usr/local/bin/civicrm-pull-patch dest=/usr/local/bin/civicrm-pull-patch owner=root group=root mode=0755
+  tags:
+    - aegir-civicrm-pull-patch
+
 - include: letsencrypt.yml
 - include: settings-php.yml
 - include: settings-mysql.yml

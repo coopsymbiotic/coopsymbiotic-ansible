@@ -395,7 +395,7 @@
 - name: Aegir settings | Delete a few settings
   become: true
   become_user: aegir
-  shell: "drush @hostmaster vdel {{ item }}"
+  shell: "drush @hostmaster vdel {{ item }} -y"
   with_items:
     - update_notify_emails
 

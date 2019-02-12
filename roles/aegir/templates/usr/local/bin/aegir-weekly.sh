@@ -101,7 +101,7 @@ count() {
         fi
 
         if [ "${_DEV_URL}" = "NO" ]; then
-          CiviStats=$(sudo -i -u aegir drush @${Dom} provision-symbiotic-civicrm-stats)
+          CiviStats=$(sudo -i -u aegir drush @${Dom} provision-symbiotic-civicrm-stats 2>/dev/null)
           CiviContact=$(echo $CiviStats | cut -d ',' -f 1)
           CiviActivity=$(echo $CiviStats | cut -d ',' -f 2)
           CiviContribute=$(echo $CiviStats | cut -d ',' -f 3)

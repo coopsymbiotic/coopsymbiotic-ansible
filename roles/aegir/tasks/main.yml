@@ -14,7 +14,18 @@
     url: "https://packages.sury.org/php/apt.gpg"
     state: present
     keyring: /etc/apt/trusted.gpg.d/php.gpg
-  when: phpversion == 7.2 and ansible_distribution == "Debian" and ansible_distribution_major_version == "9"
+  when: (phpversion == 7.2 or phpversion == 7.1) and ansible_distribution == "Debian" and ansible_distribution_major_version == "9"
+  tags:
+    - packages
+    - packages-php
+    - aegir-php
+
+- name: Ubuntu | Add Sury.org apt reporitory key
+  apt_key:
+    url: "https://packages.sury.org/php/apt.gpg"
+    state: present
+    keyring: /etc/apt/trusted.gpg.d/php.gpg
+  when: (phpversion == 7.2 or phpversion == 7.1) and ansible_distribution == "Ubuntu" and ansible_distribution_major_version == "16"
   tags:
     - packages
     - packages-php
@@ -25,7 +36,7 @@
     repo: deb https://packages.sury.org/php/ {{ ansible_distribution_release }} main
     state: present
     update_cache: yes
-  when: phpversion == 7.2 and ansible_distribution == "Debian" and ansible_distribution_major_version == "9"
+  when: (phpversion == 7.2 or phpversion == 7.1) and ansible_distribution == "Debian" and ansible_distribution_major_version == "9"
   tags:
     - packages
     - packages-php

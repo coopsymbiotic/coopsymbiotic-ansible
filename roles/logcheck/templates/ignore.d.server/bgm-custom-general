@@ -11,6 +11,7 @@
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ puppet-agent\[[0-9]+\]: .* Could not set gid on user .*$
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ puppet-agent\[[0-9]+\]: .* Could not set password on user .*$
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ nscd: nss_ldap: reconnected to LDAP server.*
+^\w{3} [ :0-9]{11} [._[:alnum:]-]+ pam_ldap: error trying to bind as user.*
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ ansible.*
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ ntpd\[[0-9]+\]: peer .* now valid
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ ntpd\[[0-9]+\]: peer .* now invalid
@@ -82,6 +83,9 @@
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ systemd\[[\.0-9]+\]: Reloading LSB: Apache2 web server.
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ systemd\[[\.0-9]+\]: Reloaded LSB: Apache2 web server.
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ systemd\[[\.0-9]+\]: Reloading A high performance webserver and a reverse proxy server.
+^\w{3} [ :0-9]{11} [._[:alnum:]-]+ systemd\[[\.0-9]+\]: Reloading A high performance web server and a reverse proxy server.
+^\w{3} [ :0-9]{11} [._[:alnum:]-]+ systemd\[[\.0-9]+\]: Reloaded A high performance webserver and a reverse proxy server.
+^\w{3} [ :0-9]{11} [._[:alnum:]-]+ systemd\[[\.0-9]+\]: Reloaded A high performance web server and a reverse proxy server.
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ systemd\[[\.0-9]+\]: Listening on GnuPG.*
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ systemd\[[\.0-9]+\]: Closed GnuPG.*
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ systemd\[[\.0-9]+\]: apt-daily-upgrade.*

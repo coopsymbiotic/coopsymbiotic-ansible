@@ -37,7 +37,7 @@
     - icinga2
     - icinga2-base-configs
 
-- file: path=/etc/icinga2/pki state=directory owner=root group=nagios mode=0770
+- file: path=/etc/icinga2/pki state=directory owner=root group={{ icinga2_user }} mode=0770
 
 - name: Run icinga2 pki new-cert for our host
   shell: icinga2 pki new-cert --cn {{ inventory_hostname }} --key /etc/icinga2/pki/{{ inventory_hostname }}.key --cert /etc/icinga2/pki/{{ inventory_hostname }}.crt
@@ -104,7 +104,7 @@
 ##
 ## We deploy the scripts to /usr/local/lib/icinga2-plugins
 ## because some are run by less-privileged users and might not have access to /etc/icinga2
-- file: path="{{ item }}" state=directory owner=root group=nagios mode=0755
+- file: path="{{ item }}" state=directory owner=root group={{ icinga2_user }} mode=0755
   with_items:
     - /etc/icinga2/conf.d/services
     - /etc/icinga2/conf.d/commands
@@ -132,6 +132,7 @@
     - check_cmsversion
     - check_file_content
     - check_memory
+    - check_md_raid
     - check_mysqldump-secure
     - check_ufw
     - check_zpool
@@ -159,6 +160,7 @@
     - cmsversion
     - file_content
     - mem
+    - md_raid
     - mysqldump
     - mysql_uptime
     - ufw

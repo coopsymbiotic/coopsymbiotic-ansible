@@ -15,3 +15,4 @@ icinga2_rdiffbackup_root: "/backup"
 icinga2_user: nagios
 
 icinga2_cert_dir: "/etc/icinga2/pki"
+icinga2_plugin_dir: "/usr/lib/nagios/plugins"

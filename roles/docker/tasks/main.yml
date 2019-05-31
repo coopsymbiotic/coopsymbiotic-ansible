@@ -12,7 +12,7 @@
     - packages
 
 - apt_repository:
-    repo='deb https://apt.dockerproject.org/repo debian-jessie main'
+    repo='deb https://apt.dockerproject.org/repo debian-{{ ansible_distribution_release }} main'
     state=present
     update_cache=yes
   tags:

@@ -51,3 +51,16 @@
   when: "'aegir-apache' not in group_names"
   tags:
     - aegir-php
+
+- name: Enable php-fpm status for localhost
+  lineinfile:
+    path: /etc/php/{{ phpversion }}/fpm/pool.d/www.conf
+    regexp: '^;?pm.status_path = .*'
+    line: 'pm.status_path = /fpm-status'
+    owner: root
+    group: root
+    mode: 0644
+  notify: "restart php{{ phpversion }}-fpm"
+  tags:
+    - aegir-php
+    - aegir-php-fpm

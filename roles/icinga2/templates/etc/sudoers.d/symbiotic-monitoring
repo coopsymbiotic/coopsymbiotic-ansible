@@ -1,0 +1,38 @@
+# {{ ansible_managed }}
+
+# Hosting (Aegir or not)
+{{ icinga2_user }} ALL=(aegir) NOPASSWD: /usr/local/bin/drush * cvapi System.check --out=json
+{{ icinga2_user }} ALL=(aegir) NOPASSWD: /usr/local/bin/drush * cvapi Domain.get --out=json
+{{ icinga2_user }} ALL=(aegir) NOPASSWD: /usr/local/bin/drush * status version --format=json
+{{ icinga2_user }} ALL=(aegir) NOPASSWD: /usr/local/bin/drush * cc drush
+{{ icinga2_user }} ALL=(aegir) NOPASSWD: /usr/local/bin/drush * wp cv api System.check --out=json --strict=0
+{{ icinga2_user }} ALL=(aegir) NOPASSWD: /usr/local/bin/drush * wp cv api Domain.get --out=json --strict=0
+{{ icinga2_user }} ALL=(aegir) NOPASSWD: /usr/local/bin/drush * wp core version
+{{ icinga2_user }} ALL=(aegir) NOPASSWD: /usr/local/bin/drush * provision-verify
+{{ icinga2_user }} ALL=(aegir) NOPASSWD: /usr/local/lib/icinga2-plugins/check_file_content
+{{ icinga2_user }} ALL=(www-data) NOPASSWD: /usr/bin/env php * -s * -u * -p * -e System -a check --json
+{{ icinga2_user }} ALL=(www-data) NOPASSWD: /usr/bin/env php * -s * -u * -p * -e Domain -a get --json
+
+# MySQL
+{{ icinga2_user }} ALL=(root) NOPASSWD: /usr/lib/nagios/plugins/pmp-check-mysql-status *
+
+# Backups
+{{ icinga2_user }} ALL=(root) NOPASSWD: /usr/local/lib/icinga2-plugins/check_backup -s *
+{{ icinga2_user }} ALL=(root) NOPASSWD: /usr/local/lib/icinga2-plugins/check_mysqldump-secure *
+
+# RAID and ZFS
+{{ icinga2_user }} ALL=(root) NOPASSWD: /usr/local/lib/icinga2-plugins/check_md_raid
+{{ icinga2_user }} ALL=(root) NOPASSWD: /usr/local/lib/icinga2-plugins/check_zpool
+
+# Firewall
+{{ icinga2_user }} ALL=(root) NOPASSWD: /usr/local/lib/icinga2-plugins/check_ufw
+
+# Run OS upgrades
+{{ icinga2_user }} ALL=(root) NOPASSWD: /usr/bin/apt --yes upgrade
+
+# Restart services
+{{ icinga2_user }} ALL=(root) NOPASSWD: /bin/systemctl restart php7.0-fpm
+{{ icinga2_user }} ALL=(root) NOPASSWD: /bin/systemctl restart php7.1-fpm
+{{ icinga2_user }} ALL=(root) NOPASSWD: /bin/systemctl restart php7.2-fpm
+{{ icinga2_user }} ALL=(root) NOPASSWD: /bin/systemctl restart php7.3-fpm
+{{ icinga2_user }} ALL=(root) NOPASSWD: /bin/systemctl restart hosting-queued

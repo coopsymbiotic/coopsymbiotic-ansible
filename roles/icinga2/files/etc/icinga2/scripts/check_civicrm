@@ -9,36 +9,36 @@ if (empty($host)) {
   exit(3);
 }
 
-$tmp = '';
-$civistatus = '';
+function do_api_call($host, $cms, $entity, $action) {
+  $civistatus = null;
+  $tmp = null;
 
-if ($cms == 'drupal' || $cms == 'drupal8') {
-  exec('sudo -u aegir /usr/local/bin/drush @' . escapeshellarg($host) . ' cvapi System.check --out=json', $tmp);
-}
-elseif ($cms == 'wordpress') {
-  exec('sudo -u aegir /usr/local/bin/drush @' . escapeshellarg($host) . ' wp cv api System.check --out=json --strict=0', $tmp);
-}
-elseif ($cms == 'joomla') {
-  global $civicrm_cli;
-  global $civicrm_cli_ini; // required if TZ is not the same as the server
-  global $civicrm_cron_user;
-  global $civicrm_cron_pass;
+  if ($cms == 'drupal' || $cms == 'drupal8') {
+    exec('sudo -u aegir /usr/local/bin/drush @' . escapeshellarg($host) . ' cvapi ' . escapeshellarg($entity) . '.' . escapeshellarg($action) . ' --out=json', $tmp);
+  }
+  elseif ($cms == 'wordpress') {
+    exec('sudo -u aegir /usr/local/bin/drush @' . escapeshellarg($host) . ' wp cv api ' . escapeshellarg($entity) . '.' . escapeshellarg($action) . ' --out=json --strict=0', $tmp);
+  }
+  elseif ($cms == 'joomla') {
+    global $civicrm_cli;
+    global $civicrm_cli_ini; // required if TZ is not the same as the server
+    global $civicrm_cron_user;
+    global $civicrm_cron_pass;
 
-  require_once '/etc/civicrm/' . $host . '.php';
+    require_once '/etc/civicrm/' . $host . '.php';
 
-  if ($civicrm_cli_ini) {
-    exec('sudo -u www-data /usr/bin/env php -c ' . escapeshellarg($civicrm_cli_ini) . ' ' . escapeshellarg($civicrm_cli) . ' -s ' . escapeshellarg($host) . ' -u ' . escapeshellarg($civicrm_cron_user) . ' -p ' . escapeshellarg($civicrm_cron_pass) . ' -e System -a check --json', $tmp);
+    if ($civicrm_cli_ini) {
+      exec('sudo -u www-data /usr/bin/env php -c ' . escapeshellarg($civicrm_cli_ini) . ' ' . escapeshellarg($civicrm_cli) . ' -s ' . escapeshellarg($host) . ' -u ' . escapeshellarg($civicrm_cron_user) . ' -p ' . escapeshellarg($civicrm_cron_pass) . ' -e ' . escapeshellarg($entity) . ' -a ' . escapeshellarg($action) . ' --json', $tmp);
+    }
+    else {
+      exec('sudo -u www-data /usr/bin/env php ' . escapeshellarg($civicrm_cli) . ' -s ' . escapeshellarg($host) . ' -u ' . escapeshellarg($civicrm_cron_user) . ' -p ' . escapeshellarg($civicrm_cron_pass) . ' -e ' . escapeshellarg($entity) . ' -a ' . escapeshellarg($action) . ' --json', $tmp);
+    }
   }
   else {
-    exec('sudo -u www-data /usr/bin/env php ' . escapeshellarg($civicrm_cli) . ' -s ' . escapeshellarg($host) . ' -u ' . escapeshellarg($civicrm_cron_user) . ' -p ' . escapeshellarg($civicrm_cron_pass) . ' -e System -a check --json', $tmp);
+    echo 'Unsupported CMS: ' . $cms;
+    exit(3);
   }
-}
-else {
-  echo 'Unsupported CMS: ' . $cms;
-  exit(3);
-}
 
-if ($tmp) {
   if ($cms == 'joomla') {
     $civistatus = json_decode(implode(' ', $tmp));
   }
@@ -46,16 +46,13 @@ if ($tmp) {
     $civistatus = json_decode($tmp[0]);
   }
 
-  $check_status = 0;
-  $check_descriptions = array();
-
   if (empty($civistatus)) {
     if ($cms == 'drupal' || $cms == 'drupal8') {
       exec('sudo -u aegir /usr/local/bin/drush @' . escapeshellarg($host) . ' cc drush');
-      echo 'Failed to check status (1). Drush cache flushed for the next run.';
+      echo 'Failed to check status (2). Drush cache flushed for the next run.';
     }
     else {
-      echo 'Failed to check status (1).';
+      echo 'Failed to check status (2).';
     }
 
     exit(3);
@@ -66,39 +63,84 @@ if ($tmp) {
     exit(3);
   }
 
-  foreach ($civistatus->values as $key => $val) {
-    // Issue was acknowledged (hidden from the Status Check UI).
-    if (!$val->is_visible) {
-      continue;
+  return $civistatus;
+}
+
+$domain = do_api_call($host, $cms, 'Domain', 'get');
+$civistatus = do_api_call($host, $cms, 'System', 'check');
+
+// Fetch the CiviCRM version
+$version = 'unknown';
+
+if (!empty($domain->values)) {
+  $values = (array) $domain->values;
+  $t = array_shift($values);
+  $version = $t->version;
+
+  // Convert the version to an integer. Performance metrics do not handle strings.
+  // Ex: 5.19.beta1 => 005 019 000.01
+  // Ex: 5.19.3 => 005 019 003.00
+  // Ex: 5.19 => 005 019 000.00
+  $parts = explode('.', $version);
+  $formatted = '';
+
+  while (count($parts)) {
+    $t = array_pop($parts);
+
+    if (substr($t, 0, 4) == 'beta') {
+      // In a way, 5.19.beta1 is actually 5.19.0.1
+      $formatted = '000.' . sprintf('%02d', substr($t, 4));
     }
-
-    if (in_array($val->severity, ['warning', 'error', 'critical'])) {
-      // We don't want to downgrade an 'error' status to 'warning'.
-      if ($check_status == 0) {
-        $check_status = 1;
-      }
-
-      $check_descriptions[] = $val->title;
-    }
-
-    if ($val->severity == 'error' || $val->severity == 'critical') {
-      $check_status = 2;
+    else {
+      $formatted = sprintf('%03d', $t) . $formatted;
     }
   }
 
-  if ($check_status == 0) {
-    echo 'OK';
-    exit(0);
+  $version = $formatted;
+}
+
+$check_status = 0;
+$check_descriptions = [];
+$upgrade_status = 1;
+
+$upgrade_status_options = [
+  'info' => 1,
+  'notice' => 1,
+  'warning' => 2,
+  'critical' => 3,
+];
+
+foreach ($civistatus->values as $key => $val) {
+  if ($val->name == 'checkVersion_upgrade') {
+    $upgrade_status = $upgrade_status_options[$val->severity];
   }
-  else {
-    echo implode(' ', $check_descriptions);
-    exit($check_status);
+
+  // Issue was acknowledged (hidden from the Status Check UI).
+  if (!$val->is_visible) {
+    continue;
+  }
+
+  if (in_array($val->severity, ['warning', 'error', 'critical'])) {
+    // We don't want to downgrade an 'error' status to 'warning'.
+    if ($check_status == 0) {
+      $check_status = 1;
+    }
+
+    $check_descriptions[] = $val->title;
+  }
+
+  if ($val->severity == 'error' || $val->severity == 'critical') {
+    $check_status = 2;
   }
 }
 
-if ($cms == 'drupal' || $cms == 'drupal8') {
-  exec('sudo -u aegir /usr/local/bin/drush @' . escapeshellarg($host) . ' cc drush');
-}
+$metrics = "upgrade=$upgrade_status; civiver=$version";
 
-echo 'Failed to check status (2). Drush cache flushed for the next run.';
-exit(3);
+if ($check_status == 0) {
+  echo "OK | $metrics";
+  exit(0);
+}
+else {
+  echo implode(' ', $check_descriptions) . " | $metrics";
+  exit($check_status);
+}

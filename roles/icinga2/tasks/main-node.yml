@@ -73,10 +73,12 @@
     - icinga2
     - icinga2-cert
 
-- template: src=zones.conf dest=/etc/icinga2/zones.conf owner=root group=root mode=0644
+- template: src=etc/icinga2/zones.conf dest=/etc/icinga2/zones.conf owner=root group=root mode=0644
   notify: restart icinga2
   tags:
     - icinga2
+    - icinga2-zones
+    - icinga2-custom-checks
 
 - name: Enable the Icinga2 API
   shell: icinga2 feature enable api
@@ -111,8 +113,8 @@
 ## because some are run by less-privileged users and might not have access to /etc/icinga2
 - file: path="{{ item }}" state=directory owner=root group={{ icinga2_user }} mode=0755
   with_items:
-    - /etc/icinga2/conf.d/services
     - /etc/icinga2/conf.d/commands
+    - /etc/icinga2/conf.d/services
     - /usr/local/lib/icinga2-plugins
   tags:
     - icinga2
@@ -139,8 +141,12 @@
     - check_memory
     - check_md_raid
     - check_mysqldump-secure
+    - check_php_fpm
     - check_ufw
     - check_zpool
+    - restart_service
+    - run_aegir_verify
+    - run_dist_upgrade
   notify: restart icinga2
   tags:
     - icinga2
@@ -162,6 +168,7 @@
     - backup
     - bandwidth
     - civicrm
+    - cert_expiry
     - cmsversion
     - file_content
     - mem
@@ -177,18 +184,21 @@
 
 - template: src="etc/sudoers.d/{{ item }}" dest="/etc/sudoers.d/{{ item }}" owner=root group=root mode=0440
   with_items:
+    - symbiotic-monitoring
+  tags:
+    - icinga2
+    - icinga2-custom-checks
+    - icinga2-sudo
+
+# Remove old sudo configurations before they were merged
+- file: path=/etc/sudoers.d/{{ item }} state=absent
+  with_items:
     - aegir-icinga2
     - backup-icinga2
     - mdadm-icinga2
     - mysql-icinga2
     - zfs-icinga2
     - ufw-icinga2
-  tags:
-    - icinga2
-    - icinga2-custom-checks
-
-# Remove old location for those configurations
-- file: path=/etc/icinga2/conf.d/services/civicrm.conf state=absent
   tags:
     - icinga2
     - icinga2-custom-checks

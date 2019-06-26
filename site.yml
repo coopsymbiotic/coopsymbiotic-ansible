@@ -65,6 +65,13 @@
   tags:
     - logstash
 
+- hosts: loki-servers
+  sudo: yes
+  roles:
+    - loki
+  tags:
+    - loki
+
 - hosts: icinga-servers
   sudo: yes
   roles:

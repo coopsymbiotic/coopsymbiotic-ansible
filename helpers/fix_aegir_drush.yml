@@ -1,0 +1,15 @@
+---
+
+# Fix drush on Aegir and re-run the upgrade
+# To use it: $ ansible-playbook ./hacks/fix_aegir_drush.yml 
+
+- hosts: aegir-managed
+  tasks:
+    - file: path=/usr/local/bin/drush state=absent
+    - get_url:
+        url: https://github.com/drush-ops/drush/releases/download/8.1.16/drush.phar
+        dest: /usr/local/bin/drush
+        mode: 0755
+    - apt: upgrade=dist update_cache=yes
+  become: true
+  become_user: root

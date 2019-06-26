@@ -48,6 +48,14 @@
 
 # - network interface configuration
 
+# FIXME: not sure if these are the correct filenames
+# - name: Ensure that OVH defaults are absent
+#   file: path="/etc/systemd/network/{{ item }}" state=absent
+#   with_items:
+#     - 50-br0.netdev
+#     - 50-default.network
+#     - 50-public-interface.link
+
 - name: Deploy the network interfaces configuration
   template:
     src: "etc/systemd/network/{{ item }}"
@@ -61,13 +69,6 @@
     - 50-network-interface.network
   tags:
     - kvm-server-networkd
-
-- name: Ensure that OVH defaults are absent
-  file: path="/etc/systemd/network/{{ item }}" state=absent
-  with_items:
-    - 50-br0.netdev
-    - 50-default.network
-    - 50-public-interface.link
 
 # TODO: grub configuration to enable serial console? (not really working)
 # http://tech.sid3windr.be/2016/02/configuring-ipmi-serial-over-lan-on-debian-8-jessie/

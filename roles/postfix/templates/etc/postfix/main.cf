@@ -25,23 +25,28 @@ smtpd_tls_session_cache_database = btree:${data_directory}/smtpd_scache
 smtp_tls_session_cache_database = btree:${data_directory}/smtp_scache
 
 # DKIM
+# 2018-01-11 Removing, since too many problems with the Debian package
+# and for most servers, we are switching to SparkPost.
+#
 # NB: runs in chroot, so /run/opendkim/ = /var/spool/postfix/run/
-milter_default_action = accept
-milter_protocol = 2
-smtpd_milters = unix:/run/opendkim/opendkim.sock
-non_smtpd_milters = unix:/run/opendkim/opendkim.sock
+# milter_default_action = accept
+# milter_protocol = 2
+# smtpd_milters = unix:/run/opendkim/opendkim.sock
+# non_smtpd_milters = unix:/run/opendkim/opendkim.sock
 
 myhostname = {{ inventory_hostname }}
-myorigin = /etc/mailname
+myorigin = {{ host_postfix_myorigin }}
 mydestination = {{ inventory_hostname }}, localhost
 
 alias_maps = hash:/etc/aliases
 alias_database = hash:/etc/aliases
 mynetworks = 127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128
 
-{% if ansible_distribution_release == "jessie" %}
+# Postfix >= 2.10 (Debian 8/Jessie and above)
 smtpd_relay_restrictions = permit_mynetworks permit_sasl_authenticated defer_unauth_destination
-{% endif %}
+
+# Everyone recommends this, but I don't know why.
+header_size_limit = 4096000
 
 {% if host_postfix_sasl %}
 # Sender-dependent SASL authentication
@@ -49,7 +54,7 @@ smtp_sasl_auth_enable = yes
 smtp_use_tls = yes
 smtp_sasl_password_maps = hash:/etc/postfix/sasl/sasl_pass
 smtp_sasl_security_options = noanonymous
-relayhost = {{ host_postfix_sasl }}
+relayhost = {{ host_postfix_sasl_host }}:{{ host_postfix_sasl_port }}
 {% else %}
 relayhost =
 {% endif %}

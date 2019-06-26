@@ -2,37 +2,15 @@
 - apt: name={{ item }} state=present install_recommends=no
   with_items:
     - postfix
-    - opendkim
-    - opendkim-tools
   tags:
     - packages
     - postfix
 
-- name: Test if the bidon.ca key is present.
-  stat: path=/etc/ssl/private/wildcard.bidon.ca.key
-  register: stkey
-  tags:
-    - postfix
+# DEPRECATED, now sending everything through SparkPost
+#    - opendkim
+#    - opendkim-tools
 
-- set_fact:
-    postfix_key: "/etc/ssl/private/wildcard.bidon.ca.key"
-    when: stkey.stat.exists
-  tags:
-    - postfix
-
-- name: Test if the bidon.ca cert bundle is present.
-  stat: path=/etc/ssl/private/wildcard.bidon.ca.bundled.crt
-  register: stcrt
-  tags:
-    - postfix
-
-- set_fact:
-    postfix_cert: "/etc/ssl/private/wildcard.bidon.ca.bundled.crt"
-    when: stcrt.stat.exists
-  tags:
-    - postfix
-
-# SymbioTIC key
+# DEPRECATED SymbioTIC key
 - name: Test if the symbiotic.coop key is present.
   stat: path=/etc/ssl/private/wildcard.symbiotic.coop.key
   register: stkey
@@ -80,96 +58,20 @@
   tags:
     - postfix
 
-- name: Deploy the opendkim configurations.
-  template:
-    src: "{{ item }}"
-    dest: "/{{ item }}"
-    owner: "root"
-    group: "root"
-    mode: 0644
-  with_items:
-    - "etc/opendkim.conf"
-    - "etc/default/opendkim"
-  notify: restart opendkim
-  tags:
-    - postfix
-    - postfix-opendkim
-
-- name: Deploy the opendkim systemd unit override, workaround Debian bug 864162
-  template:
-    src: "lib/systemd/system/opendkim.service"
-    dest: "/lib/systemd/system/opendkim.service"
-    owner: "root"
-    group: "root"
-    mode: 0644
-  notify: restart opendkim
-  tags:
-    - postfix
-    - postfix-opendkim
-
-- name: Ensure that the postfix run directory exists.
-  file: path=/var/spool/postfix/run/ state=directory owner=postfix
-
-- name: Ensure that the opendkim socket directory exists.
-  file: path=/var/spool/postfix/run/opendkim/ state=directory owner=opendkim
-  notify: restart opendkim
-  tags:
-    - postfix
-    - postfix-opendkim
-
-- name: Ensure that the opendkim keys directory exists and is restricted.
-  file: path=/etc/opendkim/ state=directory owner=opendkim group=opendkim mode=0700
-  notify: restart opendkim
-  tags:
-    - postfix
-    - postfix-opendkim
-
-- name: Deploy the public OpenDKIM key
-  copy: src=/etc/ansible/files/etc/opendkim/201409.txt dest=/etc/opendkim/201409.txt owner=root group=root mode=0600
-  notify: restart opendkim
-  tags:
-    - postfix
-    - postfix-opendkim
-
-- name: Deploy the private OpenDKIM key
-  copy: src=/etc/ansible/files/etc/opendkim/201409.private dest=/etc/opendkim/201409.private owner=root group=root mode=0600
-  notify: restart opendkim
-  tags:
-    - postfix
-    - postfix-opendkim
-
-- stat: path=/etc/opendkim/201409.private
-  register: stkey
-  tags:
-    - postfix
-    - postfix-opendkim
-
-- name: Set OpenDKIM private key permissions.
-  file: path=/etc/opendkim/201409.private owner=root group=root mode=0600
-  when: (stkey.stat.exists == true)
-  notify: restart opendkim
-  tags:
-    - postfix
-    - postfix-opendkim
-
-- name: Set OpenDKIM public key permissions.
-  file: path=/etc/opendkim/201409.txt owner=root group=root mode=0600
-  when: (stkey.stat.exists == true)
-  notify: restart opendkim
-  tags:
-    - postfix
-    - postfix-opendkim
-
-- name: Add postfix in the opendkim group.
-  user: name=postfix groups=opendkim append=yes
-  notify: restart opendkim
-  tags:
-    - postfix
-    - postfix-opendkim
-
-# Configure SASL if necessary
-- name: Create sasl directory if necessary.
+- name: Create sasl directory if necessary
   file: path=/etc/postfix/sasl/ state=directory owner=root group=root mode=0700
+  when: host_postfix_sasl != false
+  notify: restart postfix
+  tags:
+    - postfix
+
+- name: Deploy sasl credentials for the SMTP relay
+  template:
+    src: "etc/postfix/sasl/sasl_pass"
+    dest: "/etc/postfix/sasl/sasl_pass"
+    owner: "root"
+    group: "root"
+    mode: 0600
   when: host_postfix_sasl != false
   notify: restart postfix
   tags:

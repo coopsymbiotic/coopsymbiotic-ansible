@@ -11,7 +11,6 @@
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ puppet-agent\[[0-9]+\]: .* Could not set gid on user .*$
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ puppet-agent\[[0-9]+\]: .* Could not set password on user .*$
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ nscd: nss_ldap: reconnected to LDAP server.*
-^\w{3} [ :0-9]{11} [._[:alnum:]-]+ pam_ldap: error trying to bind as user.*
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ ansible.*
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ ntpd\[[0-9]+\]: peer .* now valid
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ ntpd\[[0-9]+\]: peer .* now invalid
@@ -65,6 +64,7 @@
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ sshd\[[0-9]+\]: input_userauth_request: invalid user .*
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ sshd\[[0-9]+\]: packet_write_wait: Connection from .*
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ sshd\[[0-9]+\]: Connection reset by .*
+^\w{3} [ :0-9]{11} [._[:alnum:]-]+ sshd\[[0-9]+\]: pam_ldap: error trying to bind as user.*
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ kernel: \[[\.0-9]+\] iptables dropped input: .*
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ kernel: \[[\.0-9]+\] ip6tables dropped input: .*
 ^\w{3} [ :0-9]{11} [._[:alnum:]-]+ kernel: \[[\.0-9]+\] iptables dropped forward: .*

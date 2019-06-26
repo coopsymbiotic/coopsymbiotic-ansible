@@ -1,0 +1,10 @@
+---
+
+# Run Debian upgrades
+# To use it: $ ansible-playbook ./hacks/upgrade_debian.yml 
+
+- hosts: all
+  tasks:
+    - apt: upgrade=dist
+  become: true
+  become_user: root

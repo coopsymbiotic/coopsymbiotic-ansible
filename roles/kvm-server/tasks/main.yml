@@ -18,7 +18,6 @@
 - apt: name={{ item }} state=present install_recommends=no
   with_items:
     - openntpd
-    - kvm
     - qemu-kvm
     - virtinst
     - bridge-utils
@@ -29,10 +28,10 @@
 
 - apt: name={{ item }} state=present install_recommends=no
   with_items:
-    - libvirt-bin
+    - libvirt-clients
     - libvirt-daemon
     - libvirt-daemon-system
-  when: ansible_distribution_release == "jessie"
+  when: (ansible_distribution_release == "jessie" or ansible_distribution_release == "buster")
 
 - apt: name={{ item }} state=present install_recommends=no
   with_items:

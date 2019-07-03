@@ -107,6 +107,7 @@ $upgrade_status_options = [
   'info' => 1,
   'notice' => 1,
   'warning' => 2,
+  'alert' => 3,
   'critical' => 3,
 ];
 
@@ -120,7 +121,7 @@ foreach ($civistatus->values as $key => $val) {
     continue;
   }
 
-  if (in_array($val->severity, ['warning', 'error', 'critical'])) {
+  if (in_array($val->severity, ['warning', 'error', 'alert', 'critical'])) {
     // We don't want to downgrade an 'error' status to 'warning'.
     if ($check_status == 0) {
       $check_status = 1;

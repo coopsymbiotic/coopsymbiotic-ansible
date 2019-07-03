@@ -105,6 +105,15 @@
     - packages
     - aegir-nginx
 
+- apt: name={{ item }} state=present install_recommends=no
+  with_items:
+    - "php{{ phpversion }}-fpm"
+  when: "'aegir-apache' not in group_names"
+  tags:
+    - packages
+    - packages-php
+    - aegir-php
+
 # nb: imagick is required by Mosaico
 - apt: name={{ item }} state=present install_recommends=no
   with_items:
@@ -139,15 +148,6 @@
     - "php{{ phpversion }}-zip"
     - "php-imagick"
   when: phpversion >= 7.0
-  tags:
-    - packages
-    - packages-php
-    - aegir-php
-
-- apt: name={{ item }} state=present install_recommends=no
-  with_items:
-    - "php{{ phpversion }}-fpm"
-  when: "'aegir-apache' not in group_names"
   tags:
     - packages
     - packages-php

@@ -68,7 +68,7 @@
 
 - shell: icinga2 pki request --host {{ icinga2_main_node }} --ticket {{ ticket.stdout }} --key "{{ icinga2_cert_dir }}/{{ inventory_hostname }}.key" --cert "{{ icinga2_cert_dir }}/{{ inventory_hostname }}.crt" --trustedcert "{{ icinga2_cert_dir }}/trusted-master.crt" --ca "{{ icinga2_cert_dir }}/ca.crt"
   args:
-    creates: "/etc/icinga2/pki/ca.crt"
+    creates: "{{ icinga2_cert_dir }}/ca.crt"
   tags:
     - icinga2
     - icinga2-cert

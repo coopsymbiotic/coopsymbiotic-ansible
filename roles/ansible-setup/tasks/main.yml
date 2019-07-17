@@ -15,7 +15,7 @@
 - name: User | authorized key upload
   authorized_key:
     user="{{ deploy_user }}"
-    key="{{ lookup('file', '/etc/ansible/files/sshkeys/global/{{ deploy_user }}.pub') }}"
+    key="{{ lookup('file', '/etc/ansible/files/sshkeys/deploy/{{ deploy_user }}.pub') }}"
 
 - apt: name={{ item }} state=present install_recommends=no
   with_items:

@@ -1,16 +1,59 @@
 ---
 
-- name: Create system users
-  user: name={{ item | basename | regex_replace('\.pub$', '') }} shell="/bin/bash"
+- name: Generate a random password for users
+  set_fact:
+    password_item: "{{ item | basename | regex_replace('.pub$', '') }};{{ lookup('password', '/dev/null chars=ascii_letters,digits length=25') }}"
   with_fileglob:
-    - /etc/ansible/files/sshkeys/global/*.pub
+    - "{{ sshuserkeys_files_path }}/sshkeys/global/*.pub"
+  register: password_results
+  tags:
+    - sshuserkeys
+    - sshuserkeys-test
+
+- name: Format random password list
+  set_fact:
+    password_list: "{{ password_results.results | selectattr('skipped', 'undefined') | map(attribute='ansible_facts.password_item') | list }}"
+  tags:
+    - sshuserkeys
+    - sshuserkeys-test
+
+- name: Format random password dict
+  set_fact:
+    password_dict: "{{ password_dict|default([]) + [ { 'name': item.split(';')[0], 'password': item.split(';')[1] } ] }}"
+  with_items: "{{ password_list }}"
+  tags:
+    - sshuserkeys
+    - sshuserkeys-test
+
+- name: Create system users
+  user:
+    name: "{{ item.name }}"
+    shell: "/bin/bash"
+    password: "{{ item.password | password_hash('sha512') }}"
+    update_password: "on_create"
+  with_items:
+    - "{{ password_dict }}"
   tags:
     - sshuserkeys
 
-- name: Deploy ssh user keys
+- name: Save the user password in pw.txt
+  copy:
+    content: "{{ item.password }}"
+    dest: "/home/{{ item.name }}/pw.txt"
+    owner: "{{ item.name }}"
+    group: "{{ item.name }}"
+    mode: '0600'
+    force: "no"
+  with_items:
+    - "{{ password_dict }}"
+  tags:
+    - sshuserkeys
+    - sshuserkeys-test
+
+- name: Deploy user ssh keys
   authorized_key: user={{ item | basename | regex_replace('\.pub$', '') }} key="{{ lookup('file', item) }}"
   with_fileglob:
-    - /etc/ansible/files/sshkeys/global/*.pub
+    - "{{ sshuserkeys_files_path }}/sshkeys/global/*.pub"
   tags:
     - sshuserkeys
 
@@ -21,5 +64,3 @@
   tags:
     - sshuserkeys
     - sshuserkeys-sudoers
-
-# TODO: per-server, ex: /etc/ansible/files/sshkeys/{{ inventory_hostname }}/*.pub

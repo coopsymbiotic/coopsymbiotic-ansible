@@ -2,3 +2,8 @@
 # Override in /etc/ansible/group_vars/all
 # or per-host in /etc/ansible/host_vars/[host]
 root_sudoers: johndoe
+
+# Expects ssh pub keys, for example in /etc/ansible/files/sshkeys/global/
+# Other example: "{{ inventory_dir }}/files" (ex: if you have a repo for
+# your inventory hosts, vars and files.
+sshuserkeys_files_path: /etc/ansible/files/

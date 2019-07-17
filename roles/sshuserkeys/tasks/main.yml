@@ -1,5 +1,12 @@
 ---
 
+# We start by generating the passwords and storing the result in a fact
+# The result is then converted to a list, and then to a dict, to simplify lookups.
+# Note that this first task will create entries such as "myusername;mypassword"
+# it later gets split when creating password_list.
+
+# In this task, the use of set_fact+register is explained here:
+# https://stackoverflow.com/a/29817564
 - name: Generate a random password for users
   set_fact:
     password_item: "{{ item | basename | regex_replace('.pub$', '') }};{{ lookup('password', '/dev/null chars=ascii_letters,digits length=25') }}"

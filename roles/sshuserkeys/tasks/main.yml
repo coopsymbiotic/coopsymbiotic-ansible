@@ -43,6 +43,10 @@
   tags:
     - sshuserkeys
 
+# force=no, combined with update_password=on_create, should ensure
+# that we do not change the password of existing users. If they had
+# already logged-in and deleted the pw.txt, this will re-create it,
+# but it will not be valid, so it's not a big issue.
 - name: Save the user password in pw.txt
   copy:
     content: "{{ item.password }}"

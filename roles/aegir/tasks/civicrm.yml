@@ -22,10 +22,9 @@
     - packages
 
 - apt_repository:
-    repo='deb https://deb.nodesource.com/node_6.x stretch main'
+    repo="deb https://deb.nodesource.com/node_10.x {{ ansible_distribution_release }} main"
     state=present
     update_cache=yes
-  when: ansible_distribution_release == "stretch"
   tags:
     - nodejs
     - packages
@@ -33,22 +32,8 @@
 - apt: name={{ item }} state=present install_recommends=no
   with_items:
     - nodejs
-  when: ansible_distribution_release == "stretch"
   tags:
     - nodejs
-    - packages
-
-# libssl-dev from jessie-backports required for nodejs-dev, for node-gyp, for node, for npm..
-- apt:
-    name: "{{ item }}"
-    state: present
-    install_recommends: no
-    default_release: jessie-backports
-  with_items:
-    - libssl-dev
-    - npm
-  when: ansible_distribution_release == "jessie"
-  tags:
     - packages
 
 - name: civicrm | Download civix, cv, civistrings and git-scan

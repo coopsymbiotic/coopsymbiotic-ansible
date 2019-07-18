@@ -7,12 +7,16 @@
     - linux-image-amd64
     - linux-headers-amd64
   when: ansible_distribution_release == "jessie"
+  tags:
+    - packages
 
 - apt: name={{ item }} state=present install_recommends=no
   with_items:
     - linux-image-amd64
     - linux-headers-amd64
   when: ansible_distribution_release != "jessie"
+  tags:
+    - packages
 
 # FIXME: on Stretch, requires "contrib"
 - apt: name={{ item }} state=present install_recommends=no

@@ -24,7 +24,6 @@
   sudo: yes
   roles:
     - kvm-server
-    - munin-node
   tags:
     - kvm-server
 

@@ -1,5 +1,6 @@
 ---
 # Assumes Debian Jessie with Redmine 3.0.x
+# This role is deprecated, we are not using Redmine anymore.
 
 - name: Create the redmine user manually, since we want a home.
   user: name=redmine

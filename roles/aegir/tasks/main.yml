@@ -117,6 +117,7 @@
 # nb: imagick is required by Mosaico
 - apt: name={{ item }} state=present install_recommends=no
   with_items:
+    - "php{{ phpversion }}"
     - "php{{ phpversion }}-gd"
     - "php{{ phpversion }}-cli"
     - "php{{ phpversion }}-curl"

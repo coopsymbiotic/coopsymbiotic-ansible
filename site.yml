@@ -24,6 +24,7 @@
   sudo: yes
   roles:
     - kvm-server
+    - munin-node
   tags:
     - kvm-server
 
@@ -36,13 +37,6 @@
     - dehydrated
   tags:
     - aegir
-
-- hosts: aegir-managed
-  sudo: yes
-  roles:
-    - gitlab-runner
-  tags:
-    - gitlab-runner
 
 - hosts: postfix-servers
   sudo: yes
@@ -89,13 +83,6 @@
   tags:
     - icinga2
 
-- hosts: redmine-servers
-  sudo: yes
-  roles:
-    - redmine
-  tags:
-    - redmine
-
 - hosts: gitlab-servers
   sudo: yes
   roles:
@@ -130,13 +117,6 @@
     - backupninja-rdiff
   tags:
     - backupninja-rdiff
-
-- hosts: munin-nodes
-  sudo: yes
-  roles:
-    - munin-node
-  tags:
-    - munin-node
 
 - hosts: dokuwiki-instances
   sudo: yes

@@ -27,21 +27,20 @@
     - bridge-utils
     - netcat-openbsd
     - zfs-dkms
-    - zfsutils-linux
-    - zfs-zed
+  tags:
+    - packages
+
+- name: Modprobe zfs
+  shell: modprobe zfs
 
 - apt: name={{ item }} state=present install_recommends=no
   with_items:
+    - zfsutils-linux
+    - zfs-zed
     - libvirt-clients
     - libvirt-daemon
     - libvirt-daemon-system
-  when: (ansible_distribution_release == "jessie" or ansible_distribution_release == "buster")
-
-- apt: name={{ item }} state=present install_recommends=no
-  with_items:
-    - libvirt-clients
-    - libvirt-daemon-system
-  when: ansible_distribution_release == "stretch"
+    - virt-top
 
 - service: name=openntpd state=started enabled=yes
 

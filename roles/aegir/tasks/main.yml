@@ -120,7 +120,6 @@
     - "php{{ phpversion }}-gd"
     - "php{{ phpversion }}-cli"
     - "php{{ phpversion }}-curl"
-    - "php{{ phpversion }}-imagick"
     - "php{{ phpversion }}-intl"
     - "php{{ phpversion }}-json"
     - "php{{ phpversion }}-ldap"

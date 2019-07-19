@@ -409,6 +409,13 @@
   with_items:
     - update_notify_emails
 
+- name: Aegir | Generate the dhparams file, may take a few minutes
+  shell: "openssl dhparam -check -5 4096 > /etc/nginx/params.4096"
+  args:
+    creates: /etc/nginx/params.4096
+  tags:
+    - aegir-dhparams
+
 # TODO
 # - vget hosting_default_web_server, and enable nginx-ssl, then run verify.
 # - enable SSL on the hostmaster site (so that LE can later generate a cert for it)

@@ -1,0 +1,4 @@
+# {{ ansible_managed }}
+Package: *
+Pin: release o=deb.sury.org
+Pin-Priority: 900

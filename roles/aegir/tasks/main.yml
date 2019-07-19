@@ -42,6 +42,13 @@
     - packages-php
     - aegir-php
 
+- name: Debian | Pin Sury repositories
+  template: src=etc/apt/preferences.d/php-symbiotic dest=/etc/apt/preferences.d/php-symbiotic owner=root group=root mode=0444
+  tags:
+    - packages
+    - packages-php
+    - aegir-php
+
 # https://github.com/gaspaio/ansible-devbox/blob/master/roles/mysql/tasks/server.yml
 # Install server using a preseed file to set the root password
 - name: Check for previous MySQL installation

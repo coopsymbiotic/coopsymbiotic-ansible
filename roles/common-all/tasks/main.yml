@@ -49,6 +49,13 @@
     - common-all
     - common-all-rsyslog
 
+- name: sysctl | Deploy custom sysctl settings
+  template: src=etc/sysctl.d/95-symbiotic.conf dest=/etc/sysctl.d/95-symbiotic.conf owner=root group=root mode=0644
+  notify: refresh sysctl
+  tags:
+    - common-all
+    - common-all-sysctl
+
 - name: common | Deploy keyboard default conf
   template: src=etc/default/keyboard dest=/etc/default/keyboard owner=root group=root mode=0644
   tags:

@@ -4,4 +4,4 @@
   service: name=rsyslog state=restarted
 
 - name: refresh sysctl
-  shell: sysctl -p to refresh
+  shell: sysctl -p

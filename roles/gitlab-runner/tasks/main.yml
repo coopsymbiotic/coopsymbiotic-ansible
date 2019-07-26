@@ -27,6 +27,11 @@
     - gitlab-runner
     - packages
 
+# Fixes a bug on Debian Buster
+# https://gitlab.com/gitlab-org/gitlab-runner/issues/4449
+- name: Delete the bash_logout of the gitlab-runner user
+  file: path=/home/gitlab-runner/.bash_logout state=absent
+
 # Register the Runner with the Gitlab server
 # Based on: https://github.com/haroldb/ansible-gitlab-runner/blob/master/tasks/register-runner.yml
 

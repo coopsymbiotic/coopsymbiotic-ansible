@@ -166,6 +166,7 @@
 
 - apt: name={{ item }} state=present install_recommends=no
   with_items:
+    - patch # required for drush make
     - pwgen
     - curl
     - gettext

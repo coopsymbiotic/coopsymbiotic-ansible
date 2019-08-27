@@ -38,3 +38,6 @@ log_bin_trust_function_creators=1
 # but this is a bit too brutal for legacy code.
 # https://mariadb.com/kb/en/library/sql-mode/
 sql-mode="NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION"
+
+# [ML] Some clients use this for imports (required for MariaDB 10.3)
+local-infile=1

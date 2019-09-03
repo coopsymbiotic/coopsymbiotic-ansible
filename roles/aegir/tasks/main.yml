@@ -424,34 +424,20 @@
 - name: Restart Aegir hosting queue
   service: name=hosting-queued state=restarted
 
-# This is absurd, but wkhtmltopdf cannot fetch https without this package
-# affects Debian Stretch.
-# https://github.com/wkhtmltopdf/wkhtmltopdf/issues/3001#issuecomment-309673453
+# Requirements for the wkhtmltox 0.15 package
 - apt: name={{ item }} state=absent install_recommends=no
   with_items:
-    - libssl1.0-dev
-  when: ansible_distribution_release == "stretch"
+    - fontconfig
+    - xfonts-base
+    - xfonts-75dpi
   tags:
     - packages
     - aegir
     - aegir-wkhtmltopdf
 
-- name: Download wkhtmltopdf
-  get_url:
-    url=https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.4/wkhtmltox-0.12.4_linux-generic-amd64.tar.xz
-    dest=/usr/local/wkhtmltox-0.12.4_linux-generic-amd64.tar.xz
-    mode=0644
-  tags:
-    - aegir
-    - aegir-wkhtmltopdf
-
-- unarchive: src=/usr/local/wkhtmltox-0.12.4_linux-generic-amd64.tar.xz dest=/usr/local/ copy=no
-  tags:
-    - aegir
-    - aegir-wkhtmltopdf
-
-- name: Create symlink for wkhtmltopdf
-  file: src=/usr/local/wkhtmltox/bin/wkhtmltopdf dest=/usr/local/bin/wkhtmltopdf state=link
+- name: Install wkhtmltopdf from deb
+  apt:
+    deb: https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.5/wkhtmltox_0.12.5-1.stretch_amd64.deb
   tags:
     - aegir
     - aegir-wkhtmltopdf

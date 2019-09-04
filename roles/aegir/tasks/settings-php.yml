@@ -14,8 +14,8 @@
 
 - name: Apache | Deploy our PHP ini overrides.
   template:
-    src="etc/php{{ phpversion }}/mods-available/90-symbiotic.ini"
-    dest="/etc/php{{ phpversion }}/mods-enabled/90-symbiotic.ini"
+    src="etc/php/{{ phpversion }}/mods-available/90-symbiotic.ini"
+    dest="/etc/php/{{ phpversion }}/mods-available/90-symbiotic.ini"
     owner=root group=root mode=0644
   notify: restart apache2
   when: "'aegir-apache' in group_names"
@@ -52,6 +52,14 @@
   tags:
     - aegir-php
 
+- name: Symlink PHP ini settings for PHP cli
+  file:
+    src="/etc/php/{{ phpversion }}/mods-available/90-symbiotic.ini"
+    dest="/etc/php/{{ phpversion }}/cli/conf.d/90-symbiotic.ini"
+    owner=root group=root state=link
+  tags:
+    - aegir-php
+
 - name: Enable php-fpm status for localhost
   lineinfile:
     path: /etc/php/{{ phpversion }}/fpm/pool.d/www.conf
@@ -61,6 +69,7 @@
     group: root
     mode: 0644
   notify: "restart php{{ phpversion }}-fpm"
+  when: "'aegir-apache' not in group_names"
   tags:
     - aegir-php
     - aegir-php-fpm

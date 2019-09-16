@@ -234,6 +234,7 @@
     - en_CA.UTF-8
     - fr_CA.UTF-8
     - fr_FR.UTF-8
+    - ca_ES.UTF-8
     - es_ES.UTF-8
   tags:
     - aegir

@@ -42,8 +42,20 @@
     - packages-php
     - aegir-php
 
+- name: Ubuntu | Add Sury.org repository
+  apt_repository:
+    repo: deb http://ppa.launchpad.net/ondrej/php/ubuntu {{ ansible_distribution_release }} main
+    state: present
+    update_cache: yes
+  when: (phpversion == 7.2 or phpversion == 7.1) and ansible_distribution == "Ubuntu" and ansible_distribution_major_version == "16"
+  tags:
+    - packages
+    - packages-php
+    - aegir-php
+
 - name: Debian | Pin Sury repositories
   template: src=etc/apt/preferences.d/php-symbiotic dest=/etc/apt/preferences.d/php-symbiotic owner=root group=root mode=0444
+  when: (phpversion == 7.2 or phpversion == 7.1) and (ansible_distribution == "Debian" or (ansible_distribution == "Ubuntu" and ansible_distribution_major_version == "16"))
   tags:
     - packages
     - packages-php

@@ -531,6 +531,11 @@
   tags:
     - aegir-sudoers
 
+- name: Deploy our duct tape script to safely reload nginx
+  template: src=usr/local/bin/aegir-reload-nginx.sh dest=/usr/local/bin/aegir-reload-nginx.sh owner=root group=root mode=0755
+  tags:
+    - aegir-sudoers
+
 - name: ssh | Create the .ssh directory for the Aegir user
   file: path=/var/aegir/.ssh state=directory mode="{{ aegir_ssh_dir_permission }}" owner=aegir group="{{ aegir_ssh_dir_group }}"
   tags:

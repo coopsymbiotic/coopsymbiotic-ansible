@@ -610,3 +610,15 @@
 - include: sshfs-keys.yml
   tags:
     - aegir-sshfs
+
+- include: mysql-users.yml mysql_users="{{ aegir_mysql_users_ro }}" mysql_privs="SELECT,SHOW VIEW,PROCESS"
+  when: aegir_mysql_users_ro | length > 0
+  tags:
+    - aegir-mysql-users
+    - aegir-mysql-users-ro
+
+- include: mysql-users.yml mysql_users="{{ aegir_mysql_users_rw }}" mysql_privs="SELECT,SHOW VIEW,PROCESS,INSERT,UPDATE,DELETE,CREATE VIEW,REPLICATION CLIENT"
+  when: aegir_mysql_users_rw | length > 0
+  tags:
+    - aegir-mysql-users
+    - aegir-mysql-users-rw

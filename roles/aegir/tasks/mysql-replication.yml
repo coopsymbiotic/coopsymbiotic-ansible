@@ -1,0 +1,5 @@
+---
+
+- name: ufw | Open the MySQL port for replication
+  ufw: proto="tcp" port="3306" src="{{ item }}" rule="allow"
+  with_items: "{{ aegir_mysql_replication_hosts }}"

@@ -622,3 +622,8 @@
   tags:
     - aegir-mysql-users
     - aegir-mysql-users-rw
+
+- include: mysql-replication.yml
+  when: aegir_mysql_replication_hosts | length > 0
+  tags:
+    - aegir-mysql-replication

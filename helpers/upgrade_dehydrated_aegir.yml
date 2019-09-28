@@ -1,0 +1,17 @@
+---
+
+# Upgrade dehydrated in Aegir
+# To use it: $ ansible-playbook ./helpers/upgrade_dehydrated_aegir.yml 
+
+- hosts: all
+  tasks:
+    - file: path="/var/aegir/config/letsencrypt/dehydrated" state="absent"
+    - name: Clone dehydrated repo into configured directory.
+      git:
+        repo: "https://github.com/lukas2511/dehydrated.git"
+        dest: "/var/aegir/config/letsencrypt/dehydrated"
+        version: "master"
+        update: "yes"
+    - file: path="/var/aegir/config/letsencrypt/dehydrated/.git" state="absent"
+  become: true
+  become_user: aegir

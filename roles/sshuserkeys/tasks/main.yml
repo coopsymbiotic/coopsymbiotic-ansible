@@ -11,7 +11,7 @@
   set_fact:
     password_item: "{{ item | basename | regex_replace('.pub$', '') }};{{ lookup('password', '/dev/null chars=ascii_letters,digits length=25') }}"
   with_fileglob:
-    - "{{ sshuserkeys_files_path }}/sshkeys/global/*.pub"
+    - "{{ sshuserkeys_files_path }}/*.pub"
   register: password_results
   tags:
     - sshuserkeys
@@ -43,6 +43,14 @@
   tags:
     - sshuserkeys
 
+- name: Change the home directory permissions
+  file: path="/home/{{ item.name }}" mode=0750
+  with_items:
+    - "{{ password_dict }}"
+  tags:
+    - sshuserkeys
+    - sshuserkeys-perms
+
 # force=no, combined with update_password=on_create, should ensure
 # that we do not change the password of existing users. If they had
 # already logged-in and deleted the pw.txt, this will re-create it,
@@ -64,7 +72,7 @@
 - name: Deploy user ssh keys
   authorized_key: user={{ item | basename | regex_replace('\.pub$', '') }} key="{{ lookup('file', item) }}"
   with_fileglob:
-    - "{{ sshuserkeys_files_path }}/sshkeys/global/*.pub"
+    - "{{ sshuserkeys_files_path }}/*.pub"
   tags:
     - sshuserkeys
 

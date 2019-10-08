@@ -6,4 +6,4 @@ root_sudoers: johndoe
 # Expects ssh pub keys, for example in /etc/ansible/files/sshkeys/global/
 # Other example: "{{ inventory_dir }}/files" (ex: if you have a repo for
 # your inventory hosts, vars and files.
-sshuserkeys_files_path: /etc/ansible/files/
+sshuserkeys_files_path: /etc/ansible/files/sshkeys/global

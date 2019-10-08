@@ -256,6 +256,14 @@
   tags:
     - aegir
 
+- name: Add the aegir user to the admin group
+  user: name="aegir"
+        groups=adm
+        append=yes
+  tags:
+    - aegir
+    - aegir-adm
+
 - name: Download provision_symbiotic from Github
   sudo_user: aegir
   git: repo=https://github.com/coopsymbiotic/provision_symbiotic.git

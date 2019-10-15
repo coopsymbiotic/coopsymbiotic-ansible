@@ -494,6 +494,12 @@
     - aegir-fixownership
     - aegir-fixpermission-override
 
+- name: Deploy our fix-wordpress-permissions.sh
+  template: src=usr/local/bin/fix-wordpress-permissions.sh dest=/usr/local/bin/fix-wordpress-permissions.sh owner=root group=root mode=0755
+  tags:
+    - aegir-fixownership
+    - aegir-fixpermission-override
+
 - name: Deploy our version of BOA's weekly.sh
   template: src=usr/local/bin/aegir-weekly.sh dest=/usr/local/bin/aegir-weekly.sh owner=root group=root mode=0755
   tags:

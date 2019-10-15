@@ -500,6 +500,14 @@
     - aegir-fixownership
     - aegir-fixpermission-override
 
+- name: Deploy other Aegir helper scripts
+  template: src="usr/local/bin/{{ item }}" dest="/usr/local/bin/{{ item }}" owner=root group=root mode=0755
+  with_items:
+    - resync-drupal-db.sh
+    - resync-wordpress-db.sh
+  tags:
+    - aegir-helper-scripts
+
 - name: Deploy our version of BOA's weekly.sh
   template: src=usr/local/bin/aegir-weekly.sh dest=/usr/local/bin/aegir-weekly.sh owner=root group=root mode=0755
   tags:

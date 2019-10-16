@@ -105,21 +105,9 @@
     name: "{{ item }}"
     state: present
     install_recommends: no
-    default_release: jessie-backports
   with_items:
     - nginx
-  when: ("'aegir-apache' not in group_names") and (ansible_distribution_release == "jessie")
-  tags:
-    - packages
-    - aegir-nginx
-
-- apt:
-    name: "{{ item }}"
-    state: present
-    install_recommends: no
-  with_items:
-    - nginx
-  when: ("'aegir-apache' not in group_names") and (ansible_distribution_release == "stretch")
+  when: ("'aegir-apache' not in group_names")
   tags:
     - packages
     - aegir-nginx

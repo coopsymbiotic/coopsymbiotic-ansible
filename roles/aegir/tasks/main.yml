@@ -71,6 +71,7 @@
 - apt: name={{ item }} state=present install_recommends=no
   with_items:
     - pwgen
+    - locales
 
 - name: Generate a root password for MySQL
   shell: pwgen 15 1 > /root/.mysql.root

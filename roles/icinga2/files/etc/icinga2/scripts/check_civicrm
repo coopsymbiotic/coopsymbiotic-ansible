@@ -20,10 +20,8 @@ function do_api_call($host, $cms, $entity, $action) {
     exec('sudo -u aegir /usr/local/bin/drush @' . escapeshellarg($host) . ' wp cv api ' . escapeshellarg($entity) . '.' . escapeshellarg($action) . ' --out=json --strict=0', $tmp);
   }
   elseif ($cms == 'joomla') {
-    global $civicrm_cli;
+    global $civicrm_root;
     global $civicrm_cli_ini; // required if TZ is not the same as the server
-    global $civicrm_cron_user;
-    global $civicrm_cron_pass;
 
     require_once '/etc/civicrm/' . $host . '.php';
 
@@ -31,7 +29,7 @@ function do_api_call($host, $cms, $entity, $action) {
       exec('sudo -u www-data /usr/bin/env php -c ' . escapeshellarg($civicrm_cli_ini) . ' ' . escapeshellarg($civicrm_cli) . ' -s ' . escapeshellarg($host) . ' -u ' . escapeshellarg($civicrm_cron_user) . ' -p ' . escapeshellarg($civicrm_cron_pass) . ' -e ' . escapeshellarg($entity) . ' -a ' . escapeshellarg($action) . ' --json', $tmp);
     }
     else {
-      exec('sudo -u www-data /usr/bin/env php ' . escapeshellarg($civicrm_cli) . ' -s ' . escapeshellarg($host) . ' -u ' . escapeshellarg($civicrm_cron_user) . ' -p ' . escapeshellarg($civicrm_cron_pass) . ' -e ' . escapeshellarg($entity) . ' -a ' . escapeshellarg($action) . ' --json', $tmp);
+      exec('sudo -u www-data /usr/local/bin/cv --cwd=' . escapeshellarg($civicrm_root) . ' api ' . escapeshellarg($entity . '.' . $action), $tmp);
     }
   }
   else {

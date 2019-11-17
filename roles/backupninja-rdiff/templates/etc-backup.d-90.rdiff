@@ -80,6 +80,7 @@ exclude = /var/aegir/platforms/*/sites/*/wp-content/plugins/files/civicrm/templa
 exclude = /var/aegir/tmp
 exclude = /var/aegir/hostmaster-7.x-*
 exclude = /usr/local/wkhtmltox
+exclude = /usr/local/promtail*
 
 {% if backupexcludes is defined %}
 # Excludes defined for this host only

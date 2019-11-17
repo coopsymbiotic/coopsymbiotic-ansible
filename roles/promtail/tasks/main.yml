@@ -1,0 +1,42 @@
+---
+
+- name: Check if promtail needs to be installed or upgraded
+  stat: path="/usr/local/bin/.promtail-{{ promtail_version }}.txt"
+  register: p
+  tags:
+    - packages
+    - packages-promtail
+    - promtail
+
+- name: Deploy the promtail binary
+  get_url:
+    url: "https://github.com/grafana/loki/releases/download/v{{ promtail_version }}/promtail-linux-amd64.gz"
+    dest: /usr/local/bin/promtail.gz
+    mode: '0640'
+  when: p.stat.exists == False
+  tags:
+    - packages
+    - packages-promtail
+    - promtail
+
+- name: Unzip the promtail binary
+  shell: "gunzip -f /usr/local/bin/promtail.gz && touch /usr/local/bin/.promtail-{{ promtail_version }}.txt"
+  when: p.stat.exists == False
+  tags:
+    - packages
+    - packages-promtail
+    - promtail
+
+- name: Delete the promtail gzip file
+  file: path="/usr/local/bin/promtail.gz" state=absent
+  tags:
+    - packages
+    - packages-promtail
+    - promtail
+
+- name: Promtail file permissions
+  file: path="/usr/local/bin/promtail" owner=root group=root mode=0755
+  tags:
+    - packages
+    - packages-promtail
+    - promtail

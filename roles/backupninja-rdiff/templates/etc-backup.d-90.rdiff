@@ -38,6 +38,13 @@ include = {{ item }}
 {% endfor %}
 {% endif %}
 
+# Exclude home directories from Symbiotic team
+# They should not contain production data.
+exclude = /home/mathieu
+exclude = /home/myriam
+exclude = /home/samuel
+exclude = /home/stephane
+
 exclude = /home/*/.bup
 exclude = /home/*/.local/share/Trash
 exclude = /home/*/.thumbnails
@@ -65,18 +72,25 @@ exclude = /var/aegir/.composer
 exclude = /var/aegir/.drush/cache
 exclude = /var/aegir/.npm
 exclude = /var/aegir/.nvm
+exclude = /var/aegir/.tmp
 exclude = /var/aegir/.vimundo
 exclude = /var/aegir/.vimbackup
 exclude = /var/aegir/backups
 exclude = /var/aegir/platforms/*/.git
 exclude = /var/aegir/platforms/*/sites/*/files/civicrm/templates_c
+exclude = /var/aegir/platforms/*/sites/*/files/civicrm/ConfigAndLog
 exclude = /var/aegir/platforms/*/sites/*/files/css
 exclude = /var/aegir/platforms/*/sites/*/files/imagecache
 exclude = /var/aegir/platforms/*/sites/*/files/js
 exclude = /var/aegir/platforms/*/sites/*/files/styles
 exclude = /var/aegir/platforms/*/sites/*/files/tmp
+exclude = /var/aegir/platforms/*/sites/*/files/*.sql
+exclude = /var/aegir/platforms/*/sites/*/files/*.sql.gz
 exclude = /var/aegir/platforms/*/sites/*/wp-content/uploads/civicrm/templates_c
+exclude = /var/aegir/platforms/*/sites/*/wp-content/uploads/civicrm/ConfigAndLog
 exclude = /var/aegir/platforms/*/sites/*/wp-content/plugins/files/civicrm/templates_c
+exclude = /var/aegir/platforms/*/sites/*/wp-content/plugins/files/civicrm/ConfigAndLog
+exclude = /var/aegir/platforms/civicrm-d8/core
 exclude = /var/aegir/tmp
 exclude = /var/aegir/hostmaster-7.x-*
 exclude = /usr/local/wkhtmltox

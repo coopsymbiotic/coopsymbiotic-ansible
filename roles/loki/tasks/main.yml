@@ -1,0 +1,74 @@
+---
+
+- name: Check if loki needs to be installed or upgraded
+  stat: path="/usr/local/bin/.loki-{{ loki_version }}.txt"
+  register: p
+  tags:
+    - packages
+    - packages-loki
+    - loki
+
+- name: Deploy the loki binary
+  get_url:
+    url: "https://github.com/grafana/loki/releases/download/v{{ loki_version }}/loki-linux-amd64.gz"
+    dest: /usr/local/bin/loki.gz
+    mode: '0640'
+  when: p.stat.exists == False
+  tags:
+    - packages
+    - packages-loki
+    - loki
+
+- name: Unzip the loki binary
+  shell: "gunzip -f /usr/local/bin/loki.gz && touch /usr/local/bin/.loki-{{ loki_version }}.txt"
+  when: p.stat.exists == False
+  tags:
+    - packages
+    - packages-loki
+    - loki
+
+- name: Delete the loki gzip file
+  file: path="/usr/local/bin/loki.gz" state=absent
+  tags:
+    - packages
+    - packages-loki
+    - loki
+
+- name: Loki file permissions
+  file: path="/usr/local/bin/loki" owner=root group=root mode=0755
+  tags:
+    - packages
+    - packages-loki
+    - loki
+
+- name: Open the loki port for our machines only
+  ufw: proto=tcp port=3100 rule=allow src="{{ item }}" route="yes"
+  with_items: "{{ loki_server_allow_ips }}"
+  tags:
+    - loki
+    - loki-ufw
+    - ufw
+
+- name: Loki lib directory permissions
+  file: path="/var/lib/loki" state=directory owner=root group=root mode=0700
+  tags:
+    - loki
+
+- name: Loki systemd unit file
+  template: src=etc/systemd/system/loki.service dest=/etc/systemd/system/loki.service owner=root group=root mode=0644
+  tags:
+    - loki
+
+- name: Loki configuration file
+  template: src=etc/loki.yaml dest=/etc/loki.yaml owner=root group=root mode=0644
+  notify: restart loki
+  tags:
+    - loki
+
+- name: Enable the loki service
+  systemd:
+    name: loki
+    enabled: yes
+    masked: no
+  tags:
+    - loki

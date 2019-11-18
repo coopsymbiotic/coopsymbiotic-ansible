@@ -1,0 +1,8 @@
+loki_version: 0.4.0
+loki_server_name: log.example.org
+
+# Assumes ufw is installed and used to manage your firewall.
+# We only expose logstash to IPs we trust, otherwise people could send junk logs.
+loki_server_allow_ips:
+- 10.0.0.0/8
+- 192.168.1.0/24

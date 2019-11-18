@@ -1,0 +1,29 @@
+# {{ ansible_managed }}
+
+server:
+  http_listen_port: 9080
+  grpc_listen_port: 0
+
+positions:
+  filename: /var/lib/promtail/positions.yaml
+
+clients:
+- url: {{ promtail_push_url }}
+
+scrape_configs:
+- job_name: system
+  static_configs:
+  - targets:
+      - localhost
+    labels:
+      job: varlogs
+      host: av501
+      __path__: /var/log/*log
+- job_name: nginx
+  static_configs:
+  - targets:
+      - localhost
+    labels:
+      job: nginx
+      host: av501
+      __path__: /var/log/nginx/*log

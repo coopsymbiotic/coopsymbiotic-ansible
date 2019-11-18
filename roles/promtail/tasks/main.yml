@@ -34,9 +34,33 @@
     - packages-promtail
     - promtail
 
-- name: Promtail file permissions
+- name: Promtail binary file permissions
   file: path="/usr/local/bin/promtail" owner=root group=root mode=0755
   tags:
     - packages
     - packages-promtail
+    - promtail
+
+- name: Promtail lib directory permissions
+  file: path="/var/lib/promtail" state=directory owner=root group=root mode=0700
+  tags:
+    - promtail
+
+- name: Promtail systemd unit file
+  template: src=etc/systemd/system/promtail.service dest=/etc/systemd/system/promtail.service owner=root group=root mode=0644
+  tags:
+    - promtail
+
+- name: Promtail configuration file
+  template: src=etc/promtail.yaml dest=/etc/promtail.yaml owner=root group=root mode=0644
+  notify: restart promtail
+  tags:
+    - promtail
+
+- name: Enable the promtail service
+  systemd:
+    name: promtail
+    enabled: yes
+    masked: no
+  tags:
     - promtail

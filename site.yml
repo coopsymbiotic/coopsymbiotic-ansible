@@ -5,6 +5,7 @@
     - common-all
     - icinga2
     - filebeat
+    - promtail
     - backupninja-rdiff
     - mysqlbackup
     - ufw

@@ -53,9 +53,9 @@ rm $sqlfile
 # Set an image so that users notice the difference between prod and formation.
 DATE=`date +%Y-%m-%d`
 SITE="** DEV **"
-wget -O $DEV_PLATFORM/sites/$SITE_DEST/files/symbiotic-dev-version-tmp.jpg  "http://lorempixel.com/mono/640/280/food"
-convert -pointsize 80 -fill '#0099FF' -stroke black -strokewidth 2  -annotate +15+100 "$SITE\n$DATE" $DEV_PLATFORM/sites/$SITE_DEST/files/symbiotic-dev-version-tmp.jpg $DEV_PLATFORM/sites/$SITE_DEST/files/symbiotic-dev-version.jpg
-rm $DEV_PLATFORM/sites/$SITE_DEST/files/symbiotic-dev-version-tmp.jpg
+wget -O $DEV_PLATFORM/sites/${SITE_DEST:1}/files/symbiotic-dev-version-tmp.jpg  "http://lorempixel.com/mono/640/280/food"
+convert -pointsize 80 -fill '#0099FF' -stroke black -strokewidth 2  -annotate +15+100 "$SITE\n$DATE" $DEV_PLATFORM/sites/${SITE_DEST:1}/files/symbiotic-dev-version-tmp.jpg $DEV_PLATFORM/sites/${SITE_DEST:1}/files/symbiotic-dev-version.jpg
+rm $DEV_PLATFORM/sites/${SITE_DEST:1}/files/symbiotic-dev-version-tmp.jpg
 
 # Verify takes care of detecting that it's a dev site and updating the environment
 # and other settings.

@@ -2,9 +2,6 @@
 
 # Synchronize the database from prod to dev.
 
-SITE_SRC="@$1"
-SITE_DEST="@$2"
-
 function usage() {
   echo "Usage: resync-drupal-db.sh prod.example.org dev.example.org"
   exit 1
@@ -28,10 +25,13 @@ if [ ! -f "$PROD_PLATFORM/sites/$SITE_SRC/settings.php" ]; then
   exit 1
 fi
 
-if [ ! -d "$DEV_PLATFORM/sites/$SITE_DEST/settings.php" ]; then
+if [ ! -f "$DEV_PLATFORM/sites/$SITE_DEST/settings.php" ]; then
   echo "Dev: $DEV_PLATFORM/sites/$SITE_DEST is not a valid Drupal directory"
   exit 1
 fi
+
+SITE_SRC="@$SITE_SRC"
+SITE_DEST="@$SITE_DEST"
 
 # be verbose
 set -x

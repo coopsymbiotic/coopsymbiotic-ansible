@@ -72,7 +72,11 @@ Although, for now, this is mostly to avoid running the "apt" and "mem" checks on
 
 * Graphite: https://github.com/findmypast/icingaweb2-module-graphite
 
-Graphite setup:
+### Graphite setup
+
+We are not currently using this. It broke at some point and we did not bother fixing it.
+It makes it possible to view graphite graphs directly in icingaweb2, but we are using
+Grafana anyway, and this is not required.
 
 ```
 /etc/uwsgi/apps-available/graphite-api.ini
@@ -82,9 +86,10 @@ Graphite setup:
 [uwsgi]
 processes = 2
 socket = 127.0.0.1:3031
-plugins = python27
+plugins = python3
 
 module = graphite_api.app:app
+buffer-size = 32768
 
 chdir = /usr/share/graphite-web
 pythonpath = "['/usr/share/graphite-web'] + sys.path"

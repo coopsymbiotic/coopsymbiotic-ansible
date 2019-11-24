@@ -48,3 +48,8 @@ if [ -d ./wp-content/uploads/civicrm ]; then
   chown -R aegir.www-data ./wp-content/uploads/civicrm/
   chmod -R g+w ./wp-content/uploads/civicrm/
 fi
+
+if [ -d ./wp-content/plugins/files/civicrm ]; then
+  chown -R aegir.www-data ./wp-content/plugins/files/civicrm/
+  chmod -R g+w ./wp-content/plugins/files/civicrm/
+fi

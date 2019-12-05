@@ -3,22 +3,23 @@
 # Based on:
 # https://github.com/openmicroscopy/ansible-role-mysql-backup/
 
-# Required to cleanup backups after 24h
-- apt: name={{ item }} state=present install_recommends=no
-  with_items:
-    - tmpreaper
-  when: ansible_distribution == "Debian"
-  tags:
-    - mysqlbackup
-    - packages
-
-- yum: name={{ item }} state=present
-  with_items:
-    - tmpwatch
-  when: ansible_distribution == "CentOS"
-  tags:
-    - mysqlbackup
-    - packages
+# Not used now that we overwrite the previous backup with the same name.
+# # Required to cleanup backups after 24h
+# - apt: name={{ item }} state=present install_recommends=no
+#   with_items:
+#     - tmpreaper
+#   when: ansible_distribution == "Debian"
+#   tags:
+#     - mysqlbackup
+#     - packages
+#
+# - yum: name={{ item }} state=present
+#   with_items:
+#     - tmpwatch
+#   when: ansible_distribution == "CentOS"
+#   tags:
+#     - mysqlbackup
+#     - packages
 
 - name: mysqlbackup | create backup directory
   become: yes

@@ -22,7 +22,6 @@
 #     - packages
 
 - name: mysqlbackup | create backup directory
-  become: yes
   file:
     path: "{{ mysqlbackup_backupdir }}"
     recurse: yes
@@ -30,8 +29,16 @@
   tags:
     - mysqlbackup
 
+- name: mysqlbackup | chgrp aegir if Aegir server
+  file:
+    path: "{{ mysqlbackup_backupdir }}"
+    owner: root
+    group: aegir
+  when: "'symbiotic-aegir-vm' in group_names"
+  tags:
+    - mysqlbackup
+
 - name: mysqlbackup | create backup tmp directory
-  become: yes
   file:
     path: "{{ mysqlbackup_backupdir }}/tmp"
     recurse: yes

@@ -1,0 +1,3 @@
+borgmatic_backupserver: backupserver.example.org
+borgmatic_retention_daily: 60
+borgmatic_retention_monthly: 4

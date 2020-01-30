@@ -327,22 +327,12 @@
     - aegir-hosting-wordpress
 
 - name: Install wp-cli
-  become: true
-  become_user: aegir
-  shell: "composer global require wp-cli/wp-cli"
-  args:
-    creates: /var/aegir/.composer/vendor/wp-cli/wp-cli/bin/wp
+  get_url:
+    url: "https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar"
+    dest: /usr/local/bin/wp
+    mode: '0755'
   tags:
-    - aegir-hosting-civicrm
-
-- name: Install wp-cli-bundle
-  become: true
-  become_user: aegir
-  shell: "composer global require wp-cli/wp-cli-bundle"
-  args:
-    creates: /var/aegir/.composer/vendor/wp-cli/db-command/composer.json
-  tags:
-    - aegir-hosting-civicrm
+    - aegir-hosting-wordpress
 
 ##
 ## Configurations

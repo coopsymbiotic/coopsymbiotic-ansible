@@ -423,6 +423,33 @@
   tags:
     - aegir-dhparam
 
+# Using lineinfile instead of a template so that we can still add other
+# settings in global.inc without ansible.
+- name: Aegir | Enable CiviCRM Native Gettext globally
+  lineinfile:
+    path: /var/aegir/config/includes/global.inc
+    regexp: 'CIVICRM_GETTEXT_NATIVE'
+    line: "define('CIVICRM_GETTEXT_NATIVE', 1);"
+  tags:
+    - aegir-globalinc
+
+- name: Aegir | Set our CiviCRM l10n directory
+  lineinfile:
+    path: /var/aegir/config/includes/global.inc
+    regexp: 'global \$civicrm_paths;'
+    line: 'global $civicrm_paths;'
+  tags:
+    - aegir-globalinc
+
+- name: Aegir | Set our CiviCRM l10n directory
+  lineinfile:
+    path: /var/aegir/config/includes/global.inc
+    regexp: "\\$civicrm_paths\\['civicrm.l10n'\\]\\['path'\\]"
+    line: "$civicrm_paths['civicrm.l10n']['path'];"
+    insertafter: 'global \$civicrm_paths;'
+  tags:
+    - aegir-globalinc
+
 - name: Restart Aegir hosting queue
   service: name=hosting-queued state=restarted
 

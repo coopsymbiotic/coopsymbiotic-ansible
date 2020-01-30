@@ -445,7 +445,7 @@
   lineinfile:
     path: /var/aegir/config/includes/global.inc
     regexp: "\\$civicrm_paths\\['civicrm.l10n'\\]\\['path'\\]"
-    line: "$civicrm_paths['civicrm.l10n']['path'];"
+    line: "$civicrm_paths['civicrm.l10n']['path'] = '/var/aegir/l10n-civicrm';"
     insertafter: 'global \$civicrm_paths;'
   tags:
     - aegir-globalinc

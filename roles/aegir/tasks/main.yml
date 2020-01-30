@@ -338,7 +338,7 @@
 ## Configurations
 ##
 - name: Aegir modules | Enable a few extra Aegir modules
-  shell: "drush @hostmaster en hosting_https hosting_letsencrypt hosting_alias hosting_clone hosting_git hosting_git_pull hosting_tasks_extra hosting_remote_import hosting_civicrm_cron hosting_civicrm hosting_wpsite -y"
+  shell: "drush @hostmaster en hosting_https hosting_letsencrypt hosting_alias hosting_clone hosting_tasks_extra hosting_remote_import hosting_civicrm_cron hosting_civicrm hosting_wpsite -y"
   become: true
   become_user: aegir
   tags:

@@ -1,0 +1,30 @@
+#!/bin/bash
+
+# Downloads translation files to /var/aegir/l10n-civicrm
+# If it does not exist, it will create the directory and download our
+# most common languages. You can still add more by creating the directory
+# manually (although it does not add the SQL files).
+#
+# The main reason why we track this here, is to make it possible to update
+# regularly, while avoiding to bloat the platform git repository.
+
+set -e
+
+# If the directory does not exist, bootstrap with the most
+# common languages we support. Once the directories are created,
+# the next loop downloads the .mo files.
+languages=( "en_CA" "en_GB" "es_ES" "fr_CA" "fr_FR" "he_IL" "nl_NL" "ru_RU" "uk_UA" )
+
+if [ ! -d /var/aegir/l10n-civicrm/ ]; then
+  for i in "${languages[@]}"; do
+    mkdir -p /var/aegir/l10n-civicrm/$i/LC_MESSAGES
+  done
+fi
+
+for i in /var/aegir/l10n-civicrm/*; do
+  lang=$(basename $i)
+  wget https://download.civicrm.org/civicrm-l10n-core/mo/$lang/civicrm.mo -O /var/aegir/l10n-civicrm/$lang/LC_MESSAGES/civicrm.mo
+done
+
+chown -R aegir.www-data /var/aegir/l10n-civicrm/
+chmod -R g+r /var/aegir/l10n-civicrm/

@@ -534,10 +534,15 @@
   tags:
     - aegir-weekly
 
-- name: Deploy the civicrm-pull-patch script
+- name: Aegir | Deploy civicrm-pull-patch
   template: src=usr/local/bin/civicrm-pull-patch dest=/usr/local/bin/civicrm-pull-patch owner=root group=root mode=0755
   tags:
-    - aegir-civicrm-pull-patch
+    - aegir-civicrm-scripts
+
+- name: Aegir | Deploy civicrm-update-translations
+  template: src=usr/local/bin/civicrm-update-translations dest=/usr/local/bin/civicrm-update-translations owner=root group=root mode=0755
+  tags:
+    - aegir-civicrm-scripts
 
 - include: letsencrypt.yml
 - include: settings-php.yml
@@ -636,6 +641,17 @@
   become_user: aegir
   tags:
     - aegir-civicrm-platform
+
+# [ML] Undfined variable mysqlbackup_backupdir (because it was moved from another role)
+# but also.. we're probably not going to keep local backups
+# - name: mysqlbackup | chgrp aegir if Aegir server
+#   file:
+#     path: "{{ mysqlbackup_backupdir }}"
+#     owner: root
+#     group: aegir
+#   when: "'symbiotic-aegir-vm' in group_names"
+#   tags:
+#     - mysqlbackup
 
 - include: sshfs-keys.yml
   tags:

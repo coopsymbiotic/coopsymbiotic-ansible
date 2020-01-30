@@ -76,6 +76,7 @@ exclude = /var/aegir/.tmp
 exclude = /var/aegir/.vimundo
 exclude = /var/aegir/.vimbackup
 exclude = /var/aegir/backups
+exclude = /var/aegir/l10n-civicrm
 exclude = /var/aegir/platforms/*/.git
 exclude = /var/aegir/platforms/*/sites/*/files/civicrm/templates_c
 exclude = /var/aegir/platforms/*/sites/*/files/civicrm/ConfigAndLog

@@ -96,15 +96,29 @@
 # TimeoutStartSec=15
 # TODO: reload systemd (systemctl daemon-reload)
 
-# TODO: remove OVH stuff from /etc/rc.local
-
-- name: Deploy the network interfaces configuration
+- name: network | Deploy the network interfaces configuration
   template:
     src: "etc/network/interfaces"
     dest: "/etc/network/interfaces"
     owner: "root"
     group: "root"
     mode: 0644
+  tags:
+    - kvm-server-networkd
+
+- name: network | Disable Debian old networking
+  systemd:
+    name: networking
+    enabled: no
+  tags:
+    - kvm-server-networkd
+
+- name: network | Enable systemd-networkd
+  systemd:
+    name: systemd-networkd
+    enabled: yes
+  tags:
+    - kvm-server-networkd
 
 - name: kvm preseeds | Create preseed directory
   file: path="/etc/preseeds" state=directory mode=0750 owner=root group=root
@@ -119,6 +133,12 @@
 
 - name: Generate preseed files for VMs on this host
   template: src=etc/preseeds/host/preseed.cfg dest=/etc/preseeds/{{ item }}/preseed.cfg owner=root group=root mode=0640
+  with_items: "{{ kvm_hosts }}"
+  tags:
+    - kvm-server-preseeds
+
+- name: Generate preseed start script for VMs on this host
+  template: src=etc/preseeds/host/start.sh dest=/etc/preseeds/{{ item }}/start.sh owner=root group=root mode=0755
   with_items: "{{ kvm_hosts }}"
   tags:
     - kvm-server-preseeds

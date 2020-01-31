@@ -4,7 +4,7 @@ Name=br0
 [Network]
 Description=network interface on public network, with default route
 DHCP=no
-Address={{ kvm_main_ipv4_address }}/{{ kvm_main_ipv4_netmask }}
+Address={{ kvm_main_ipv4_address }}/24
 Gateway={{ kvm_main_ipv4_gateway }}
 IPv6AcceptRA=false
 NTP=ntp.ovh.net

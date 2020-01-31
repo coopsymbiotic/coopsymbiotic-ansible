@@ -56,6 +56,13 @@
     - libvirt-daemon-system
     - virt-top
 
+- name: zfs | make sure the hostid exists
+  shell: "/usr/bin/zgenhostid"
+  args:
+    creates: /etc/hostid
+  tags:
+    - kvm-server-zfs
+
 - service: name=openntpd state=started enabled=yes
 
 - name: Ensure that OVH defaults are absent

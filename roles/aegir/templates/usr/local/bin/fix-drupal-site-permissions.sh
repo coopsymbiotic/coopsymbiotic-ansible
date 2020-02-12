@@ -97,4 +97,9 @@ find ./themes -type f -exec chmod 0644 '{}' \+
 find ./modules -exec chown aegir.aegir '{}' \+
 find ./themes -exec chown aegir.aegir '{}' \+
 
+# fix permissions/ownership on the main site-specific directory
+# Important for sql-dump to work (migrate/backup).
+chown aegir.www-data .
+chmod 0755 .
+
 echo "Done setting proper permissions on site files and directories."

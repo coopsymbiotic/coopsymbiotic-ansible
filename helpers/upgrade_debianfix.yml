@@ -1,0 +1,14 @@
+---
+
+# Run Debian upgrades
+# To use it: $ ansible-playbook ./hacks/upgrade_debianfix.yml 
+
+- hosts: all
+  tasks:
+    - shell: dpkg --configure -a
+      ignore_errors: True
+    - shell: apt -f install -y
+    - shell: dpkg --purge tmpreaper
+    - shell: dpkg --purge filebeat
+  become: true
+  become_user: root

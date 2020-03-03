@@ -1,7 +1,7 @@
 ---
 
 # Run Debian upgrades
-# To use it: $ ansible-playbook ./hacks/upgrade_debian.yml 
+# To use it: $ ansible-playbook ./helpers/upgrade_debian.yml 
 
 - hosts: all
   tasks:

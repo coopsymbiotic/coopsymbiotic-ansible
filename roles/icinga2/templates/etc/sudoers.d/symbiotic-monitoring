@@ -21,6 +21,7 @@
 # Backups
 {{ icinga2_user }} ALL=(root) NOPASSWD: /usr/local/lib/icinga2-plugins/check_backup -s *
 {{ icinga2_user }} ALL=(root) NOPASSWD: /usr/local/lib/icinga2-plugins/check_mysqldump-secure *
+{{ icinga2_user }} ALL=(root) NOPASSWD: /usr/local/lib/icinga2-plugins/check_borg *
 
 # RAID and ZFS
 {{ icinga2_user }} ALL=(root) NOPASSWD: /usr/local/lib/icinga2-plugins/check_md_raid

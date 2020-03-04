@@ -1,11 +1,36 @@
 ---
 
-- apt: name={{ item }} state=present
-  with_items:
-    - borgbackup
-    - borgmatic
+# Ubuntu 18.x and Debian Buster do not have some of the latest packages
+# so we are fetching from Debian Bullseye
+- apt:
+    state: present
+    deb: "http://ftp.us.debian.org/debian/pool/main/p/pykwalify/python3-pykwalify_1.7.0-3_amd64.deb"
   tags:
     - packages
+    - borgmatic
+
+- apt:
+    state: present
+    name: [
+      'python3-colorama',
+      'python3-pkg-resources',
+      'python3-pykwalify',
+      'python3-requests',
+      'python3-ruamel.yaml',
+      'borgbackup',
+    ]
+  tags:
+    - packages
+    - borgmatic
+
+# Ansible does not seem to like loops or lists for this operation
+- name: borgmatic | Install the borgmatic deb package
+  apt:
+    state: present
+    deb: "http://ftp.us.debian.org/debian/pool/main/b/borgmatic/borgmatic_1.5.1-1_amd64.deb"
+  tags:
+    - packages
+    - borgmatic
 
 - name: Create the borgmatic config directory
   file:
@@ -41,7 +66,7 @@
     - borgmatic-cron
 
 # Run cron randomly between 01:00 AND 03:59
-- name: Configure cron for borgmatic.
+- name: borgmatic | Configure cron
   cron:
     name="borgmatic"
     minute="{{ 60 | random }}"
@@ -55,52 +80,59 @@
     - borgmatic-confs
     - borgmatic-cron
 
-# - name: Generate an ssh key if necessary for root
-#   user: name=root generate_ssh_key=yes ssh_key_bits=2048 ssh_key_file=.ssh/id_rsa
-#   tags:
-#     - backupninja-rdiff
-# 
-# - name: Add backup server to known_hosts
-#   shell: ssh-keyscan -H {{ backupserver }} >> ~/.ssh/known_hosts
-#   tags:
-#     - backupninja-rdiff
-# 
-# - name: Fetch the root public ssh key
-#   command: cat /root/.ssh/id_rsa.pub
-#   register: root_pub_key
-#   tags:
-#     - backupninja-rdiff
-# 
-# - name: Create the backup user on backup server
-#   delegate_to: "{{ backupserver }}"
-#   user: name="backups-{{ ansible_hostname }}" home="/backup/{{ inventory_hostname }}"
-#   tags:
-#     - backupninja-rdiff
-# 
-# - name: Update home directory permissions
-#   delegate_to: "{{ backupserver }}"
-#   file:
-#     path="/backup/{{ inventory_hostname }}"
-#     state=directory
-#     owner="backups-{{ ansible_hostname }}"
-#     group="backups-{{ ansible_hostname }}"
-#     mode=0700
-#   tags:
-#     - backupninja-rdiff
-# 
-# - name: Create the backup directory on backup server
-#   delegate_to: "{{ backupserver }}"
-#   file:
-#     path="/backup/{{ inventory_hostname }}/rdiff-backup"
-#     state=directory
-#     owner="backups-{{ ansible_hostname }}"
-#     group="backups-{{ ansible_hostname }}"
-#     mode=0700
-#   tags:
-#     - backupninja-rdiff
-# 
-# - name: Add the public ssh key to backup account on the backup server
-#   delegate_to: "{{ backupserver }}"
-#   authorized_key: user="backups-{{ ansible_hostname }}" key="{{root_pub_key.stdout}}"
-#   tags:
-#     - backupninja-rdiff
+- name: borgmatic | Generate an ssh key if necessary for root
+  user: name=root generate_ssh_key=yes ssh_key_bits=2048 ssh_key_file=.ssh/id_rsa
+  tags:
+    - borgmatic
+    - borgmatic-ssh
+
+- name: borgmatic | Add backup server to known_hosts
+  shell: ssh-keyscan -H {{ borgmatic_backupserver }} >> ~/.ssh/known_hosts
+  tags:
+    - borgmatic
+    - borgmatic-ssh
+
+- name: borgmatic | Fetch the root public ssh key
+  command: cat /root/.ssh/id_rsa.pub
+  register: root_pub_key
+  tags:
+    - borgmatic
+    - borgmatic-ssh
+
+- name: borgmatic | Create the backup user on backup server
+  delegate_to: "{{ borgmatic_backupserver }}"
+  user: name="backups-{{ ansible_hostname }}" home="/backup/{{ inventory_hostname }}"
+  tags:
+    - borgmatic
+    - borgmatic-ssh
+
+- name: borgmatic | Update backup server home directory permissions
+  delegate_to: "{{ borgmatic_backupserver }}"
+  file:
+    path="/backup/{{ inventory_hostname }}"
+    state=directory
+    owner="backups-{{ ansible_hostname }}"
+    group="backups-{{ ansible_hostname }}"
+    mode=0700
+  tags:
+    - borgmatic
+    - borgmatic-ssh
+
+- name: borgmatic | Create the backup directory on backup server
+  delegate_to: "{{ borgmatic_backupserver }}"
+  file:
+    path="/backup/{{ inventory_hostname }}/borg"
+    state=directory
+    owner="backups-{{ ansible_hostname }}"
+    group="backups-{{ ansible_hostname }}"
+    mode=0700
+  tags:
+    - borgmatic
+    - borgmatic-ssh
+
+- name: borgmatic | Add the public ssh key to backup account on the backup server
+  delegate_to: "{{ borgmatic_backupserver }}"
+  authorized_key: user="backups-{{ ansible_hostname }}" key="{{root_pub_key.stdout}}"
+  tags:
+    - borgmatic
+    - borgmatic-ssh

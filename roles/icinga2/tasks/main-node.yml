@@ -10,11 +10,11 @@
     - packages
   when: ansible_distribution == "Debian"
 
+# as of Ubuntu 18.xx, it seems closer to Debian
 - apt: name={{ item }} state=present install_recommends=no
   with_items:
     - icinga2
-    - nagios-plugins
-    - libnagios-plugin-perl
+    - monitoring-plugins-basic # required for check_apt
     - nagios-plugins-contrib # for mysql checks
   tags:
     - icinga2

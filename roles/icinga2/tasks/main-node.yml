@@ -133,6 +133,7 @@
     - check_aegir_civicrm_cases
     - check_aegir_civicrm_events
     - check_aegir_civicrm_participants
+    - check_aegir_civicrm_lastlogin
     - check_backup
     - check_bandwidth
     - check_civicrm
@@ -155,16 +156,6 @@
 - name: Deploy custom checks configurations
   template: src="etc/icinga2/conf.d/commands/{{ item }}.conf" dest="/etc/icinga2/conf.d/commands/{{ item }}.conf" owner=root group=root mode=0644
   with_items:
-    - aegir_disk
-    - aegir_sql
-    - aegir_civicrm_contacts
-    - aegir_civicrm_activities
-    - aegir_civicrm_contributions
-    - aegir_civicrm_memberships
-    - aegir_civicrm_mailings
-    - aegir_civicrm_cases
-    - aegir_civicrm_events
-    - aegir_civicrm_participants
     - backup
     - bandwidth
     - civicrm
@@ -177,6 +168,26 @@
     - mysql_uptime
     - ufw
     - zpool
+  notify: restart icinga2
+  tags:
+    - icinga2
+    - icinga2-custom-checks
+
+- name: Cleanup checks that are now deployed via global-templates
+  file:
+    path: "/etc/icinga2/conf.d/commands/{{ item }}.conf"
+    state: absent
+  with_items:
+    - aegir_disk
+    - aegir_sql
+    - aegir_civicrm_contacts
+    - aegir_civicrm_activities
+    - aegir_civicrm_contributions
+    - aegir_civicrm_memberships
+    - aegir_civicrm_mailings
+    - aegir_civicrm_cases
+    - aegir_civicrm_events
+    - aegir_civicrm_participants
   notify: restart icinga2
   tags:
     - icinga2

@@ -1,5 +1,4 @@
 ---
 
-# Nothing here now.
-# This use to deploy the check_backup/nsca script,
-# but it's now either in icinga2 or deprecated.
+# Nothing here anymore.
+# it's now either in icinga2 or deprecated.

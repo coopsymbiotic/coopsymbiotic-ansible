@@ -433,6 +433,15 @@
   tags:
     - aegir-globalinc
 
+- name: Aegir | Enable CiviCRM l10n basedir define
+  lineinfile:
+    path: /var/aegir/config/includes/global.inc
+    regexp: 'CIVICRM_L10N_BASEDIR'
+    line: "define('CIVICRM_L10N_BASEDIR', '/var/aegir/l10n-civicrm');"
+  tags:
+    - aegir-globalinc
+
+# deprecated?
 - name: Aegir | Set our CiviCRM l10n directory
   lineinfile:
     path: /var/aegir/config/includes/global.inc

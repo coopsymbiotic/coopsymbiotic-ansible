@@ -552,6 +552,14 @@
   template: src=usr/local/bin/civicrm-update-translations dest=/usr/local/bin/civicrm-update-translations owner=root group=root mode=0755
   tags:
     - aegir-civicrm-scripts
+    - aegir-civicrm-translations
+
+- name: Aegir | Download CiviCRM translations
+  shell: "/usr/local/bin/civicrm-update-translations"
+  args:
+    creates: /var/aegir/l10n-civicrm
+  tags:
+    - aegir-civicrm-translations
 
 - include: letsencrypt.yml
 - include: settings-php.yml

@@ -24,7 +24,7 @@ check_root
 count() {
   User="/var/aegir"
 
-  for Site in `find /var/aegir/config/server_master/nginx/vhost.d -maxdepth 1 -mindepth 1 -type f | sort`; do
+  for Site in `find /var/aegir/config/server_master/*/vhost.d -maxdepth 1 -mindepth 1 -type f | sort`; do
     Dom=$(echo $Site | cut -d'/' -f8 | awk '{ print $1}' 2>&1)
 
     _DEV_URL=NO
@@ -130,11 +130,6 @@ count() {
 }
 
 action() {
-  if [ ! -e "/var/aegir/config/server_master/nginx/vhost.d" ]; then
-    echo "Not nginx"
-    return
-  fi
-
   SumDir=0
   SumDat=0
   SkipDt=0

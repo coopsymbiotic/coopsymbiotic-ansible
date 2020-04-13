@@ -111,7 +111,8 @@ count() {
           CiviEvent=$(echo $CiviStats | cut -d ',' -f 7)
           CiviParticipant=$(echo $CiviStats | cut -d ',' -f 8)
           CiviPaymentProcessors=$(echo $CiviStats | cut -d ',' -f 9)
-          LastLogin=$(echo $CiviStats | cut -d ',' -f 10)
+          CiviLanguages=$(echo $CiviStats | cut -d ',' -f 10)
+          LastLogin=$(echo $CiviStats | cut -d ',' -f 11)
 
           echo "${_THIS_U},${Dom},CiviContact:${CiviContact}"
           echo "${_THIS_U},${Dom},CiviActivity:${CiviActivity}"
@@ -122,6 +123,7 @@ count() {
           echo "${_THIS_U},${Dom},CiviEvent:${CiviEvent}"
           echo "${_THIS_U},${Dom},CiviParticipant:${CiviParticipant}"
           echo "${_THIS_U},${Dom},CiviPaymentProcessors:${CiviPaymentProcessors}"
+          echo "${_THIS_U},${Dom},CiviLanguages:${CiviLanguages}"
           echo "${_THIS_U},${Dom},LastLogin:${LastLogin}"
         fi
       fi

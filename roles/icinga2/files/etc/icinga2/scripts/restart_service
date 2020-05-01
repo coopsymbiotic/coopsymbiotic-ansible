@@ -18,7 +18,6 @@ while getopts "s:t:a:S:" opt; do
       ;;
   esac
 done
-echo "COUCOU $service" >> /tmp/test.log
 
 if ( [ -z $servicestate ] || [ -z $servicestatetype ] || [ -z $serviceattempt ] || [ -z $service ] ); then
   echo "USAGE: $0 -s servicestate -t servicestatetype -a serviceattempt -S service"

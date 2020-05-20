@@ -423,6 +423,25 @@
   tags:
     - aegir-dhparam
 
+# Disable nginx logging, since Aegir enables it per-host
+- name: Aegir | Disable global error.log
+  lineinfile:
+    path: /etc/nginx/nginx.conf
+    regexp: 'access_log /var/log/nginx/access.log'
+    line: "        # access_log /var/log/nginx/access.log; # disabled by ansible"
+  notify: reload nginx
+  tags:
+    - aegir-nginx
+
+- name: Aegir | Disable global error.log
+  lineinfile:
+    path: /etc/nginx/nginx.conf
+    regexp: 'error_log /var/log/nginx/error.log'
+    line: "        # error_log /var/log/nginx/error.log; # disabled by ansible"
+  notify: reload nginx
+  tags:
+    - aegir-nginx
+
 # Using lineinfile instead of a template so that we can still add other
 # settings in global.inc without ansible.
 - name: Aegir | Enable CiviCRM Native Gettext globally

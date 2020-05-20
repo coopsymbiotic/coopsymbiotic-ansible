@@ -1,0 +1,122 @@
+#!/bin/bash
+#
+# Retrieve the most recent civicrm log file from the current site and views it
+#
+# {{ ansible_managed }}
+#
+# Source: https://lab.symbiotic.coop/coopsymbiotic/symbiotic-platform-scripts/-/blob/master/cvlog.sh
+#
+
+# Resolve configuration
+VIEWER="${CVLOG_VIEWER:-less +G -SF}"
+MATCH="${CVLOG_MATCH:-CiviCRM.*.log*}"
+SUBPATHS_WORDPRESS=( 'wp-content/uploads/civicrm/ConfigAndLog' 'wp-content/plugins/files/civicrm/ConfigAndLog' );
+SUBPATHS_DRUPAL=( 'files/civicrm/ConfigAndLog' );
+
+# Resolve arguments
+OP=${1#-}
+OP=${OP:-1}
+SITENAME=${2#@}
+PLATFORM="${PWD%/sites*}";
+SCRIPTNAME=`basename "$0"`
+
+# Resolve domain name
+if [ -z ${SITENAME} ]; then
+  if [[ $PWD =~ /sites/([^/]*) ]]; then
+    SITENAME=${BASH_REMATCH[1]}
+  fi
+fi
+
+if [ -z ${SITENAME} ]; then
+  echo "You must be located under a platform's 'sites' folder and optionally supply a domain name before running $SCRIPTNAME."
+  echo
+  echo "Example:"
+  echo "  $SCRIPTNAME - @abc.symbiodev.xyz"
+  echo
+  echo "Type \`$SCRIPTNAME help\` for usage information."
+  exit 0
+else
+  # Resolve location of log files
+  if [[ $PWD =~ /wp-content/ ]]; then
+    # Wordpress site
+    logpaths=($SUBPATHS_WORDPRESS)
+  else
+    # Drupal site
+    logpaths=($SUBPATHS_DRUPAL)
+  fi
+  for LOGPATH in "${logpaths[@]}"
+  do
+    LOGPATH="$PLATFORM/sites/$SITENAME/$LOGPATH"
+  if [ -d "$LOGPATH" ]; then break; fi
+  done
+
+  if [ ! -d "$LOGPATH" ]; then
+    echo "Failed to find a ConfigAndLog folder somewhere under '$PLATFORM/sites/$SITENAME'."
+    echo
+    echo "Defaulting to local folder."
+    echo
+  else
+    cd "$LOGPATH"
+  fi
+fi
+
+# Resolve command
+case $OP in
+  pwd)
+    pwd
+    ;;
+  cd)
+    echo "Opening a new bash shell to the log folder..."
+    exec bash
+    ;;
+  ls)
+    # List available log files
+    echo "Listing files matching $MATCH in the log folder..."
+    \ls -lshpt --time-style="+%Y-%m-%d %H:%m:%S" $MATCH \
+      | awk 'NR > 0 {printf "%3s) %s %s - %s %s (%s)\n", NR,$7,$8,$9,$10,$6}' \
+      | tac
+    ;;
+  all | 0)
+    # Open all log files (may not be compatible with all viewers)
+    MATCHES=$( \ls -pt $MATCH )
+    if [ -z "$MATCHES" ]; then
+      echo "No matches found."
+      exit 1
+    fi
+    echo "Opening all log files found in the log folder..."
+    $VIEWER $MATCHES
+    ;;
+  *[0-9]*)
+    # View log file number $OP, ordered by most recent
+    LOGFILE=$( \ls -pt $MATCH | awk "NR==$OP { print }" )
+    if [ -z "$LOGFILE" ]; then
+      echo "No matches found."
+      exit 1
+    fi
+    if [ -f "$LOGFILE" ]; then
+      echo "Opening $SITENAME's log file '$LOGFILE'..."
+      $VIEWER "$LOGFILE"
+    else
+      echo "Expected to find a CiviCRM log file named '$LOGFILE' under '$LOGPATH'"
+      exit 1
+    fi
+    ;;
+  help | *)
+    # Help
+    echo "usage: $SCRIPTNAME [COMMAND] [DOMAIN NAME]"
+    echo
+    echo "View the most recent CiviCRM log file located under the ConfigAndLog folder."
+    echo
+    echo "COMMAND"
+    echo "  -n     View the nth most recent log file (defaults to -1 for most recent)"
+    echo "  ls     List all log files present in the ConfigAndLog folder"
+    echo "  all    Open all log files (most recent first) using \`$VIEWER\`"
+    echo "  cd     Go to the ConfigAndLog folder (opens a new bash shell)"
+    echo "  pwd    Display the location of the ConfigAndLog folder"
+    echo "  -      Ignore the COMMAND argument"
+    echo "  help   Show this message"
+    echo
+    echo "Environment variables"
+    printf "  %-30s  %s\n" "CVLOG_VIEWER=\"$VIEWER\"" '# Log file viewer'
+    printf "  %-30s  %s\n" "CVLOG_MATCH=\"$MATCH\""  '# Match pattern for CiviCRM log files'
+esac

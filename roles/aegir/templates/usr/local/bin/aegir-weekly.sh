@@ -97,7 +97,9 @@ count() {
             echo "${_THIS_U},${Dom},DatSize:${DatSize}:${Dat}"
           fi
         else
-          echo "Database ${Dat} for ${Dom} does not exist"
+          # Database ${Dat} for ${Dom} does not exist
+          # Assumed to be hosted on another server
+          echo "${_THIS_U},${Dom},DatSize:0:${Dat}"
         fi
 
         if [ "${_DEV_URL}" = "NO" ]; then

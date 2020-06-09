@@ -40,7 +40,7 @@ We can also review the last output of the cron run:
    Active: active (waiting) since Tue 2020-06-09 14:01:03 EDT; 1min 31s ago
   Trigger: Tue 2020-06-09 14:14:40 EDT; 12min left
 
-Jun 09 14:01:03 aegir systemd[1]: Started "canadahelps/civicrm-hosting#30 CH Funds".
+Jun 09 14:01:03 aegir systemd[1]: Started "My Description".
 ```
 
 Tail a specific cron (to see when it runs, but it will not display the output):

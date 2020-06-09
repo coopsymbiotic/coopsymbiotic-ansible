@@ -27,7 +27,7 @@ You can inspect the status of systemd timers with:
 ```
 # systemctl list-timers --all
 NEXT                         LEFT          LAST                         PASSED    UNIT                              ACTIVATES
-Tue 2020-06-09 14:14:40 EDT  13min left    n/a                          n/a       civicrm_chcontribs_test-dms.timer civicrm_chcontribs_test-dms.service
+Tue 2020-06-09 14:14:40 EDT  13min left    n/a                          n/a       civicrm_mycron_site1.timer civicrm_mycron_site1.service
 [...]
 ```
 

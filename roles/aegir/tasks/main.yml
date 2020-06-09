@@ -255,7 +255,7 @@
     - aegir-adm
 
 - name: Download provision_symbiotic from Github
-  sudo_user: aegir
+  become_user: aegir
   git: repo=https://github.com/coopsymbiotic/provision_symbiotic.git
        version=master
        dest=/var/aegir/.drush/provision_symbiotic
@@ -264,7 +264,7 @@
     - aegir-provision-symbiotic
 
 - name: Download provision_customhtaccess from Github
-  sudo_user: aegir
+  become_user: aegir
   git: repo=https://github.com/mlutfy/provision_customhtaccess.git
        version=master
        dest=/var/aegir/.drush/provision_customhtaccess

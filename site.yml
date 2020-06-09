@@ -1,6 +1,6 @@
 ---
 - hosts: servers
-  sudo: yes
+  become: yes
   roles:
     - common-all
     - icinga2
@@ -15,21 +15,21 @@
     - base
 
 - hosts: symbiotic-servers
-  sudo: yes
+  become: yes
   roles:
     - sshuserkeys
   tags:
     - sshuserkeys
 
 - hosts: kvm-servers
-  sudo: yes
+  become: yes
   roles:
     - kvm-server
   tags:
     - kvm-server
 
 - hosts: aegir-managed
-  sudo: yes
+  become: yes
   roles:
     - aegir
     - postfix
@@ -39,28 +39,28 @@
     - aegir
 
 - hosts: postfix-servers
-  sudo: yes
+  become: yes
   roles:
     - postfix
   tags:
     - postfix
 
 - hosts: backup-servers
-  sudo: yes
+  become: yes
   roles:
     - backup-server
   tags:
     - backup-server
 
 - hosts: logstash-servers
-  sudo: yes
+  become: yes
   roles:
     - logstash
   tags:
     - logstash
 
 - hosts: loki-servers
-  sudo: yes
+  become: yes
   roles:
     - loki
   tags:
@@ -69,58 +69,66 @@
 # NB: icinga role intentionally not added because it is already
 # running for all servers, so it would make the role run twice.
 - hosts: icinga-servers
-  sudo: yes
+  become: yes
   roles:
     - grafana
     - gitlab-runner
+    - loki
   tags:
     - icinga
     - icinga2
 
 - hosts: gitlab-servers
-  sudo: yes
+  become: yes
   roles:
     - gitlab
   tags:
     - gitlab
 
 - hosts: php-servers
-  sudo: yes
+  become: yes
   roles:
     - php
   tags:
     - php
 
 - hosts: buildkit-servers
-  sudo: yes
+  become: yes
   roles:
     - buildkit
   tags:
     - buildkit
 
 - hosts: yubiauth-managed
-  sudo: yes
+  become: yes
   roles:
     - yubiauth
   tags:
     - yubiauth
 
 - hosts: rdiff-backups
-  sudo: yes
+  become: yes
   roles:
     - backupninja-rdiff
   tags:
     - backupninja-rdiff
 
+- hosts: civicrm-sites
+  become: yes
+  roles:
+    - civicrm-sites
+  tags:
+    - civicrm-sites
+
 - hosts: dokuwiki-instances
-  sudo: yes
+  become: yes
   roles:
     - dokuwiki
   tags:
     - dokuwiki
 
 - hosts: ufw-managed
-  sudo: yes
+  become: yes
   roles:
     - ufw
   tags:
@@ -129,14 +137,14 @@
 # For hosts not running Aegir
 # or with more custom setups
 - hosts: dehydrated-manually
-  sudo: yes
+  become: yes
   roles:
     - dehydrated
   tags:
     - dehydrated
 
 - hosts: docker-servers
-  sudo: yes
+  become: yes
   roles:
     - docker
     - gitlab-runner
@@ -144,7 +152,7 @@
     - docker
 
 - hosts: mattermost-servers
-  sudo: yes
+  become: yes
   roles:
     - mattermost
   tags:

@@ -4,7 +4,6 @@
   roles:
     - common-all
     - icinga2
-    - filebeat
     - promtail
     - backupninja-rdiff
     - borgmatic

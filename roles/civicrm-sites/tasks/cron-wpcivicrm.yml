@@ -1,0 +1,33 @@
+---
+
+# Setup the CiviCRM-on-WordPress cron
+
+- name: systemd | Setup the WP CiviCRM Cron service
+  template:
+    src="etc/systemd/system/wpcivicron.service"
+    dest="/etc/systemd/system/wpcivicron_{{ site_shortname }}.service"
+    owner=root
+    group=root
+    mode=0644
+  notify: reload systemd
+
+- name: systemd | Setup the WP CiviCRM Cron timer
+  template:
+    src="etc/systemd/system/wpcivicron.timer"
+    dest="/etc/systemd/system/wpcivicron_{{ site_shortname }}.timer"
+    owner=root
+    group=root
+    mode=0644
+  notify: reload systemd
+
+# My understanding is that this will make the service run once, then the timer will kick-in
+# (because we are using OnUnitInactiveSec=15m; maybe we should use OnCalendar?)
+- name: systemd | Start the service
+  systemd:
+    name: "wpcivicron_{{ site_shortname }}.service"
+    state: started
+
+- name: systemd | Enable the WP CiviCRM Cron timer
+  systemd:
+    name: "wpcivicron_{{ site_shortname }}.timer"
+    enabled: yes

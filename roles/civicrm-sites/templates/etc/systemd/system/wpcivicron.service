@@ -1,0 +1,10 @@
+# {{ ansible_managed }}
+
+[Unit]
+Description="WP-CiviCRM Cron for {{ inventory_hostname }}"
+Documentation="https://github.com/coopsymbiotic/coopsymbiotic-ansible/tree/master/roles/civicrm-sites"
+Wants=wpcivicron_{{ site_shortname }}.timer
+
+[Service]
+User=aegir
+ExecStart=drush @{{ inventory_hostname }} wp civicrm api Job.execute --user={{ cron_user }}

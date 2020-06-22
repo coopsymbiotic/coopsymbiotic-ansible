@@ -3,40 +3,11 @@
 # Provides helpers for CiviCRM sites.
 # Eventually it might replace Aegir.
 
-# Setup extra crons
-- template:
-    src="etc/systemd/system/civiextracron.service"
-    dest="/etc/systemd/system/civicrm_{{ item.key }}_{{ inventory_hostname_short | replace('-', '_') }}.service"
-    owner=root
-    group=root
-    mode=0644
-  with_dict: "{{ civicrm_sites_extra_crons | default({}) }}"
-  notify: reload systemd
+- include: cron-wpcivicrm.yml
+  when: cms == "wordpress"
   tags:
-    - civicrm-sites-timers
+    - civicrm-sites-cron-wpcivicrm
 
-- template:
-    src="etc/systemd/system/civiextracron.timer"
-    dest="/etc/systemd/system/civicrm_{{ item.key }}_{{ inventory_hostname_short | replace('-', '_') }}.timer"
-    owner=root
-    group=root
-    mode=0644
-  with_dict: "{{ civicrm_sites_extra_crons | default({}) }}"
-  notify: reload systemd
+- include: cron-extra.yml
   tags:
-    - civicrm-sites-timers
-
-# Not necessary?
-# - systemd:
-#     name: "civicrm_{{ item.key }}_{{ inventory_hostname_short }}.service"
-#     enabled: yes
-#   with_dict: "{{ civicrm_sites_extra_crons | default({}) }}"
-#   tags:
-#     - civicrm-sites-timers
-
-- systemd:
-    name: "civicrm_{{ item.key }}_{{ inventory_hostname_short | replace('-', '_') }}.timer"
-    enabled: yes
-  with_dict: "{{ civicrm_sites_extra_crons | default({}) }}"
-  tags:
-    - civicrm-sites-timers
+    - civicrm-sites-cron-extra

@@ -209,11 +209,14 @@
     - aegir
     - aegir-mariadb
 
-- apt: name={{ item }} state=present
-  with_items:
-    - mariadb-client-10.3
-    - mariadb-server-10.3
-    - mariadb-server
+- apt:
+    name: [
+      "mariadb-client-10.3",
+      "mariadb-server-10.3",
+      "mariadb-server"
+    ]
+    state: present
+    install_recommends: no
   tags:
     - packages
     - aegir
@@ -250,7 +253,10 @@
     - aegir
     - aegir-locales
 
-- apt: pkg=aegir3 state=installed
+- apt:
+    name: aegir3
+    state: present
+    install_recommends: no
   tags:
     - aegir
 

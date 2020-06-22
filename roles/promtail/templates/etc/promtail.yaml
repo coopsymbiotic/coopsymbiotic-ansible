@@ -17,7 +17,7 @@ scrape_configs:
       - localhost
     labels:
       job: varlogs
-      host: {{ ansible_hostname }}
+      host: {{ inventory_hostname }}
       __path__: /var/log/*log
 - job_name: nginx
   static_configs:
@@ -25,5 +25,5 @@ scrape_configs:
       - localhost
     labels:
       job: nginx
-      host: {{ ansible_hostname }}
+      host: {{ inventory_hostname }}
       __path__: /var/log/nginx/*log

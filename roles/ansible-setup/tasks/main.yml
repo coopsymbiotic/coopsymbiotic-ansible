@@ -17,6 +17,9 @@
     user="{{ deploy_user }}"
     key="{{ lookup('file', '/etc/ansible/files/sshkeys/deploy/{{ deploy_user }}.pub') }}"
 
+- name: User | Change deploy directory permissions
+  file: path=/home/deploy mode=0750
+
 - apt: name={{ item }} state=present install_recommends=no
   with_items:
     - sudo

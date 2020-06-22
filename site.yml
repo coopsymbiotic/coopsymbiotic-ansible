@@ -14,21 +14,21 @@
   tags:
     - base
 
-- hosts: symbiotic-servers
+- hosts: symbiotic_servers
   become: yes
   roles:
     - sshuserkeys
   tags:
     - sshuserkeys
 
-- hosts: kvm-servers
+- hosts: kvm_servers
   become: yes
   roles:
     - kvm-server
   tags:
     - kvm-server
 
-- hosts: aegir-managed
+- hosts: aegir_managed
   become: yes
   roles:
     - aegir
@@ -38,28 +38,28 @@
   tags:
     - aegir
 
-- hosts: postfix-servers
+- hosts: postfix_servers
   become: yes
   roles:
     - postfix
   tags:
     - postfix
 
-- hosts: backup-servers
+- hosts: backup_servers
   become: yes
   roles:
     - backup-server
   tags:
     - backup-server
 
-- hosts: logstash-servers
+- hosts: logstash_servers
   become: yes
   roles:
     - logstash
   tags:
     - logstash
 
-- hosts: loki-servers
+- hosts: loki_servers
   become: yes
   roles:
     - loki
@@ -68,7 +68,7 @@
 
 # NB: icinga role intentionally not added because it is already
 # running for all servers, so it would make the role run twice.
-- hosts: icinga-servers
+- hosts: icinga_servers
   become: yes
   roles:
     - grafana
@@ -78,56 +78,56 @@
     - icinga
     - icinga2
 
-- hosts: gitlab-servers
+- hosts: gitlab_servers
   become: yes
   roles:
     - gitlab
   tags:
     - gitlab
 
-- hosts: php-servers
+- hosts: php_servers
   become: yes
   roles:
     - php
   tags:
     - php
 
-- hosts: buildkit-servers
+- hosts: buildkit_servers
   become: yes
   roles:
     - buildkit
   tags:
     - buildkit
 
-- hosts: yubiauth-managed
+- hosts: yubiauth_managed
   become: yes
   roles:
     - yubiauth
   tags:
     - yubiauth
 
-- hosts: rdiff-backups
+- hosts: rdiff_backups
   become: yes
   roles:
     - backupninja-rdiff
   tags:
     - backupninja-rdiff
 
-- hosts: civicrm-sites
+- hosts: civicrm_sites
   become: yes
   roles:
     - civicrm-sites
   tags:
     - civicrm-sites
 
-- hosts: dokuwiki-instances
+- hosts: dokuwiki_instances
   become: yes
   roles:
     - dokuwiki
   tags:
     - dokuwiki
 
-- hosts: ufw-managed
+- hosts: ufw_managed
   become: yes
   roles:
     - ufw
@@ -136,14 +136,14 @@
 
 # For hosts not running Aegir
 # or with more custom setups
-- hosts: dehydrated-manually
+- hosts: dehydrated_manually
   become: yes
   roles:
     - dehydrated
   tags:
     - dehydrated
 
-- hosts: docker-servers
+- hosts: docker_servers
   become: yes
   roles:
     - docker
@@ -151,7 +151,7 @@
   tags:
     - docker
 
-- hosts: mattermost-servers
+- hosts: mattermost_servers
   become: yes
   roles:
     - mattermost

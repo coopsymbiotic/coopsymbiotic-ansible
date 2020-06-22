@@ -64,8 +64,8 @@
 # https://github.com/gaspaio/ansible-devbox/blob/master/roles/mysql/tasks/server.yml
 # Install server using a preseed file to set the root password
 - name: Check for previous MySQL installation
-  shell: "[ -f /usr/sbin/mysqld ]"
-  ignore_errors: True
+  stat:
+    path: /usr/sbin/mysqld
   register: mysqld_exists
 
 - apt: name={{ item }} state=present install_recommends=no
@@ -75,7 +75,7 @@
 
 - name: Generate a root password for MySQL
   shell: pwgen 15 1 > /root/.mysql.root
-  when: mysqld_exists|failed
+  when: not mysqld_exists.stat.exists
 
 - name: Preseed Aegir Debian configurations
   shell: "{{ item }} | debconf-set-selections"
@@ -103,19 +103,18 @@
     - packages
 
 - apt:
-    name: "{{ item }}"
+    name: "nginx"
     state: present
     install_recommends: no
-  with_items:
-    - nginx
   when: ("'aegir-apache' not in group_names")
   tags:
     - packages
     - aegir-nginx
 
-- apt: name={{ item }} state=present install_recommends=no
-  with_items:
-    - "php{{ phpversion }}-fpm"
+- apt:
+    name: "php{{ phpversion }}-fpm"
+    state: present
+    install_recommends: no
   when: "'aegir-apache' not in group_names"
   tags:
     - packages
@@ -123,62 +122,70 @@
     - aegir-php
 
 # nb: imagick is required by Mosaico
-- apt: name={{ item }} state=present install_recommends=no
-  with_items:
-    - "php{{ phpversion }}"
-    - "php{{ phpversion }}-bcmath"
-    - "php{{ phpversion }}-gd"
-    - "php{{ phpversion }}-cli"
-    - "php{{ phpversion }}-curl"
-    - "php{{ phpversion }}-intl"
-    - "php{{ phpversion }}-json"
-    - "php{{ phpversion }}-ldap"
-    - "php{{ phpversion }}-mysql"
-    - "php{{ phpversion }}-soap"
-    - "php{{ phpversion }}-zip"
-    - "php{{ phpversion }}-xsl"
-    - "php{{ phpversion }}-mbstring"
-    - "php{{ phpversion }}-zip"
-    - "php-imagick"
+- apt:
+    name: [
+      "php{{ phpversion }}",
+      "php{{ phpversion }}-bcmath",
+      "php{{ phpversion }}-gd",
+      "php{{ phpversion }}-cli",
+      "php{{ phpversion }}-curl",
+      "php{{ phpversion }}-intl",
+      "php{{ phpversion }}-json",
+      "php{{ phpversion }}-ldap",
+      "php{{ phpversion }}-mysql",
+      "php{{ phpversion }}-soap",
+      "php{{ phpversion }}-zip",
+      "php{{ phpversion }}-xsl",
+      "php{{ phpversion }}-mbstring",
+      "php{{ phpversion }}-zip",
+      "php-imagick"
+    ]
+    state: present
+    install_recommends: no
   tags:
     - packages
     - packages-php
     - aegir-php
 
 # This is to help deal with Debian Stretch upgrades
-- apt: name={{ item }} state=absent install_recommends=no
-  with_items:
-    - php5-fpm
-    - php5-gd
-    - php5-cli
-    - php5-common
-    - php5-curl
-    - php5-intl
-    - php5-json
-    - php5-ldap
-    - php5-mcrypt
-    - php5-mysql
-    - php5-xsl
-    - php-soap
+- apt:
+    name: [
+      php5-fpm,
+      php5-gd,
+      php5-cli,
+      php5-common,
+      php5-curl,
+      php5-intl,
+      php5-json,
+      php5-ldap,
+      php5-mcrypt,
+      php5-mysql,
+      php5-xsl,
+      php-soap
+    ]
+    state: absent
+    install_recommends: no
   when: ansible_distribution_release == "stretch"
   tags:
     - packages
     - packages-php
     - aegir-php
 
-- apt: name={{ item }} state=present install_recommends=no
-  with_items:
-    - patch # required for drush make
-    - pwgen
-    - curl
-    - gettext
-    - xauth
-    - xvfb
-    - libxrender1
-    - ttf-mscorefonts-installer
-    - fonts-dejavu-core
-    - imagemagick
-    - ondir
+- apt:
+    name: [
+      patch, # required for drush make
+      pwgen,
+      curl,
+      gettext,
+      xauth,
+      xvfb,
+      libxrender1,
+      ttf-mscorefonts-installer,
+      fonts-dejavu-core,
+      imagemagick
+    ]
+    state: present
+    install_recommends: no
   tags:
     - packages
 

@@ -128,17 +128,20 @@
 - name: kvm preseeds | Create preseed hosts directories
   file: path="/etc/preseeds/{{ item }}" state=directory mode=0750 owner=root group=root
   with_items: "{{ kvm_hosts }}"
+  when: kvm_hosts is defined
   tags:
     - kvm-server-preseeds
 
 - name: Generate preseed files for VMs on this host
   template: src=etc/preseeds/host/preseed.cfg dest=/etc/preseeds/{{ item }}/preseed.cfg owner=root group=root mode=0640
   with_items: "{{ kvm_hosts }}"
+  when: kvm_hosts is defined
   tags:
     - kvm-server-preseeds
 
 - name: Generate preseed start script for VMs on this host
   template: src=etc/preseeds/host/start.sh dest=/etc/preseeds/{{ item }}/start.sh owner=root group=root mode=0755
   with_items: "{{ kvm_hosts }}"
+  when: kvm_hosts is defined
   tags:
     - kvm-server-preseeds

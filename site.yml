@@ -51,13 +51,6 @@
   tags:
     - backup-server
 
-- hosts: logstash_servers
-  become: yes
-  roles:
-    - logstash
-  tags:
-    - logstash
-
 - hosts: loki_servers
   become: yes
   roles:

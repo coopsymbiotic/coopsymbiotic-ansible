@@ -4,20 +4,17 @@
   stat: path=/etc/apt/sources.list.d/debmon_org_debmon.list
   register: icinga_old_package
   tags:
-    - icinga2
     - packages
 
 - name: Remove the old Icinga package to force an upgrade
   apt: pkg=icinga2 state=absent
   when: icinga_old_package.stat.exists == True
   tags:
-    - icinga2
     - packages
 
 - name: Delete the old Icinga debmon repository
   file: path="/etc/apt/sources.list.d/debmon_org_debmon.list" state=absent
   tags:
-    - icinga2
     - packages
 
 - name: Get Icinga Apt Key
@@ -25,7 +22,6 @@
     url="https://packages.icinga.com/icinga.key"
     state=present
   tags:
-    - icinga2
     - packages
 
 - name: Configure Icinga Apt Repo
@@ -34,7 +30,6 @@
     update_cache=yes 
     state=present
   tags:
-    - icinga2
     - packages
 
 - include: main-server.yml

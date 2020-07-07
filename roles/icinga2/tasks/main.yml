@@ -38,7 +38,7 @@
     - packages
 
 - include: main-server.yml
-  when: "'icinga-servers' in group_names"
+  when: "'icinga_servers' in group_names"
 
 - include: main-node.yml
-  when: "'icinga-servers' not in group_names"
+  when: "'icinga_servers' not in group_names"

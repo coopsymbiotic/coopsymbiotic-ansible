@@ -106,7 +106,7 @@
     name: "nginx"
     state: present
     install_recommends: no
-  when: ("'aegir-apache' not in group_names")
+  when: ("'aegir_apache' not in group_names")
   tags:
     - packages
     - aegir-nginx
@@ -115,7 +115,7 @@
     name: "php{{ phpversion }}-fpm"
     state: present
     install_recommends: no
-  when: "'aegir-apache' not in group_names"
+  when: "'aegir_apache' not in group_names"
   tags:
     - packages
     - packages-php
@@ -364,7 +364,7 @@
   shell: "drush @hostmaster en hosting_nginx_https -y"
   become: true
   become_user: aegir
-  when: "'aegir-apache' not in group_names"
+  when: "'aegir_apache' not in group_names"
   tags:
     - aegir-hosting-https
 
@@ -372,7 +372,7 @@
   shell: "drush @hostmaster en hosting_apache_https -y"
   become: true
   become_user: aegir
-  when: "'aegir-apache' in group_names"
+  when: "'aegir_apache' in group_names"
   tags:
     - aegir-hosting-https
 
@@ -719,7 +719,7 @@
 #     path: "{{ mysqlbackup_backupdir }}"
 #     owner: root
 #     group: aegir
-#   when: "'symbiotic-aegir-vm' in group_names"
+#   when: "'symbiotic_aegir_vm' in group_names"
 #   tags:
 #     - mysqlbackup
 

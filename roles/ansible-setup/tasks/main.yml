@@ -4,13 +4,13 @@
   command: "useradd -m {{ deploy_user }} -G admins"
   args:
     creates: "/home/{{ deploy_user }}"
-  when: "'koumbit-aegir-vm' in group_names"
+  when: "'koumbit_aegir_vm' in group_names"
 
 - name: User | create user | RegularVM
   command: "useradd -m {{ deploy_user }}"
   args:
     creates: "/home/{{ deploy_user }}"
-  when: "'koumbit-aegir-vm' not in group_names"
+  when: "'koumbit_aegir_vm' not in group_names"
 
 - name: User | authorized key upload
   authorized_key:

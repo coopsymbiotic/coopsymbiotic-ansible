@@ -79,7 +79,7 @@
 - name: Add priviledged users to sudo group
   user: name={{ item }} group="sudo" append=yes
   with_items: "{{ root_sudoers }}"
-  when: "'koumbit-aegir-vm' not in group_names"
+  when: "'koumbit_aegir_vm' not in group_names"
   tags:
     - sshuserkeys
     - sshuserkeys-sudoers

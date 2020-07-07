@@ -130,6 +130,7 @@
     - check_aegir_civicrm_contributions
     - check_aegir_civicrm_memberships
     - check_aegir_civicrm_mailings
+    - check_aegir_civicrm_sms
     - check_aegir_civicrm_cases
     - check_aegir_civicrm_events
     - check_aegir_civicrm_participants
@@ -185,6 +186,7 @@
     - aegir_civicrm_contributions
     - aegir_civicrm_memberships
     - aegir_civicrm_mailings
+    - aegir_civicrm_sms
     - aegir_civicrm_cases
     - aegir_civicrm_events
     - aegir_civicrm_participants

@@ -3,7 +3,7 @@
 # Installs Gitlab using Omnibus packages
 # https://about.gitlab.com/downloads/#debian8
 
-- apt: pkg="{{ item }}" state=installed
+- apt: pkg="{{ item }}" state=present
   with_items:
     - debian-archive-keyring
     - apt-transport-https
@@ -25,7 +25,7 @@
     - gitlab
     - packages
 
-- apt: pkg=gitlab-ce state=installed
+- apt: pkg=gitlab-ce state=present
   tags:
     - gitlab
     - packages

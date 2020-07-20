@@ -145,3 +145,9 @@
   when: kvm_hosts is defined
   tags:
     - kvm-server-preseeds
+
+- name: kvm sudo | Add priviledged users to sudo group
+  user: name={{ item }} group="libvirt" append=yes
+  with_items: "{{ root_sudoers }}"
+  tags:
+    - kvm-server-sudoers

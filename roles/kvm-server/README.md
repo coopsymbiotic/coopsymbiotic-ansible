@@ -49,10 +49,10 @@ Copy a preseed example from another host, and:
 Now launch the installation:
 
 ```
-virt-install --name av201 --ram 8192 --disk path=/dev/zvol/zx2/av201 --vcpus 4 --os-type linux --os-variant virtio26 --network bridge=br0 --graphics vnc,listen=127.0.0.1 --noautoconsole --location 'http://ftp.ca.debian.org/debian/dists/jessie/main/installer-amd64/' --extra-args 'ks=file:/av201.ks' --initrd-inject=/root/av201.ks
+/etc/preseeds/my.example.org/start.sh
 ```
 
-The automatic installer will get stuck on the network configuration. Use `virt-manager` to fix the network, continue the install (which should be mostly automatic).
+The automatic installer might get stuck on the network configuration. Use `virt-manager` to fix the network, continue the install (which should be mostly automatic).
 
 Post-installation:
 

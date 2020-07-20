@@ -622,12 +622,11 @@
   tags:
     - aegir-drush
 
-- name: bash | Deploy bashrc, profile, ondir configurations
+- name: bash | Deploy bashrc and profile configurations
   template: src=var/aegir/dot{{ item }} dest=/var/aegir/{{ item }} owner=aegir group=aegir mode=0644
   with_items:
     - .bashrc
     - .profile
-    - .ondirrc
   tags:
     - aegir-bash
 

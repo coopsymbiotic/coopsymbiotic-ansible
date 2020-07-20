@@ -81,6 +81,3 @@ fi
 # [ML] 2017-02-08 Not sure this is a good idea
 # now that civicrm utils are in /usr/local ?
 PATH=$PATH:/var/aegir/bin:/var/aegir/.composer/vendor/bin
-
-# http://swapoff.org/ondir.html
-source /usr/share/ondir/integration/bash

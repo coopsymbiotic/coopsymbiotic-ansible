@@ -8,4 +8,5 @@ aegir ALL=NOPASSWD: /bin/systemctl restart php7.0-fpm
 aegir ALL=NOPASSWD: /bin/systemctl restart php7.2-fpm
 aegir ALL=NOPASSWD: /bin/systemctl restart php7.3-fpm
 aegir ALL=NOPASSWD: /usr/local/bin/aegir-reload-nginx.sh
+aegir ALL=NOPASSWD: /usr/local/bin/aegir-ansible
 aegir ALL=NOPASSWD: /usr/local/bin/fix-wordpress-permissions.sh

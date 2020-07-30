@@ -554,6 +554,7 @@
   with_items:
     - resync-drupal-db.sh
     - resync-wordpress-db.sh
+    - aegir-ansible
   tags:
     - aegir-helper-scripts
 

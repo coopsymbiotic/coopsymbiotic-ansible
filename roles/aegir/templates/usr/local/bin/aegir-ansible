@@ -1,0 +1,26 @@
+#!/bin/bash
+
+host=$1
+tag=$2
+
+# Validate that the hostname looks like a FQDN
+echo $host | grep -q -E "^[-\.a-zA-Z0-9]+$"
+
+if [ $? != 0 ]; then
+  echo "Error: Invalid host format"
+  exit 1
+fi
+
+# Validate that the hostname looks like a FQDN
+if [ -n "$tag" ]; then
+  echo $tag | grep -q -E "^[-a-zA-Z0-9]+$"
+
+  if [ $? != 0 ]; then
+    echo "Error: Invalid tag format"
+    exit 1
+  fi
+
+  ansible-playbook --connection=local -i /usr/local/coopsymbiotic-ansible/aegir-inventory -l $host --tags $tag /usr/local/coopsymbiotic-ansible/site.yml
+else
+  ansible-playbook --connection=local -i /usr/local/coopsymbiotic-ansible/aegir-inventory -l $host /usr/local/coopsymbiotic-ansible/site.yml
+fi

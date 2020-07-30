@@ -8,6 +8,11 @@
   tags:
     - civicrm-sites-cron-wpcivicrm
 
+- include: cron-d7civicrm.yml
+  when: cms == "drupal"
+  tags:
+    - civicrm-sites-cron-d7civicrm
+
 - include: cron-extra.yml
   tags:
     - civicrm-sites-cron-extra

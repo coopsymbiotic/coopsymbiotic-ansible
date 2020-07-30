@@ -1,0 +1,10 @@
+# {{ ansible_managed }}
+
+[Unit]
+Description="D7-CiviCRM Cron for {{ inventory_hostname }}"
+Documentation="https://github.com/coopsymbiotic/coopsymbiotic-ansible/tree/master/roles/civicrm-sites"
+Wants=d7civicron_{{ site_shortname }}.timer
+
+[Service]
+User=aegir
+ExecStart=drush --user=1 @{{ inventory_hostname }} cvapi Job.execute auth=0

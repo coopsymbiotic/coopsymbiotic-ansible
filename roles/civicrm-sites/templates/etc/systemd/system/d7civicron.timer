@@ -1,0 +1,14 @@
+# {{ ansible_managed }}
+
+[Unit]
+Description="D7-CiviCRM Cron for {{ inventory_hostname }}"
+Requires=d7civicron_{{ site_shortname }}.service
+
+[Timer]
+Unit=d7civicron_{{ site_shortname }}.service
+OnUnitInactiveSec=15m
+OnBootActiveSec=10m
+RandomizedDelaySec=30s
+
+[Install]
+WantedBy=timers.target

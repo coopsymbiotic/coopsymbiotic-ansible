@@ -1,0 +1,33 @@
+---
+
+# Setup the CiviCRM-on-Drupal7 cron
+
+- name: systemd | Setup the Drupal7 CiviCRM Cron service
+  template:
+    src="etc/systemd/system/d7civicron.service"
+    dest="/etc/systemd/system/d7civicron_{{ site_shortname }}.service"
+    owner=root
+    group=root
+    mode=0644
+  notify: reload systemd
+
+- name: systemd | Setup the Drupal7 CiviCRM Cron timer
+  template:
+    src="etc/systemd/system/d7civicron.timer"
+    dest="/etc/systemd/system/d7civicron_{{ site_shortname }}.timer"
+    owner=root
+    group=root
+    mode=0644
+  notify: reload systemd
+
+# My understanding is that this will make the service run once, then the timer will kick-in
+# (because we are using OnUnitInactiveSec=15m; maybe we should use OnCalendar?)
+- name: systemd | Start the service
+  systemd:
+    name: "d7civicron_{{ site_shortname }}.service"
+    state: started
+
+- name: systemd | Enable the WP CiviCRM Cron timer
+  systemd:
+    name: "d7civicron_{{ site_shortname }}.timer"
+    enabled: yes

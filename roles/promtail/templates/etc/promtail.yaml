@@ -18,7 +18,7 @@ scrape_configs:
     labels:
       job: varlogs
       host: {{ inventory_hostname }}
-      __path__: /var/log/*log
+      __path__: /var/log/{auth,daemon,dpkg,fail2ban,kern,mail,sys,ufw,user}*log
 - job_name: nginx
   static_configs:
   - targets:

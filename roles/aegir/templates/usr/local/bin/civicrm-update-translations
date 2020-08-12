@@ -23,6 +23,9 @@ fi
 
 for i in /var/aegir/l10n-civicrm/*; do
   lang=$(basename $i)
+  # Create the directory if necessary, in case we are adding another language
+  # we can create the top-level directory and re-run the update.
+  mkdir -p /var/aegir/l10n-civicrm/$lang/LC_MESSAGES
   wget https://download.civicrm.org/civicrm-l10n-core/mo/$lang/civicrm.mo -O /var/aegir/l10n-civicrm/$lang/LC_MESSAGES/civicrm.mo
 done
 

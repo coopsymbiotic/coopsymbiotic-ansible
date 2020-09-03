@@ -1,4 +1,6 @@
 # {{ ansible_managed }}
+#
+# https://grafana.com/docs/loki/latest/clients/promtail/configuration/
 
 server:
   http_listen_port: 9080

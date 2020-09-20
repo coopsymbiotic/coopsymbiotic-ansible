@@ -137,6 +137,7 @@
     - check_aegir_civicrm_lastlogin
     - check_backup
     - check_bandwidth
+    - check_borg
     - check_civicrm
     - check_cmsversion
     - check_file_content

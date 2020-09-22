@@ -25,7 +25,8 @@ https://github.com/coopsymbiotic/coopsymbiotic-ansible
 Requirements
 ------------
 
-The server from where you will be running Ansible must have Ansible >= 2.0 on Debian 9.
+* Ansible 2.9 (playbooks might throw some warnings, but that is our target at the moment).
+* Most roles assume Debian 10. They may have limited support for other operating systems.
 
 Git clone this repo with submodules
 -----------------------------------

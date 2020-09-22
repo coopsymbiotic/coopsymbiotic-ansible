@@ -3,9 +3,9 @@
 # We deploy our sources.list to include "contrib"
 - name: common-all | Deploy apt sources.list
   template: src=etc/apt/sources.list dest=/etc/apt/sources.list owner=root group=root mode=0644
+  when: ansible_distribution == "Debian"
   tags:
     - common-all
-  when: ansible_distribution == "Debian"
 
 - apt: update_cache=yes
   tags:
@@ -42,14 +42,6 @@
   tags:
     - packages
     - common-all
-
-# Not required since Debian10
-# - name: rsyslog | Deploy conf file to avoid annoying warnings
-#   template: src=etc/rsyslog.conf dest=/etc/rsyslog.conf owner=root group=root mode=0644
-#   notify: restart rsyslog
-#   tags:
-#     - common-all
-#     - common-all-rsyslog
 
 - name: sysctl | Deploy custom sysctl settings
   template: src=etc/sysctl.d/95-symbiotic.conf dest=/etc/sysctl.d/95-symbiotic.conf owner=root group=root mode=0644

@@ -155,6 +155,8 @@
     - icinga2
     - icinga2-custom-checks
 
+# @todo These should only be in ./zones.d/global-templates/commands
+# of the icinga2 server. See next task.
 - name: Deploy custom checks configurations
   template: src="etc/icinga2/conf.d/commands/{{ item }}.conf" dest="/etc/icinga2/conf.d/commands/{{ item }}.conf" owner=root group=root mode=0644
   with_items:
@@ -166,7 +168,6 @@
     - file_content
     - mem
     - md_raid
-    - mysqldump
     - mysql_uptime
     - ufw
     - zpool
@@ -191,10 +192,12 @@
     - aegir_civicrm_cases
     - aegir_civicrm_events
     - aegir_civicrm_participants
+    - mysqldump
   notify: restart icinga2
   tags:
     - icinga2
     - icinga2-custom-checks
+    - icinga2-custom-checks-cleanup
 
 - template: src="etc/sudoers.d/{{ item }}" dest="/etc/sudoers.d/{{ item }}" owner=root group=root mode=0440
   with_items:

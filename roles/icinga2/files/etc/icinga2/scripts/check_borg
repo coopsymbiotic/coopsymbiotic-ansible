@@ -3,6 +3,7 @@
 # Based on check_borg, modified by Symbiotic to use borgmatic
 
 set -o nounset
+set -e
 
 PROGNAME=$(basename "$0")
 PROGPATH=$(echo "$0" | sed -e 's,[\\/][^\\/][^\\/]*$,,')

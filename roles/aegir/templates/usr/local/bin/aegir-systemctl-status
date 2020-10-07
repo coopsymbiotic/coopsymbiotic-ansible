@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# Allow www-data to get cron logs
+
+service=$1
+
+# Validate that the service looks like a cron
+echo $service | grep -q -E "^(d7|d8|d9|wp)(civi|drupal)cron"
+
+if [ $? != 0 ]; then
+  echo "Error: Invalid service format"
+  exit 1
+fi
+
+systemctl status $service 2>&1

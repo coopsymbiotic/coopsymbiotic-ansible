@@ -349,10 +349,24 @@
     - aegir-hosting-wordpress
 
 ##
+## Deploy hosting_civicrm_ansible
+##
+- name: Deploy latest hosting_civicrm_ansible from Git
+  become: true
+  become_user: aegir
+  git: repo=https://github.com/coopsymbiotic/hosting_civicrm_ansible.git
+       version=master
+       dest="{{ hostmaster_root.stdout }}/sites/{{ inventory_hostname }}/modules/hosting_civicrm_ansible"
+       update=yes
+  ignore_errors: yes
+  tags:
+    - aegir-hosting-civicrm-ansible
+
+##
 ## Configurations
 ##
 - name: Aegir modules | Enable a few extra Aegir modules
-  shell: "drush @hostmaster en hosting_https hosting_letsencrypt hosting_alias hosting_clone hosting_tasks_extra hosting_remote_import hosting_civicrm_cron hosting_civicrm hosting_wpsite -y"
+  shell: "drush @hostmaster en hosting_https hosting_letsencrypt hosting_alias hosting_clone hosting_tasks_extra hosting_remote_import hosting_civicrm_cron hosting_civicrm hosting_civicrm_ansible hosting_wpsite -y"
   become: true
   become_user: aegir
   tags:
@@ -638,6 +652,11 @@
 
 - name: Deploy our duct tape script to safely reload nginx
   template: src=usr/local/bin/aegir-reload-nginx.sh dest=/usr/local/bin/aegir-reload-nginx.sh owner=root group=root mode=0755
+  tags:
+    - aegir-sudoers
+
+- name: Deploy wrapper for getting systemd timer logs
+  template: src=usr/local/bin/aegir-systemctl-status dest=/usr/local/bin/aegir-systemctl-status owner=root group=root mode=0755
   tags:
     - aegir-sudoers
 

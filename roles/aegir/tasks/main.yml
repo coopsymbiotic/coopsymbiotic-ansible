@@ -296,6 +296,7 @@
   register: hostmaster_root
   tags:
     - aegir-hosting-civicrm
+    - aegir-hosting-civicrm-ansible
     - aegir-hosting-https
     - aegir-hosting-wordpress
     - aegir-civicrm-platform
@@ -315,9 +316,11 @@
        version=7.x-3.x
        dest="{{ hostmaster_root.stdout }}/profiles/hostmaster/modules/aegir/hosting_civicrm"
        update=yes
+       force=yes
   ignore_errors: yes
   tags:
     - aegir-hosting-civicrm
+    - aegir-hosting-civicrm-ansible
 
 - name: Flush Hostmaster cache
   become: true

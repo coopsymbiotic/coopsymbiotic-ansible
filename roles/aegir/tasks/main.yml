@@ -636,7 +636,7 @@
     - aegir-civicrm
 
 - name: Aegir | Deploy our local.drushrc.php
-  template: src=var/aegir/dot.drush/local.drushrc.php dest=/var/aegir/local.drushrc.php owner=aegir group=aegir mode=0644
+  template: src=var/aegir/dot.drush/local.drushrc.php dest=/var/aegir/.drush/local.drushrc.php owner=aegir group=aegir mode=0644
   tags:
     - aegir-drush
 
@@ -764,3 +764,7 @@
   when: aegir_mysql_replication_hosts | length > 0
   tags:
     - aegir-mysql-replication
+
+- include: cleanuptmp.yml
+  tags:
+    - aegir-cleanuptmp

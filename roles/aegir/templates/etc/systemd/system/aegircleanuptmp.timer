@@ -1,0 +1,13 @@
+# {{ ansible_managed }}
+
+[Unit]
+Description="Cleanup /var/aegir/tmp every week"
+Requires=aegircleanuptmp.service
+
+[Timer]
+Unit=aegircleanuptmp.service
+OnBootSec=15min
+OnCalendar=Sun 18:00:00
+
+[Install]
+WantedBy=timers.target

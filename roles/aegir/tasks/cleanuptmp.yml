@@ -1,0 +1,32 @@
+---
+
+# Setup the cron to cleanup /var/aegir/tmp weekly
+
+- name: systemd | Setup the tmp cleanup service
+  template:
+    src="etc/systemd/system/aegircleanuptmp.service"
+    dest="/etc/systemd/system/aegircleanuptmp.service"
+    owner=root
+    group=root
+    mode=0644
+  notify: reload systemd
+
+- name: systemd | Setup the tmp cleanup timer
+  template:
+    src="etc/systemd/system/aegircleanuptmp.timer"
+    dest="/etc/systemd/system/aegircleanuptmp.timer"
+    owner=root
+    group=root
+    mode=0644
+  notify: reload systemd
+
+# My understanding is that this will make the service run once, then the timer will kick-in
+- name: systemd | Start the service
+  systemd:
+    name: "aegircleanuptmp.service"
+    state: started
+
+- name: systemd | Enable the aegircleanuptmp timer
+  systemd:
+    name: "aegircleanuptmp.timer"
+    enabled: yes

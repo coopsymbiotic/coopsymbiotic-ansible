@@ -1,0 +1,10 @@
+# {{ ansible_managed }}
+
+[Unit]
+Description="Cleanup /var/aegir/tmp every week"
+Documentation="https://github.com/coopsymbiotic/coopsymbiotic-ansible/tree/master/roles/aegir"
+Wants=aegircleanuptmp.timer
+
+[Service]
+User=aegir
+ExecStart=/bin/bash -c 'mkdir -p /var/aegir/tmp/ && find /var/aegir/tmp/ -prune -o -exec rm -fr {} \\; && touch /var/aegir/tmp/.nobackup && touch /var/aegir/tmp/zz_this_dir_is_deleted_on_sundays'                 

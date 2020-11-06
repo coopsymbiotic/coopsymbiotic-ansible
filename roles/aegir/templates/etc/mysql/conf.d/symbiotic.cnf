@@ -8,7 +8,6 @@ tmp_table_size  = 512M
 max_heap_table_size = 512M
 
 innodb_large_prefix=true
-innodb_file_format=barracuda
 innodb_file_per_table=true
 innodb_buffer_pool_size = {{ (ansible_memtotal_mb/1024/4)|round|int }}G
 innodb_buffer_pool_instances = 1

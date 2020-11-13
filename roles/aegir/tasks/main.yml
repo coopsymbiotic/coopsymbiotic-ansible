@@ -351,8 +351,23 @@
   tags:
     - aegir-hosting-wordpress
 
+# @todo replace by systemd timer?
+# @todo Avoid running if the config-wp file does not exist?
+- name: hosting_wordpress | Configure dehydrated cron
+  cron:
+    name="dehydrated-aegir-wp"
+    minute="35"
+    hour="19"
+    job="/var/aegir/config/letsencrypt/script -c -f /var/aegir/config/letsencrypt/config-wp >/dev/null"
+    cron_file="dehydrated-aegir-wp"
+    user="aegir"
+    state=present
+  tags:
+    - aegir-hosting-wordpress
+    - aegir-hosting-wordpress-dehydrated
+
 ##
-## Deploy hosting_civicrm_ansible
+## Deploy hosting_civicrm_ansible and dependencies
 ##
 - name: Deploy latest hosting_civicrm_ansible from Git
   become: true

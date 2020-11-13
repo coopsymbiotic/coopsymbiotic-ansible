@@ -18,3 +18,5 @@ aegir_mysql_users_rw: []
 
 # Defining SQL replication hosts will open the firewall port to that IP
 aegir_mysql_replication_hosts: []
+
+aegir_helpers_version: 1.1.0

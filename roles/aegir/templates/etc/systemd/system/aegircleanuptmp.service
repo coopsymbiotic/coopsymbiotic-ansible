@@ -7,4 +7,4 @@ Wants=aegircleanuptmp.timer
 
 [Service]
 User=aegir
-ExecStart=/bin/bash -c 'mkdir -p /var/aegir/tmp/ && find /var/aegir/tmp/ -prune -o -exec rm -fr {} \\; && touch /var/aegir/tmp/.nobackup && touch /var/aegir/tmp/zz_this_dir_is_deleted_on_sundays'                 
+ExecStart=/bin/bash -c 'rm -fr /var/aegir/tmp/ && mkdir -p /var/aegir/tmp/ && touch /var/aegir/tmp/.nobackup && touch /var/aegir/tmp/zz_this_dir_is_deleted_on_sundays'

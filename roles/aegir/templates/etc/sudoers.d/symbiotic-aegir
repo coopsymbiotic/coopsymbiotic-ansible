@@ -8,6 +8,14 @@ aegir ALL=NOPASSWD: /bin/systemctl restart php7.0-fpm
 aegir ALL=NOPASSWD: /bin/systemctl restart php7.2-fpm
 aegir ALL=NOPASSWD: /bin/systemctl restart php7.3-fpm
 aegir ALL=NOPASSWD: /usr/local/bin/aegir-reload-nginx.sh
+aegir ALL=NOPASSWD: /usr/local/bin/aegir-systemctl-status
 www-data ALL=NOPASSWD: /usr/local/bin/aegir-systemctl-status
 aegir ALL=NOPASSWD: /usr/local/bin/aegir-ansible
 aegir ALL=NOPASSWD: /usr/local/bin/fix-wordpress-permissions.sh
+aegir ALL=NOPASSWD: /usr/local/bin/aegir-db-filestats
+www-data ALL=NOPASSWD: /usr/local/bin/aegir-db-filestats
+# @todo Implement/Replace with aegir-helpers?
+aegir ALL=NOPASSWD: /root/bin/gandi-dns-new-record.sh
+aegir ALL=NOPASSWD: /root/bin/gandi-dns-delete-record.sh
+aegir ALL=NOPASSWD: /root/bin/cloudflare-dns-new-record.sh
+aegir ALL=NOPASSWD: /root/bin/cloudflare-dns-delete-record.sh

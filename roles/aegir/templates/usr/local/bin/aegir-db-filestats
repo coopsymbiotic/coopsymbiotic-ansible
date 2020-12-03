@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# Validate the database name
+# It can also be empty, to list all database files
+dbname=$1
+
+echo $dbname | grep -q -E "^[_a-zA-Z0-9]*$"
+
+if [ $? != 0 ]; then
+  echo "Error: Invalid database name"
+  exit 1
+fi
+
+
+ncdu -q -r /var/lib/mysql/$dbname -o -

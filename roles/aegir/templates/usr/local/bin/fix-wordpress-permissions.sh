@@ -44,6 +44,14 @@ fi
 
 cd $site_path
 
+# For plugin upgrades, in combination with ssh-sftp-updater-support
+mkdir -p ./wp-content/upgrade
+
+if [ -d ./wp-content/upgrade ]; then
+  chown -R aegir.www-data ./wp-content/upgrade/
+  chmod -R g+w ./wp-content/upgrade/
+fi
+
 if [ -d ./wp-content/uploads/civicrm ]; then
   chown -R aegir.www-data ./wp-content/uploads/civicrm/
   chmod -R g+w ./wp-content/uploads/civicrm/

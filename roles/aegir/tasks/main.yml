@@ -669,7 +669,6 @@
   tags:
     - aegir-civicrm-translations
 
-- include: letsencrypt.yml
 - include: settings-php.yml
 - include: settings-mysql.yml
 

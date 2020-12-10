@@ -37,3 +37,9 @@
 
 - include: main-node.yml
   when: "'icinga_servers' not in group_names"
+
+- include: main-conf-host.yml
+  when: "'icinga_servers' not in group_names"
+  tags:
+    - never
+    - icinga2-conf-host

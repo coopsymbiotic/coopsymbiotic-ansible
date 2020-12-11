@@ -30,6 +30,7 @@
     - vim
     - vnstat
     - wget
+    - xz-utils
   tags:
     - packages
     - common-all

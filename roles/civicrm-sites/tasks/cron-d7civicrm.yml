@@ -27,7 +27,7 @@
     name: "d7civicron_{{ site_shortname }}.service"
     state: started
 
-- name: systemd | Enable the WP CiviCRM Cron timer
+- name: systemd | Enable the D7 CiviCRM Cron timer
   systemd:
     name: "d7civicron_{{ site_shortname }}.timer"
     enabled: yes

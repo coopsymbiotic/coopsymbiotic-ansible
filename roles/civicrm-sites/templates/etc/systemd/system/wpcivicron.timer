@@ -6,9 +6,9 @@ Requires=wpcivicron_{{ site_shortname }}.service
 
 [Timer]
 Unit=wpcivicron_{{ site_shortname }}.service
-OnUnitInactiveSec=15m
-OnBootActiveSec=10m
-RandomizedDelaySec=30s
+OnUnitInactiveSec=15min
+OnBootSec=10min
+RandomizedDelaySec=30sec
 
 [Install]
 WantedBy=timers.target

@@ -16,3 +16,8 @@
 - include: cron-extra.yml
   tags:
     - civicrm-sites-cron-extra
+
+- include: sftp.yml
+  when: civicrm_ansible_sftpchroot_keys is defined and civicrm_ansible_sftpchroot_keys
+  tags:
+    - civicrm-sites-sftp

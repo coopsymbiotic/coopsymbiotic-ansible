@@ -1,0 +1,53 @@
+---
+
+- name: civicrm-sites sftp | Create system user
+  user:
+    name: "{{ site_shortname }}"
+    shell: "/bin/false"
+    password: "{{ lookup('password', '/dev/null length=15 chars=ascii_letters,digits,hexdigits,punctuation') }}"
+
+- name: Change the home directory permissions
+  file:
+    path: "/home/{{ site_shortname }}"
+    mode: 0750
+    owner: "root"
+    group: "{{ site_shortname }}"
+
+- name: civicrm-sites sftp | Deploy ssh keys
+  authorized_key:
+    user: "{{ site_shortname }}"
+    key: "{{ civicrm_ansible_sftpchroot_keys }}"
+
+- name: civicrm-sites sftp | Ensure group sftponly exists
+  group:
+    name: sftponly
+    state: present
+
+- name: civicrm-sites sftp | Add user to sftponly and www-data groups
+  user:
+    name: "{{ site_shortname }}"
+    groups: "www-data,sftponly"
+    append: yes
+
+- name: civicrm-sites sftp | Create www directory in home
+  file:
+    path: "/home/{{ site_shortname }}/www"
+    state: directory
+    owner: "root"
+    group: "root"
+    mode: 0755
+
+- name: civicrm-sites sftp | fstab mount
+  lineinfile:
+    path: /etc/fstab
+    line: "/var/aegir/clients/admin/{{ inventory_hostname }} /home/{{ site_shortname }}/www none bind 0 1"
+    create: yes
+  register: fstab
+
+# Always remount on verify, because the site might have been migrated to another path
+# and the "clients" symlink may have changed location.
+# NB: we might not want to trust that symlink, since the aegir user can change it,
+# but unix file permissions still kick-in, and the security model assumes that the
+# aegir user is equivalent to root.
+- name: civicrm-sitges sftp | Remount
+  command: 'mount -o remount -a'

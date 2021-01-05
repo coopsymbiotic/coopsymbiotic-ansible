@@ -1,3 +1,4 @@
 ---
-- name: reload systemd
-  systemd: daemon_reload=yes
+- name: civicrm-sites | Reload systemd
+  systemd:
+    daemon_reload: yes

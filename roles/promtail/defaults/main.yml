@@ -1,2 +1,2 @@
-promtail_version: 0.4.0
+promtail_version: 2.1.0
 promtail_push_url: https://loki.example.org:443/api/prom/push

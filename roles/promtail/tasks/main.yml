@@ -10,8 +10,8 @@
 
 - name: Deploy the promtail binary
   get_url:
-    url: "https://github.com/grafana/loki/releases/download/v{{ promtail_version }}/promtail-linux-amd64.gz"
-    dest: /usr/local/bin/promtail.gz
+    url: "https://github.com/grafana/loki/releases/download/v{{ promtail_version }}/promtail-linux-amd64.zip"
+    dest: /usr/local/bin/promtail.zip
     mode: '0640'
   when: p.stat.exists == False
   tags:
@@ -19,8 +19,9 @@
     - packages-promtail
     - promtail
 
+# Consider using the unarchive module rather than running 'unzip'.
 - name: Unzip the promtail binary
-  shell: "gunzip -f /usr/local/bin/promtail.gz && touch /usr/local/bin/.promtail-{{ promtail_version }}.txt"
+  shell: "unzip -u /usr/local/bin/promtail.zip && touch /usr/local/bin/.promtail-{{ promtail_version }}.txt"
   when: p.stat.exists == False
   tags:
     - packages
@@ -28,7 +29,7 @@
     - promtail
 
 - name: Delete the promtail gzip file
-  file: path="/usr/local/bin/promtail.gz" state=absent
+  file: path="/usr/local/bin/promtail.zip" state=absent
   tags:
     - packages
     - packages-promtail

@@ -52,11 +52,12 @@ if [ -d ./wp-content/upgrade ]; then
   chmod -R g+w ./wp-content/upgrade/
 fi
 
-if [ -d ./wp-content/uploads/civicrm ]; then
-  chown -R aegir.www-data ./wp-content/uploads/civicrm/
-  chmod -R g+w ./wp-content/uploads/civicrm/
+if [ -d ./wp-content/uploads ]; then
+  chown -R aegir.www-data ./wp-content/uploads/
+  chmod -R g+w ./wp-content/uploads/
 fi
 
+# Legacy CiviCRM directory
 if [ -d ./wp-content/plugins/files/civicrm ]; then
   chown -R aegir.www-data ./wp-content/plugins/files/civicrm/
   chmod -R g+w ./wp-content/plugins/files/civicrm/

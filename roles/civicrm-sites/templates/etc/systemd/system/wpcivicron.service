@@ -7,4 +7,5 @@ Wants=wpcivicron_{{ site_shortname }}.timer
 
 [Service]
 User=aegir
-ExecStart=drush @{{ inventory_hostname }} wp civicrm api Job.execute --user={{ cron_user }}
+ExecStartPre=/usr/local/bin/drush cc drush
+ExecStart=/usr/local/bin/drush @{{ inventory_hostname }} wp civicrm api Job.execute --user={{ cron_user }}

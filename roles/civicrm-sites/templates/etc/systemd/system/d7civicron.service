@@ -7,5 +7,5 @@ Wants=d7civicron_{{ site_shortname }}.timer
 
 [Service]
 User=aegir
-ExecStartPre=drush cc drush
-ExecStart=drush --user=1 @{{ inventory_hostname }} cvapi Job.execute auth=0
+ExecStartPre=/usr/local/bin/drush cc drush
+ExecStart=/usr/local/bin/drush --user=1 @{{ inventory_hostname }} cvapi Job.execute auth=0

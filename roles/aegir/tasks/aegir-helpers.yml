@@ -1,0 +1,23 @@
+- name: aegir-helpers | Check if aegir-helpers needs to be installed or upgraded
+  stat: path="/usr/local/bin/.aegir-helpers-{{ aegir_helpers_version }}.txt"
+  register: p
+  tags:
+    - packages
+    - aegir-helpers
+
+- name: aegir-helpers | Delete the old version
+  file: path="/usr/local/bin/aegir-helpers" state=absent
+  when: p.stat.exists == False
+  tags:
+    - packages
+    - aegir-helpers
+
+- name: aegir-helpers | Deploy the new version
+  get_url:
+    url: "https://github.com/coopsymbiotic/aegir-helpers/releases/download/{{ aegir_helpers_version }}/aegir-helpers"
+    dest: /usr/local/bin/aegir-helpers
+    mode: '0755'
+  when: p.stat.exists == False
+  tags:
+    - packages
+    - aegir-helpers

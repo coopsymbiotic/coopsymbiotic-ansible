@@ -2,14 +2,17 @@
 
 # Ubuntu 18.x and Debian Buster do not have some of the latest packages
 # so we are fetching from Debian Bullseye
-- apt:
+- name: borgmatic | Install python3-pykwalify
+  apt:
     state: present
-    deb: "http://ftp.us.debian.org/debian/pool/main/p/pykwalify/python3-pykwalify_1.7.0-3_amd64.deb"
+    deb: "http://ftp.us.debian.org/debian/pool/main/p/pykwalify/python3-pykwalify_1.7.0-2_amd64.deb"
   tags:
-    - packages
     - borgmatic
+    - packages
 
-- apt:
+# zx-utils is required for installing .deb files manually (borgmatic)
+- name: borgmatic | Install python3 requirements and borgbackup
+  apt:
     state: present
     name: [
       'python3-colorama',
@@ -18,19 +21,19 @@
       'python3-requests',
       'python3-ruamel.yaml',
       'borgbackup',
+      'xz-utils',
     ]
   tags:
-    - packages
     - borgmatic
+    - packages
 
-# Ansible does not seem to like loops or lists for this operation
-- name: borgmatic | Install the borgmatic deb package
+- name: borgmatic | Install the borgmatic deb package from Debian Bullseye
   apt:
     state: present
-    deb: "http://ftp.us.debian.org/debian/pool/main/b/borgmatic/borgmatic_1.5.1-1_amd64.deb"
+    deb: "http://ftp.us.debian.org/debian/pool/main/b/borgmatic/borgmatic_1.5.12-1_amd64.deb"
   tags:
-    - packages
     - borgmatic
+    - packages
 
 - name: Create the borgmatic config directory
   file:

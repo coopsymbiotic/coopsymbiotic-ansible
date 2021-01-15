@@ -68,12 +68,12 @@
     - borgmatic-confs
     - borgmatic-cron
 
-# Run cron randomly between 01:00 AND 03:59
+# Run cron randomly between 22:00 AND 02:59
 - name: borgmatic | Configure cron
   cron:
     name="borgmatic"
     minute="{{ 60 | random }}"
-    hour="{{ 3 | random }}"
+    hour="{{ ['22','23','0','1','2'] | random }}"
     job="/usr/bin/borgmatic --verbosity 0"
     cron_file="borgmatic"
     user="root"
@@ -104,7 +104,7 @@
 
 - name: borgmatic | Create the backup user on backup server
   delegate_to: "{{ borgmatic_backupserver }}"
-  user: name="backups-{{ ansible_hostname }}" home="/backup/{{ inventory_hostname }}"
+  user: name="backups-{{ inventory_hostname_short }}" home="{{ borgmatic_server_basedir }}/{{ inventory_hostname }}"
   tags:
     - borgmatic
     - borgmatic-ssh
@@ -112,10 +112,10 @@
 - name: borgmatic | Update backup server home directory permissions
   delegate_to: "{{ borgmatic_backupserver }}"
   file:
-    path="/backup/{{ inventory_hostname }}"
+    path="{{ borgmatic_server_basedir }}/{{ inventory_hostname }}"
     state=directory
-    owner="backups-{{ ansible_hostname }}"
-    group="backups-{{ ansible_hostname }}"
+    owner="backups-{{ inventory_hostname_short }}"
+    group="backups-{{ inventory_hostname_short }}"
     mode=0700
   tags:
     - borgmatic
@@ -124,10 +124,10 @@
 - name: borgmatic | Create the backup directory on backup server
   delegate_to: "{{ borgmatic_backupserver }}"
   file:
-    path="/backup/{{ inventory_hostname }}/borg"
+    path="{{ borgmatic_server_basedir }}/{{ inventory_hostname }}/borg"
     state=directory
-    owner="backups-{{ ansible_hostname }}"
-    group="backups-{{ ansible_hostname }}"
+    owner="backups-{{ inventory_hostname_short }}"
+    group="backups-{{ inventory_hostname_short }}"
     mode=0700
   tags:
     - borgmatic
@@ -135,7 +135,47 @@
 
 - name: borgmatic | Add the public ssh key to backup account on the backup server
   delegate_to: "{{ borgmatic_backupserver }}"
-  authorized_key: user="backups-{{ ansible_hostname }}" key="{{root_pub_key.stdout}}"
+  authorized_key: user="backups-{{ inventory_hostname_short }}" key="{{root_pub_key.stdout}}"
   tags:
     - borgmatic
     - borgmatic-ssh
+
+- name: borgmatic | Check if the repository has been initialized
+  stat:
+    path: /root/.borgmatic-init
+  register: borgmatic_init_exists
+  tags:
+    - borgmatic
+    - borgmatic-init
+
+- name: borgmatic | Initialize the repository
+  shell: "borgmatic init -e repokey"
+  when: not borgmatic_init_exists.stat.exists
+  tags:
+    - borgmatic
+    - borgmatic-init
+
+- name: sudo | Deploy sudoers file for restoring backups
+  template:
+    src: "etc/sudoers.d/symbiotic-borg"
+    dest: "/etc/sudoers.d/symbiotic-borg"
+    owner: root
+    group: root
+    mode: 0440
+  tags:
+    - borgmatic
+    - borgmatic-sudoers
+
+- name: sudo | Deploy our wrapper scripts for mounting and unmounting
+  template:
+    src: "usr/local/bin/{{ item }}"
+    dest: "/usr/local/bin/{{ item }}"
+    owner: root
+    group: root
+    mode: 0755
+  with_items:
+    - borg-mount
+    - borg-umount
+  tags:
+    - borgmatic
+    - borgmatic-sudoers

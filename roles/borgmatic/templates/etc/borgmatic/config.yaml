@@ -25,7 +25,7 @@ location:
     # repositories are backed up to in sequence. See ssh_command for SSH options like
     # identity file or port.
     repositories:
-        - backups-{{ ansible_hostname }}@{{ borgmatic_backupserver }}:/backup/{{ inventory_hostname }}/borg
+        - backups-{{ inventory_hostname_short }}@{{ borgmatic_backupserver }}:/backup/{{ inventory_hostname }}/borg
 
     # Mode in which to operate the files cache. See
     # https://borgbackup.readthedocs.io/en/stable/usage/create.html#description for
@@ -145,7 +145,7 @@ storage:
     # initialized with passphrase/repokey encryption. Quote the value if it contains
     # punctuation, so it parses correctly. And backslash any quote or backslash
     # literals as well.
-    #encryption_passphrase: "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~"
+    encryption_passphrase: "{{ borgmatic_passphrase }}"
 
     # Number of seconds between each checkpoint during a long-running backup. See
     # https://borgbackup.readthedocs.io/en/stable/faq.html#if-a-backup-stops-mid-way-does-the-already-backed-up-data-stay-there

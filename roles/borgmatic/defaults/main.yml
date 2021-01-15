@@ -1,3 +1,11 @@
 borgmatic_backupserver: backupserver.example.org
 borgmatic_retention_daily: 60
 borgmatic_retention_monthly: 4
+borgmatic_passphrase: storedelsewhere
+
+# Base directory where backups are stored, on the backup server
+borgmatic_server_basedir: /backup
+
+# Require a password to run the sudo command
+# alternative password-less: "NOPASSWD:"
+borgmatic_sudorule: "(root)"

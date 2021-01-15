@@ -20,7 +20,7 @@
     - promtail
 
 - name: Unzip the promtail binary
-  ansible.builtin.unarchive:
+  unarchive:
     src: /tmp/promtail.zip
     dest: /usr/local/bin
     remote_src: yes

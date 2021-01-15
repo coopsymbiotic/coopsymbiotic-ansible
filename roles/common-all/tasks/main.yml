@@ -18,7 +18,6 @@
     - ca-certificates
     - curl
     - etckeeper
-    - fail2ban
     - gawk
     - git
     - less

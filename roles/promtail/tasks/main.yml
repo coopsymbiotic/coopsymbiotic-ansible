@@ -11,7 +11,7 @@
 - name: Deploy the promtail binary
   get_url:
     url: "https://github.com/grafana/loki/releases/download/v{{ promtail_version }}/promtail-linux-amd64.zip"
-    dest: /usr/local/bin/promtail.zip
+    dest: /tmp/promtail.zip
     mode: '0640'
   when: p.stat.exists == False
   tags:
@@ -19,17 +19,45 @@
     - packages-promtail
     - promtail
 
-# Consider using the unarchive module rather than running 'unzip'.
 - name: Unzip the promtail binary
-  shell: "unzip -u /usr/local/bin/promtail.zip && touch /usr/local/bin/.promtail-{{ promtail_version }}.txt"
+  ansible.builtin.unarchive:
+    src: /tmp/promtail.zip
+    dest: /usr/local/bin
+    remote_src: yes
   when: p.stat.exists == False
   tags:
     - packages
     - packages-promtail
     - promtail
 
+- name: Copy to rename the promtail binary
+  copy:
+    remote_src: True
+    src: /usr/local/bin/promtail-linux-amd64
+    dest: /usr/local/bin/promtail
+  when: p.stat.exists == False
+  tags:
+    - packages
+    - packages-promtail
+    - promtail
+
+- name: Delete the old promtail binary file
+  file: path="/usr/local/bin/promtail-linux-amd64" state=absent
+  tags:
+    - packages
+    - packages-promtail
+    - promtail
+
 - name: Delete the promtail gzip file
-  file: path="/usr/local/bin/promtail.zip" state=absent
+  file: path="/tmp/promtail.zip" state=absent
+  tags:
+    - packages
+    - packages-promtail
+    - promtail
+
+- name: Keep track of the installed promtail version
+  shell: "touch /usr/local/bin/.promtail-{{ promtail_version }}.txt"
+  when: p.stat.exists == False
   tags:
     - packages
     - packages-promtail

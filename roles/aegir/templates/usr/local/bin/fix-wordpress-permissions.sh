@@ -50,15 +50,18 @@ mkdir -p ./wp-content/upgrade
 if [ -d ./wp-content/upgrade ]; then
   chown -R aegir.www-data ./wp-content/upgrade/
   chmod -R g+w ./wp-content/upgrade/
+  find ./wp-content/upgrade/ -type d -exec chmod g+s {} \;
 fi
 
 if [ -d ./wp-content/uploads ]; then
   chown -R aegir.www-data ./wp-content/uploads/
   chmod -R g+w ./wp-content/uploads/
+  find ./wp-content/uploads/ -type d -exec chmod g+s {} \;
 fi
 
 # Legacy CiviCRM directory
 if [ -d ./wp-content/plugins/files/civicrm ]; then
   chown -R aegir.www-data ./wp-content/plugins/files/civicrm/
-  chmod -R g+w ./wp-content/plugins/files/civicrm/
+  chmod -R g+s ./wp-content/plugins/files/civicrm/
+  find ./wp-content/plugins/files/civicrm/ -type d -exec chmod g+s {} \;
 fi

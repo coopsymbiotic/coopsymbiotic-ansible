@@ -625,6 +625,7 @@
     - resync-wordpress-db.sh
     - aegir-ansible
     - aegir-db-filestats
+    - aegir-getlock
   tags:
     - aegir-helper-scripts
     - aegir-hosting-civicrm-ansible

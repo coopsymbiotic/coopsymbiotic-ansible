@@ -8,4 +8,4 @@ Wants=d7civicron_{{ site_shortname }}.timer
 [Service]
 User=aegir
 ExecStartPre=/usr/local/bin/drush cc drush
-ExecStart=/usr/local/bin/drush --user=1 @{{ inventory_hostname }} cvapi Job.execute auth=0
+ExecStart=/usr/local/bin/aegir-getlock /usr/local/bin/drush --user=1 @{{ inventory_hostname }} cvapi Job.execute auth=0

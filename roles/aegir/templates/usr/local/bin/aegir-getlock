@@ -1,0 +1,9 @@
+#!/bin/bash
+
+# {{ ansible_managed }}
+#
+# coopsymbiotic/ops#163
+# Allow up to 3 crons to run at the same time.
+# We might make this customizable in the future.
+
+flock --verbose -w 2  /tmp/aegir-getlock-1.lock "$@" || flock --verbose -w 2 /tmp/test-2.lock "$@" || flock --verbose /tmp/test-3.lock "$@"

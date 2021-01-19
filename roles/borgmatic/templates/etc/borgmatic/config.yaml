@@ -20,12 +20,18 @@ location:
         - {{ item }}
 {% endfor %}
 {% endif %}
+{% if backups_include_extras is defined %}
+        # Extra includes specific to this host
+{% for item in backups_include_extras %}
+        - {{ item }}
+{% endfor %}
+{% endif %}
 
     # Paths to local or remote repositories (required). Tildes are expanded. Multiple
     # repositories are backed up to in sequence. See ssh_command for SSH options like
     # identity file or port.
     repositories:
-        - backups-{{ inventory_hostname_short }}@{{ borgmatic_backupserver }}:/backup/{{ inventory_hostname }}/borg
+        - backups-{{ inventory_hostname_short }}@{{ borgmatic_backupserver }}:{{ borgmatic_server_basedir }}/{{ inventory_hostname }}/borg
 
     # Mode in which to operate the files cache. See
     # https://borgbackup.readthedocs.io/en/stable/usage/create.html#description for
@@ -114,6 +120,12 @@ location:
 {% if borgmatic_excludes is defined %}
         # Excludes specific to this host
 {% for item in borgmatic_excludes %}
+        - {{ item }}
+{% endfor %}
+{% endif %}
+{% if backupexcludes is defined %}
+        # Extra excludes specific to this host
+{% for item in backupexcludes %}
         - {{ item }}
 {% endfor %}
 {% endif %}

@@ -42,7 +42,6 @@ count() {
       ;;
     esac
     if [ -e "${User}/.drush/${Dom}.alias.drushrc.php" ]; then
-      #echo "${_THIS_U},${Dom},drushrc-exists"
       Dir=$(cat ${User}/.drush/${Dom}.alias.drushrc.php \
         | grep "site_path'" \
         | cut -d: -f2 \
@@ -59,13 +58,15 @@ count() {
         && [ -e "${Dir}/private" ] \
         && [ -e "${Dir}/modules" ] \
         && [ ! -e "${Plr}/profiles/hostmaster" ]; then
-        #echo "${_THIS_U},${Dom},sitedir-exists"
+
+        sudo -i -u aegir drush @${Dom} provision-symbiotic-cleanup 1>/dev/null 2>/dev/null
+
         Dat=$(cat ${Dir}/drushrc.php \
           | grep "options\['db_name'\] = " \
           | cut -d: -f2 \
           | awk '{ print $3}' \
           | sed "s/[\,';]//g" 2>&1)
-        #echo Dat is ${Dat}
+
         if [ ! -z "${Dat}" ] && [ -e "${Dir}" ]; then
           if [ -L "${Dir}/files" ] || [ -L "${Dir}/private" ]; then
             DirSize=$(du -L -s ${Dir} 2>&1)

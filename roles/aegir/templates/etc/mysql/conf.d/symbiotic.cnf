@@ -23,8 +23,9 @@ innodb_flush_method=O_DIRECT
 query_cache_size = 0
 query_cache_type = 0
 
-# log_slow_queries        = /var/log/mysql/mysql-slow.log
-long_query_time = 2
+slow_query_log = 1
+slow_query_log_file = /var/log/mysql/mysql-slow.log
+long_query_time = 5.0
 
 # https://mariadb.com/kb/en/mariadb/server-system-variables/#max_statement_time
 # Maximum time in seconds that a query can execute before being aborted.

@@ -53,12 +53,7 @@ count() {
         | awk '{ print $3}' \
         | sed "s/[\,']//g" 2>&1)
 
-      if [ -e "${Dir}/drushrc.php" ] \
-        && [ -e "${Dir}/files" ] \
-        && [ -e "${Dir}/private" ] \
-        && [ -e "${Dir}/modules" ] \
-        && [ ! -e "${Plr}/profiles/hostmaster" ]; then
-
+      if [ -e "${Dir}/drushrc.php" ] && [ ! -e "${Plr}/profiles/hostmaster" ]; then
         sudo -i -u aegir drush @${Dom} provision-symbiotic-cleanup 1>/dev/null 2>/dev/null
 
         Dat=$(cat ${Dir}/drushrc.php \

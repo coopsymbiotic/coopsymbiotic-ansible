@@ -429,6 +429,12 @@
     - aegir-hosting-wordpress
     - aegir-ansible
 
+# ixiam/hosting#67
+- name: Aegir modules | Disable hosting_platform_composer_git because we do not need it and seems buggy
+  shell: "drush @hostmaster dis hosting_platform_composer_git -y"
+  become: true
+  become_user: aegir
+
 - name: Aegir modules | Enable hosting_nginx_https
   shell: "drush @hostmaster en hosting_nginx_https -y"
   become: true

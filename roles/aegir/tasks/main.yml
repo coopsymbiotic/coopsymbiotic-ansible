@@ -416,6 +416,20 @@
     - aegir-ansible
 
 ##
+## Deploy hosting_usage
+##
+- name: Deploy latest hosting_usage from Git
+  become: true
+  become_user: aegir
+  git: repo=https://github.com/coopsymbiotic/hosting_usage.git
+       version=master
+       dest="{{ hostmaster_root.stdout }}/sites/{{ inventory_hostname }}/modules/hosting_usage"
+       update=yes
+  ignore_errors: yes
+  tags:
+    - aegir-hosting-usage
+
+##
 ## Configurations
 ##
 - name: Aegir modules | Enable a few extra Aegir modules

@@ -283,6 +283,7 @@
        update=yes
   tags:
     - aegir-provision-symbiotic
+    - aegir-weekly
 
 - name: Download provision_customhtaccess from Github
   become_user: aegir
@@ -304,10 +305,8 @@
   tags:
     - aegir-civicrm-platform
     - aegir-hosting-civicrm
-    - aegir-hosting-civicrm-ansible
     - aegir-hosting-https
     - aegir-hosting-wordpress
-    - aegir-hosting-civicrm-ansible
     - aegir-ansible
     - aegir-fixownership
 
@@ -316,7 +315,7 @@
 - name: Delete the old hosting_civicrm directory
   file: path="{{ hostmaster_root.stdout }}/profiles/hostmaster/modules/aegir/hosting_civicrm" state=absent
   tags:
-    - aegir-hosting-civicrm
+    - aegir-ansible
 
 - name: Deploy latest hosting_civicrm from Git
   become: true
@@ -329,7 +328,7 @@
   ignore_errors: yes
   tags:
     - aegir-hosting-civicrm
-    - aegir-hosting-civicrm-ansible
+    - aegir-ansible
 
 - name: Flush Hostmaster cache
   become: true
@@ -437,6 +436,24 @@
     - aegir-hosting-usage
 
 ##
+## Required so that our ansible scripts can access the server's site inventory
+# @todo Remove hardcoded IPs
+##
+- name: Aegir | Add our IPs to system whitelist
+  shell: "drush @hm vset provision_symbiotic_system_whitelist '76.10.173.17,2607:f2c0:f00f:2900::/56,2607:f2c0:a000::/48'"
+  become: true
+  become_user: aegir
+  tags:
+    - aegir-ansible
+
+- name: Aegir | Trigger a hostmaster verify so that the vhost is updated
+  shell: "drush @hm provision-verify"
+  become: true
+  become_user: aegir
+  tags:
+    - aegir-ansible
+
+##
 ## Configurations
 ##
 - name: Aegir modules | Enable a few extra Aegir modules
@@ -542,6 +559,7 @@
   notify: reload nginx
   tags:
     - aegir-nginx
+    - aegir-nginx-conf
 
 - name: Aegir | Disable global error.log
   lineinfile:
@@ -551,6 +569,7 @@
   notify: reload nginx
   tags:
     - aegir-nginx
+    - aegir-nginx-conf
 
 # Using lineinfile instead of a template so that we can still add other
 # settings in global.inc without ansible.
@@ -655,7 +674,7 @@
     - aegir-getlock
   tags:
     - aegir-helper-scripts
-    - aegir-hosting-civicrm-ansible
+    - aegir-ansible
 
 - name: Deploy our version of BOA's weekly.sh
   template: src=usr/local/bin/aegir-weekly.sh dest=/usr/local/bin/aegir-weekly.sh owner=root group=root mode=0755
@@ -728,7 +747,7 @@
   tags:
     - aegir-sudoers
     - aegir-helper-scripts
-    - aegir-hosting-civicrm-ansible
+    - aegir-ansible
 
 - name: Deploy our duct tape script to safely reload nginx
   template: src=usr/local/bin/aegir-reload-nginx.sh dest=/usr/local/bin/aegir-reload-nginx.sh owner=root group=root mode=0755
@@ -739,7 +758,7 @@
   template: src=usr/local/bin/aegir-systemctl-status dest=/usr/local/bin/aegir-systemctl-status owner=root group=root mode=0755
   tags:
     - aegir-sudoers
-    - aegir-hosting-civicrm-ansible
+    - aegir-ansible
 
 - name: ssh | Create the .ssh directory for the Aegir user
   file: path=/var/aegir/.ssh state=directory mode="{{ aegir_ssh_dir_permission }}" owner=aegir group="{{ aegir_ssh_dir_group }}"
@@ -793,7 +812,8 @@
     - aegir-ssh
     - aegir-civicrm-platform
 
-- name: platform | Configure the CiviCRM Drupal7 SymbioTIC platform
+# FIXME: clone first, then provision-save
+- name: platform | Configure the CiviCRM Drupal SymbioTIC platform
   shell: "drush provision-save @platform_CiviCRMd{{ aegir_platform_drupal_version }} --root=/var/aegir/platforms/civicrm-d{{ aegir_platform_drupal_version }} --context_type=platform --repo_url=git@lab-platform-key.symbiotic.coop:coopsymbiotic/symbiotic-platform-d{{ aegir_platform_drupal_version }}-civicrm.git --git_ref=master --deploy_from_git=1"
   args:
     creates: "/var/aegir/.drush/platform_CiviCRMd{{ aegir_platform_drupal_version }}.alias.drushrc.php"

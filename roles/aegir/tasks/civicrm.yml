@@ -47,6 +47,7 @@
     - git-scan
   tags:
     - packages
+    - aegir-civicrm-tools
 
 - name: civicrm | Ensure that civicrm tools (civix, cv, etc) are executable
   file: path="/usr/local/bin/{{ item }}" mode=0755
@@ -57,6 +58,7 @@
     - git-scan
   tags:
     - packages
+    - aegir-civicrm-tools
 
 # This isn't great, because it installs in /usr/bin/bower (not local).
 - name: civicrm | Install bower using npm.

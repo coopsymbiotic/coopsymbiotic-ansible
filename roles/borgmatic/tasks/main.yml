@@ -30,7 +30,7 @@
 - name: borgmatic | Install the borgmatic deb package from Debian Bullseye
   apt:
     state: present
-    deb: "http://ftp.us.debian.org/debian/pool/main/b/borgmatic/borgmatic_1.5.12-1_all.deb"
+    deb: "http://ftp.us.debian.org/debian/pool/main/b/borgmatic/borgmatic_1.5.12-2_all.deb"
   tags:
     - borgmatic
     - packages

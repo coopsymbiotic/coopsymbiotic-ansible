@@ -61,6 +61,7 @@ location:
         - /home/mathieu
         - /home/myriam
         - /home/samuel
+        - /home/shane
         - /home/stephane
         # Exclude various temporary or redundant directories
         - /home/*/.local/share/Trash

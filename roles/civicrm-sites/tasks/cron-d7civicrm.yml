@@ -1,7 +1,6 @@
 ---
 
 # Setup the CiviCRM-on-Drupal7 cron
-
 - name: systemd | Setup the Drupal7 CiviCRM Cron service
   template:
     src="etc/systemd/system/d7civicron.service"
@@ -9,6 +8,7 @@
     owner=root
     group=root
     mode=0644
+  when: civicrm_ansible_cron_interval is defined and civicrm_ansible_cron_interval != "-1"
   notify: reload systemd
 
 - name: systemd | Setup the Drupal7 CiviCRM Cron timer
@@ -18,6 +18,18 @@
     owner=root
     group=root
     mode=0644
+  when: civicrm_ansible_cron_interval is defined and civicrm_ansible_cron_interval != "-1"
+  notify: reload systemd
+
+# If disabling the cron
+- name: systemd | Remove the Drupal7 CiviCRM Cron service
+  file: path="/etc/systemd/system/d7civicron_{{ site_shortname }}.service" state=absent
+  when: civicrm_ansible_cron_interval is defined and civicrm_ansible_cron_interval == "-1"
+  notify: reload systemd
+
+- name: systemd | Remove the Drupal7 CiviCRM Cron timer
+  file: path="/etc/systemd/system/d7civicron_{{ site_shortname }}.timer" state=absent
+  when: civicrm_ansible_cron_interval is defined and civicrm_ansible_cron_interval == "-1"
   notify: reload systemd
 
 # My understanding is that this will make the service run once, then the timer will kick-in
@@ -26,11 +38,13 @@
   systemd:
     name: "d7civicron_{{ site_shortname }}.service"
     state: started
+  when: civicrm_ansible_cron_interval is defined and civicrm_ansible_cron_interval != "-1"
 
 - name: systemd | Enable the D7 CiviCRM Cron timer
   systemd:
     name: "d7civicron_{{ site_shortname }}.timer"
     enabled: yes
+  when: civicrm_ansible_cron_interval is defined and civicrm_ansible_cron_interval != "-1"
 
 - name: systemd | Start the D7 CiviCRM Cron timer
   systemd:

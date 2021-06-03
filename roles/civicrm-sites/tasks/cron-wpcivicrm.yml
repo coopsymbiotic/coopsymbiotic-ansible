@@ -31,3 +31,8 @@
   systemd:
     name: "wpcivicron_{{ site_shortname }}.timer"
     enabled: yes
+
+- name: systemd | Start the WP CiviCRM Cron timer
+  systemd:
+    name: "wpcivicron_{{ site_shortname }}.timer"
+    state: started

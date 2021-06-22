@@ -18,4 +18,4 @@ icinga2_cert_dir: "/etc/icinga2/pki"
 icinga2_plugin_dir: "/usr/lib/nagios/plugins"
 
 # Based import for the Host object
-icinga2_conf_host_import: "generic-host"
+icinga2_conf_host_import: "aegir-host"

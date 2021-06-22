@@ -60,7 +60,6 @@
     content: "{{ item.password }}"
     dest: "/home/{{ item.name }}/pw.txt"
     owner: "{{ item.name }}"
-    group: "{{ item.name }}"
     mode: '0600'
     force: "no"
   with_items:

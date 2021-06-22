@@ -812,7 +812,17 @@
     - aegir-ssh
     - aegir-civicrm-platform
 
-# FIXME: clone first, then provision-save
+- name: platform | Clone the Symbiotic platform
+  become_user: aegir
+  git: repo=git@lab-platform-key.symbiotic.coop:coopsymbiotic/symbiotic-platform-d{{ aegir_platform_drupal_version }}-civicrm.git
+       recursive=yes
+       force=yes
+       version=master
+       dest="/var/aegir/platforms/civicrm-d{{ aegir_platform_drupal_version }}"
+       update=yes
+  tags:
+    - aegir-civicrm-platform
+
 - name: platform | Configure the CiviCRM Drupal SymbioTIC platform
   shell: "drush provision-save @platform_CiviCRMd{{ aegir_platform_drupal_version }} --root=/var/aegir/platforms/civicrm-d{{ aegir_platform_drupal_version }} --context_type=platform --repo_url=git@lab-platform-key.symbiotic.coop:coopsymbiotic/symbiotic-platform-d{{ aegir_platform_drupal_version }}-civicrm.git --git_ref=master --deploy_from_git=1"
   args:

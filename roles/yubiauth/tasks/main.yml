@@ -1,4 +1,4 @@
-- apt: pkg=libpam-yubico state=installed
+- apt: pkg=libpam-yubico state=present
 
 - name: Copy the yubiauth file to /etc/yubiauth
   copy: content="{{ yubiauthfile }}" dest=/etc/yubiauth owner="root" group="root" mode=0640

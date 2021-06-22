@@ -150,10 +150,16 @@
     - restart_service
     - run_aegir_verify
     - run_dist_upgrade
-  notify: restart icinga2
   tags:
     - icinga2
     - icinga2-custom-checks
+
+- name: Deploy custom checks borg
+  copy: src="etc/icinga2/scripts/{{ item }}" dest="/usr/local/lib/icinga2-plugins/{{ item }}" owner=root group=root mode=0755
+  with_items:
+    - check_borg
+  tags:
+    - icinga2-custom-checks-borg
 
 # @todo These should only be in ./zones.d/global-templates/commands
 # of the icinga2 server. See next task.

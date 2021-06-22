@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Based on check_borg, modified by Symbiotic to use borgmatic
 
@@ -23,10 +23,9 @@ else
 	exit 128
 fi
 
-debug(){   ([ "${verbose}" -gt 1 ] && echo "$*") || return 0; }
+debug(){ ([ "${verbose}" -gt 1 ] && echo "$*") || return 0; }
 verbose(){ ([ "${verbose}" -gt 0 ] && echo "$*") || return 0; }
-
-error(){   echo "BORG UNKNOWN, $*"; exit "${STATE_UNKNOWN}"; }
+error(){ echo "BORG CRITICAL, $*"; exit "${STATE_CRITICAL}"; }
 
 crit='7 days ago'
 warn='3 days ago'
@@ -93,16 +92,20 @@ if check_range "${sec_crit}" 0:"${sec_warn}" ; then
 fi
 
 # get unixtime of last backup
-# nb: we redirect the error output, oddly sometimes borgmatic sends it to stderr, but not always
-last="$(TERM=dumb ${BORG} list --sort timestamp --last 1 --format '{time}' 2>&1 | tail -1)"
-[ "$?" = 0 ] || error "Cannot list repository archives. Repo Locked?"
+last="$(TERM=dumb ${BORG} list -nc --sort timestamp --last 1 --format '{time}' 2>&1 | grep -v 'Listing archives')"
+
+# Check the error code of the piped command
+[ "${PIPESTATUS[0]}" = 0 ] || error "borgmatic list failed"
 
 if [ -z "${last}" ]; then
-	echo "BORG CRITICAL, no archive in repository"
-	exit "${STATE_CRITICAL}"
+	error "no archive in repository"
 fi
 
 sec_last="$(${DATE} --date="${last}" '+%s')"
+
+if [ -z "${sec_last}" ]; then
+	error "unknown error"
+fi
 
 # interpret the amount of fails
 if [ "${sec_crit}" -gt "${sec_last}" ]; then

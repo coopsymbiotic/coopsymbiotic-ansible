@@ -1,0 +1,1 @@
+{{ host_postfix_sasl_host }}:{{ host_postfix_sasl_port }} {{ host_postfix_sasl_username }}:{{ host_postfix_sasl_password }}

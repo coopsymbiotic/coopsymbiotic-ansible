@@ -1,0 +1,30 @@
+#!/bin/bash
+
+# {{ ansible_managed }}
+
+# Create the directory, if necessary
+mkdir -p /mnt/restore
+
+# @todo Eventually make these configurable in Ansible
+MOUNT_POINT="/mnt/restore"
+MOUNT_PATHS="/mnt/restore/ var/backups/mysql var/aegir"
+
+# Check if the directory is already mounted
+# Based on: https://askubuntu.com/a/1271037
+# Do not return literal glob if matching fails
+shopt -s nullglob
+
+# Make * match "almost all" like ls -A
+shopt -s dotglob
+
+set -- $MOUNT_POINT/*
+
+if (( $# > 0 )); then
+  echo "The backup directory is already mounted."
+  exit 1
+fi
+
+borgmatic mount --options allow_other,ignore_permissions --mount-point /mnt/restore --path /mnt/restore/ var/backups/mysql var/aegir
+
+echo "Backups mounted to /mnt/restore"
+echo "When done, unmount with the command 'sudo borg-umount'."

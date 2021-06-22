@@ -1,0 +1,3 @@
+# {{ ansible_managed }}
+aegir ALL={{ borgmatic_sudorule }} /usr/local/bin/borg-mount
+aegir ALL=NOPASSWD: /usr/local/bin/borg-umount

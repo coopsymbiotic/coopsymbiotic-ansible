@@ -10,55 +10,62 @@
 # Resolve configuration
 VIEWER="${CVLOG_VIEWER:-less +G -SF}"
 MATCH="${CVLOG_MATCH:-CiviCRM.*.log*}"
+LOGPATH="${CVLOG_PATH:-$PWD}"
 SUBPATHS_WORDPRESS=( 'wp-content/uploads/civicrm/ConfigAndLog' 'wp-content/plugins/files/civicrm/ConfigAndLog' );
 SUBPATHS_DRUPAL=( 'files/civicrm/ConfigAndLog' );
+ROOT="/var/aegir/platforms"
 
 # Resolve arguments
 OP=${1#-}
 OP=${OP:-1}
 SITENAME=${2#@}
-PLATFORM="${PWD%/sites*}";
+PLATFORM=${3#@}
 SCRIPTNAME=`basename "$0"`
 
-# Resolve domain name
-if [ -z ${SITENAME} ]; then
-  if [[ $PWD =~ /sites/([^/]*) ]]; then
-    SITENAME=${BASH_REMATCH[1]}
+LOGPATH=`realpath "${LOGPATH}"`
+
+if [ -z ${PLATFORM} ]; then
+  if [[ $LOGPATH =~ /platforms/([^/]*) ]]; then
+    PLATFORM=${BASH_REMATCH[1]}
+  else
+    OP="unknown"
   fi
 fi
 
 if [ -z ${SITENAME} ]; then
-  echo "You must be located under a platform's 'sites' folder and optionally supply a domain name before running $SCRIPTNAME."
-  echo
-  echo "Example:"
-  echo "  $SCRIPTNAME - @abc.symbiodev.xyz"
-  echo
-  echo "Type \`$SCRIPTNAME help\` for usage information."
-  exit 0
-else
-  # Resolve location of log files
-  if [[ $PWD =~ /wp-content/ ]]; then
+  if [[ $LOGPATH =~ /sites/([^/]*) ]]; then
+    SITENAME=${BASH_REMATCH[1]}
+  else
+    OP="unknown"
+  fi
+fi
+
+# Resolve location of log files
+if [[ ! $LOGPATH =~ /ConfigAndLog$ ]]; then
+  LOGPATH="$ROOT/$PLATFORM/sites/$SITENAME/"
+  if [[ $PLATFORM =~ wordpress ]]; then
     # Wordpress site
-    logpaths=($SUBPATHS_WORDPRESS)
+    subpaths=($SUBPATHS_WORDPRESS)
   else
     # Drupal site
-    logpaths=($SUBPATHS_DRUPAL)
+    subpaths=($SUBPATHS_DRUPAL)
   fi
-  for LOGPATH in "${logpaths[@]}"
+  for SUBPATH in "${subpaths[@]}"
   do
-    LOGPATH="$PLATFORM/sites/$SITENAME/$LOGPATH"
+    LOGPATH="$ROOT/$PLATFORM/sites/$SITENAME/$SUBPATH"
   if [ -d "$LOGPATH" ]; then break; fi
   done
 
   if [ ! -d "$LOGPATH" ]; then
-    echo "Failed to find a ConfigAndLog folder somewhere under '$PLATFORM/sites/$SITENAME'."
+    echo "Failed to find a ConfigAndLog folder somewhere under $LOGPATH"
     echo
     echo "Defaulting to local folder."
     echo
-  else
-    cd "$LOGPATH"
+    LOGPATH="$PWD"
   fi
 fi
+
+cd "$LOGPATH"
 
 # Resolve command
 case $OP in
@@ -71,7 +78,7 @@ case $OP in
     ;;
   ls)
     # List available log files
-    echo "Listing files matching $MATCH in the log folder..."
+    echo "Listing files matching $MATCH in $LOGPATH"
     \ls -lshpt --time-style="+%Y-%m-%d %H:%m:%S" $MATCH \
       | awk 'NR > 0 {printf "%3s) %s %s - %s %s (%s)\n", NR,$7,$8,$9,$10,$6}' \
       | tac
@@ -80,7 +87,7 @@ case $OP in
     # Open all log files (may not be compatible with all viewers)
     MATCHES=$( \ls -pt $MATCH )
     if [ -z "$MATCHES" ]; then
-      echo "No matches found."
+      echo "No matches found in $LOGPATH"
       exit 1
     fi
     echo "Opening all log files found in the log folder..."
@@ -90,20 +97,28 @@ case $OP in
     # View log file number $OP, ordered by most recent
     LOGFILE=$( \ls -pt $MATCH | awk "NR==$OP { print }" )
     if [ -z "$LOGFILE" ]; then
-      echo "No matches found."
+      echo "No matches found in $LOGPATH."
       exit 1
     fi
     if [ -f "$LOGFILE" ]; then
-      echo "Opening $SITENAME's log file '$LOGFILE'..."
+      echo "Opening $SITENAME's log file '$LOGFILE' located under $LOGPATH"
       $VIEWER "$LOGFILE"
     else
       echo "Expected to find a CiviCRM log file named '$LOGFILE' under '$LOGPATH'"
       exit 1
     fi
     ;;
+  unknown)
+    echo "Unknown platform or site name."
+    echo
+    echo "Call $SCRIPTNAME from a folder located under your platform/site or use the CVLOG_PATH variable."
+    echo
+    echo "Type \`$SCRIPTNAME help\` for usage information."
+    exit 1
+    ;;
   help | *)
     # Help
-    echo "usage: $SCRIPTNAME [COMMAND] [DOMAIN NAME]"
+    echo "usage: $SCRIPTNAME [COMMAND] [SITE NAME] [PLATFORM]"
     echo
     echo "View the most recent CiviCRM log file located under the ConfigAndLog folder."
     echo
@@ -119,4 +134,6 @@ case $OP in
     echo "Environment variables"
     printf "  %-30s  %s\n" "CVLOG_VIEWER=\"$VIEWER\"" '# Log file viewer'
     printf "  %-30s  %s\n" "CVLOG_MATCH=\"$MATCH\""  '# Match pattern for CiviCRM log files'
+    printf "  %-30s  %s\n" "CVLOG_PATH=\"$LOGPATH\""  '# Location of ConfigAndLog folder'
+    ;;
 esac

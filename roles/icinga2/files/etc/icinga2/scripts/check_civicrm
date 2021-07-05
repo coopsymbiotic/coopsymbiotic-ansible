@@ -119,6 +119,17 @@ foreach ($civistatus->values as $key => $val) {
     continue;
   }
 
+  // Ignore extension updates
+  if ($val->title == 'Extension Update Available') {
+    continue;
+  }
+  elseif ($val->title == 'Actualização de Extensão Disponível') {
+    continue;
+  }
+  elseif ($val->title == 'actualización de extensión disponible') {
+    continue;
+  }
+
   if (in_array($val->severity, ['warning', 'error', 'alert', 'critical'])) {
     // We don't want to downgrade an 'error' status to 'warning'.
     if ($check_status == 0) {

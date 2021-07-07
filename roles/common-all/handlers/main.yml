@@ -5,3 +5,6 @@
 
 - name: refresh sysctl
   shell: sysctl -p
+
+- name: restart sshd
+  service: name=sshd state=restarted

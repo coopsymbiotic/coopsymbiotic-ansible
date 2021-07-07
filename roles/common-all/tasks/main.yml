@@ -1,5 +1,11 @@
 ---
 
+- name: common-all | Force gathering facts for partial ansible runs
+  setup:
+  tags:
+    - common-all
+    - common-all-sshd
+
 # We deploy our sources.list to include "contrib"
 - name: common-all | Deploy apt sources.list
   template: src=etc/apt/sources.list dest=/etc/apt/sources.list owner=root group=root mode=0644
@@ -68,3 +74,36 @@
   tags:
     - common-all
     - common-all-ipv6
+
+- name: common-all | Deploy our sshd_config
+  template:
+    src: "etc/ssh/sshd_config-{{ ansible_distribution_major_version }}-{{ ansible_distribution_release }}"
+    dest: /etc/ssh/sshd_config
+    owner: "root"
+    group: "root"
+    mode: 0644
+  notify: restart sshd
+  tags:
+    - common-all
+    - common-all-sshd
+
+# Requires: 'apt install figlet' on the Ansible host
+- name: common-all | Generate banner for motd
+  command: "figlet {{ inventory_hostname_short }}"
+  delegate_to: 127.0.0.1
+  become: false
+  register: motd_banner_hostname
+  tags:
+    - common-all
+    - common-all-motd
+
+- name: common-all | Create the motd
+  template:
+    src: etc/motd
+    dest: /etc/motd
+    owner: "root"
+    group: "root"
+    mode: 0644
+  tags:
+    - common-all
+    - common-all-motd

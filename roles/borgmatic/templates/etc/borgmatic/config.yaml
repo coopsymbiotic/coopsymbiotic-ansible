@@ -108,7 +108,7 @@ location:
         - /var/aegir/platforms/*/sites/*/files/tmp
         - /var/aegir/platforms/*/sites/*/files/*.sql
         - /var/aegir/platforms/*/sites/*/files/*.sql.gz
-        - /var/aegir/platforms/*/sites/*/wp-content/wp-content/updraft
+        - /var/aegir/platforms/*/sites/*/wp-content/updraft
         - /var/aegir/platforms/*/sites/*/wp-content/uploads/civicrm/templates_c
         - /var/aegir/platforms/*/sites/*/wp-content/uploads/civicrm/ConfigAndLog
         - /var/aegir/platforms/*/sites/*/wp-content/plugins/files/civicrm/templates_c

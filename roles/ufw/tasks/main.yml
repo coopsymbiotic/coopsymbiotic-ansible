@@ -1,10 +1,18 @@
 ---
 
 # Firewall (iptables)
-- name: Install ufw
+- name: ufw | Install ufw
   apt: name=ufw state=present
+- apt:
+    name: [
+      "ufw",
+      "fail2ban"
+    ]
+    state: present
+    install_recommends: no
   tags:
     - ufw
+    - ufw-packages
 
 - name: Remove old ssh allow-all rule
   ufw: proto=tcp port=22 rule=allow delete=yes

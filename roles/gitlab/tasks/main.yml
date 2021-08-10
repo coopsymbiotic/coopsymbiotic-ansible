@@ -45,6 +45,21 @@
     - gitlab
     - gitlab-cron
 
+- name: Gitlab | Deploy fail2ban jail.conf
+  template:
+    src: "etc/fail2ban/{{ item }}"
+    dest: "/etc/fail2ban/{{ item }}"
+    owner: root
+    group: root
+    mode: 0444
+  with_items:
+    - jail.d/gitlab.conf
+    - filter.d/nginx-gitlab.conf
+  notify: restart fail2ban
+  tags:
+    - gitlab
+    - gitlab-fail2ban
+
 ## TODO:
 ## /etc/gitlab/gitlab.rb
 ## openssl dhparam -check -5 4096 -out /etc/gitlab/dhparams.4096

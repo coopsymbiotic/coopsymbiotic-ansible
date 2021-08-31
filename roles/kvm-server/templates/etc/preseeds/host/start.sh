@@ -4,10 +4,10 @@
 virt-install --name {{ hostvars[item]['preseed_hostname'] }} \
   --ram {{ hostvars[item]['preseed_ram_mb'] }} \
   --disk path=/dev/zvol/{{ kvm_zfs_pool }}/{{ hostvars[item]['preseed_hostname'] }} \
-  --vcpus {{ hostvars[item]['preseed_vcpus'] }} --os-type linux --os-variant debian10 \
+  --vcpus {{ hostvars[item]['preseed_vcpus'] }} --os-type linux --os-variant debian11 \
   --network bridge=br0,mac={{ hostvars[item]['preseed_macaddr'] }} \
   --graphics vnc,listen=127.0.0.1 \
-  --noautoconsole --location 'http://ftp.ca.debian.org/debian/dists/buster/main/installer-amd64/' \
+  --noautoconsole --location 'http://ftp.ca.debian.org/debian/dists/bullseye/main/installer-amd64/' \
   --autostart \
   --initrd-inject=/etc/preseeds/{{ hostvars[item]['preseed_hostname'] }}.{{ hostvars[item]['preseed_domain'] }}/preseed.cfg
 

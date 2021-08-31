@@ -54,7 +54,6 @@
     - libvirt-clients
     - libvirt-daemon
     - libvirt-daemon-system
-    - virt-top
 
 - name: zfs | make sure the hostid exists
   shell: "/usr/bin/zgenhostid"

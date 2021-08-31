@@ -150,3 +150,16 @@
   with_items: "{{ root_sudoers }}"
   tags:
     - kvm-server-sudoers
+
+# @todo This also requires a cron, but for now we are not auto-enabling on all partitions/VMs
+- name: kvm | Deploy helper shell scripts
+  file:
+    src="{{ item }}"
+    dest="/{{ item }}"
+    owner=root
+    group=nagios
+    mode=0755
+  with_items:
+    - usr/local/bin/zfs-auto-snapshot.sh
+  tags:
+    - kvm-server-scripts

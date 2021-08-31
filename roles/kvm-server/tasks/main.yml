@@ -160,6 +160,6 @@
     group=nagios
     mode=0755
   with_items:
-    - usr/local/bin/zfs-auto-snapshot.sh
+    - usr/local/bin/zfs-auto-snapshot
   tags:
     - kvm-server-scripts

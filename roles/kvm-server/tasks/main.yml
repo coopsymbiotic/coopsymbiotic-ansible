@@ -157,9 +157,10 @@
     src="{{ item }}"
     dest="/{{ item }}"
     owner=root
-    group=nagios
+    group=root
     mode=0755
   with_items:
     - usr/local/bin/zfs-auto-snapshot
+    - usr/local/bin/zxfer
   tags:
     - kvm-server-scripts

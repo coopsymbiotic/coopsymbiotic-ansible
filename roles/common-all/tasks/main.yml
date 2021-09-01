@@ -18,32 +18,35 @@
     - packages
     - common-all
 
-- apt: name={{ item }} state=present install_recommends=no
-  with_items:
-    - apt-transport-https
-    - ca-certificates
-    - curl
-    - etckeeper
-    - gawk
-    - git
-    - less
-    - libpam-yubico
-    - ncdu
-    - tmux
-    - tree
-    - unzip
-    - vim
-    - vnstat
-    - wget
-    - xz-utils
+- apt:
+    state: present
+    install_recommends: no
+    name: [
+      'apt-transport-https',
+      'ca-certificates',
+      'curl',
+      'etckeeper',
+      'gawk',
+      'git',
+      'gpg',
+      'gpg-agent',
+      'less',
+      'libpam-yubico',
+      'ncdu',
+      'tmux',
+      'tree',
+      'unzip',
+      'vim',
+      'vnstat',
+      'wget',
+      'xz-utils'
+    ]
   tags:
     - packages
     - common-all
 
 # KVM servers run openntpd; usually not recommended to install both.
-- apt: name={{ item }} state=present install_recommends=no
-  with_items:
-    - ntpdate
+- apt: name="ntpdate" state=present install_recommends=no
   when: "'kvm_servers' not in group_names"
   tags:
     - packages

@@ -20,9 +20,7 @@
 - name: User | Change deploy directory permissions
   file: path=/home/deploy mode=0750
 
-- apt: name={{ item }} state=present install_recommends=no
-  with_items:
-    - sudo
+- apt: name="sudo" state=present install_recommends=no
   tags:
     - packages
 

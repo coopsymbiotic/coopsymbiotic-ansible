@@ -1,6 +1,7 @@
 ---
 # Installs Aegir3 (http://www.aegirproject.org)
 # Assumes Debian, with MariaDB, Nginx, php-fpm
+# Depends on the mariadb role
 
 - name: aegir | Force gathering facts for partial ansible runs
   setup:
@@ -70,22 +71,10 @@
     - packages-php
     - aegir-php
 
-# https://github.com/gaspaio/ansible-devbox/blob/master/roles/mysql/tasks/server.yml
-# Install server using a preseed file to set the root password
-- name: Check for previous MySQL installation
-  stat:
-    path: /usr/sbin/mysqld
-  register: mysqld_exists
+# Required for enabling locales, for CiviCRM native gettext
+- apt: name="locales" state=present install_recommends=no
 
-- apt: name={{ item }} state=present install_recommends=no
-  with_items:
-    - pwgen
-    - locales
-
-- name: Generate a root password for MySQL
-  shell: pwgen 15 1 > /root/.mysql.root
-  when: not mysqld_exists.stat.exists
-
+# Assumes configurations by the mariadb role
 - name: Preseed Aegir Debian configurations
   shell: "{{ item }} | debconf-set-selections"
   with_items:
@@ -201,35 +190,6 @@
 # A bit off topic, but too often had the issue where mailname was misconfigured
 - copy: content="{{ inventory_hostname }}" dest=/etc/mailname
 - file: path=/etc/mailname owner=root group=root mode=0644
-
-# MariaDB 10.3
-- apt_key: keyserver=keyserver.ubuntu.com id=0xF1656F24C74CD1D8
-  tags:
-    - packages
-    - aegir
-    - aegir-mariadb
-
-- apt_repository:
-    repo="deb http://ftp.osuosl.org/pub/mariadb/repo/10.3/debian {{ ansible_distribution_release }} main"
-    update_cache=yes
-    state=present
-  tags:
-    - packages
-    - aegir
-    - aegir-mariadb
-
-- apt:
-    name: [
-      "mariadb-client-10.3",
-      "mariadb-server-10.3",
-      "mariadb-server"
-    ]
-    state: present
-    install_recommends: no
-  tags:
-    - packages
-    - aegir
-    - aegir-mariadb
 
 - name: Get the Aegir repo key
   apt_key: url=http://debian.aegirproject.org/key.asc state=present
@@ -721,7 +681,8 @@
     - aegir-civicrm-translations
 
 - include: settings-php.yml
-- include: settings-mysql.yml
+  tags:
+    - aegir-php
 
 - include: civicrm.yml
   tags:
@@ -782,6 +743,7 @@
     - aegir-mysql-users
     - aegir-mysql-users-rw
 
+# @todo Needs fixing
 - include: mysql-replication.yml
   when: aegir_mysql_replication_hosts | length > 0
   tags:

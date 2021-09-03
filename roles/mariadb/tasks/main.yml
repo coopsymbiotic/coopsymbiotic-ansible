@@ -1,0 +1,49 @@
+---
+# Installs MariaDB using third-party packages for more version flexibility
+# Assumes Debian stable
+
+# https://github.com/gaspaio/ansible-devbox/blob/master/roles/mysql/tasks/server.yml
+# Install server using a preseed file to set the root password
+- name: Check for previous MySQL installation
+  stat:
+    path: /usr/sbin/mysqld
+  register: mysqld_exists
+
+- apt: name="pwgen" state=present install_recommends=no
+
+- name: Generate a root password for MySQL
+  shell: pwgen 15 1 > /root/.mysql.root
+  when: not mysqld_exists.stat.exists
+
+- apt_key:
+    url: "https://mariadb.org/mariadb_release_signing_key.asc"
+    state: present
+    keyring: /etc/apt/trusted.gpg.d/mariadb.gpg
+  tags:
+    - packages
+    - aegir
+    - aegir-mariadb
+
+- apt_repository:
+    repo="deb http://ftp.osuosl.org/pub/mariadb/repo/{{ mariadb_version }}/debian {{ ansible_distribution_release }} main"
+    update_cache=yes
+    state=present
+  tags:
+    - packages
+    - aegir
+    - aegir-mariadb
+
+- apt:
+    name: [
+      "mariadb-client-{{ mariadb_version }}",
+      "mariadb-server-{{ mariadb_version }}",
+      "mariadb-server"
+    ]
+    state: present
+    install_recommends: no
+  tags:
+    - packages
+    - aegir
+    - aegir-mariadb
+
+- include: settings-mysql.yml

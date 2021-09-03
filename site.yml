@@ -29,12 +29,20 @@
 - hosts: aegir_managed
   become: yes
   roles:
+    - mariadb
     - aegir
     - postfix
     - gitlab-runner
     - dehydrated
   tags:
     - aegir
+
+- hosts: sql_servers
+  become: yes
+  roles:
+    - mariadb
+  tags:
+    - mariadb
 
 - hosts: postfix_servers
   become: yes

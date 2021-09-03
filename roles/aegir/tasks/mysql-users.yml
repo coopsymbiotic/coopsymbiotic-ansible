@@ -1,22 +1,31 @@
 ---
 
+# Required for creating database users
+- name: Aegir MySQL users | Install python-mysqldb
+  apt:
+    name: "python-mysqldb"
+    state: present
+    install_recommends: no
+  tags:
+    - packages
+
 # This is based on roles/sshuserkeys
-- name: Generate a random password for read-only users
+- name: Aegir MySQL users | Generate a random password for read-only users
   set_fact:
     password_item: "{{ item }};{{ lookup('password', '/dev/null chars=ascii_letters,digits length=25') }}"
   with_items: "{{ mysql_users }}"
   register: password_results
 
-- name: Format random password list
+- name: Aegir MySQL users | Format random password list
   set_fact:
     password_list: "{{ password_results.results | selectattr('skipped', 'undefined') | map(attribute='ansible_facts.password_item') | list }}"
 
-- name: Format random password dict
+- name: Aegir MySQL users | Format random password dict
   set_fact:
     password_dict: "{{ password_dict|default([]) + [ { 'name': item.split(';')[0], 'password': item.split(';')[1] } ] }}"
   with_items: "{{ password_list }}"
 
-- name: Save the mysql user password in db.txt
+- name: Aegir MySQL users | Save the mysql user password in db.txt
   copy:
     content: "{{ item.password }}"
     dest: "/home/{{ item.name }}/db.txt"
@@ -25,7 +34,7 @@
   with_items:
     - "{{ password_dict }}"
 
-- name: Create database user
+- name: Aegir MySQL users | Create database user
   mysql_user:
     name: "{{ item.name }}"
     password: "{{ item.password }}"

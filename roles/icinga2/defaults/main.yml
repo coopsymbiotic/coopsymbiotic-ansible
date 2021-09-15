@@ -19,3 +19,9 @@ icinga2_plugin_dir: "/usr/lib/nagios/plugins"
 
 # Based import for the Host object
 icinga2_conf_host_import: "aegir-host"
+
+# If templates/etc/icinga2/conf.d/hosts/host-template.conf is used to generate
+# a node host configuration file, this option makes it possible to ignore IPv6
+# monitoring. Usually required when the host is using a DNS record set by the
+# client, and they did not bother creating a AAAA record.
+icinga2_host_ignore_ipv6: false

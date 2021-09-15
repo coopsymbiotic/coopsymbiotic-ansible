@@ -1,0 +1,7 @@
+---
+
+- name: icinga2 | Update the host object configuration
+  template:
+    src: "etc/icinga2/conf.d/hosts/host-template.conf"
+    dest: "/etc/icinga2/zones.d/icinga.symbiotic.coop/hosts/{{ inventory_hostname }}.conf"
+    mode: 0644

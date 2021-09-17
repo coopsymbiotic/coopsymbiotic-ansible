@@ -1,6 +1,11 @@
 ---
 
-- name: icinga2 | Update the host object configuration
+# Avoid accidentally running on many hosts
+- name: main-conf-host-local | Check for single host
+  fail: msg="Single host check failed."
+  when: "{{ play_hosts|length }} != 1"
+
+- name: main-conf-host-local | Update the host object configuration
   template:
     src: "etc/icinga2/conf.d/hosts/host-template.conf"
     dest: "/etc/icinga2/zones.d/icinga.symbiotic.coop/hosts/{{ inventory_hostname }}.conf"

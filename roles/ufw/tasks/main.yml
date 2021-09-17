@@ -60,6 +60,14 @@
   with_dict: "{{ ufw_extra | default({}) }}"
   tags:
     - ufw
+    - ufw-extra
+
+# More per-host extensions (because sometimes we have all/group rules, and then per-host rules)
+- ufw: proto="{{ item.value.proto }}" port="{{ item.value.port }}" src="{{ item.value.src }}" rule="{{ item.value.rule }}"
+  with_dict: "{{ ufw_extra2 | default({}) }}"
+  tags:
+    - ufw
+    - ufw-extra2
 
 - name: Set ufw policy
   ufw: state=enabled direction=incoming policy=deny

@@ -1,0 +1,24 @@
+---
+
+- name: monitoring | Check if a configuration file exists
+  stat:
+    path: /var/aegir/config/symbiotic-gitlab-monitoring
+  register: monitoring_config
+
+- name: monitoring | Call the Gitlab webhook
+  uri:
+    url: "{{ lookup('ini', 'url file=/var/aegir/config/symbiotic-gitlab-monitoring') }}"
+    method: POST
+    body_format: form-urlencoded
+    body:
+      token: "{{ lookup('ini', 'token file=/var/aegir/config/symbiotic-gitlab-monitoring') }}"
+      ref: "{{ lookup('ini', 'ref file=/var/aegir/config/symbiotic-gitlab-monitoring') }}"
+      host: "{{ lookup('ini', 'host file=/var/aegir/config/symbiotic-gitlab-monitoring') }}"
+    status_code: 201
+  when: monitoring_config.stat.exists
+
+# read config file
+#
+# figure out what my hostname is
+#
+# ping gitlab

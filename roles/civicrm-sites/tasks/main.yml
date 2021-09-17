@@ -21,3 +21,7 @@
   when: civicrm_ansible_sftpchroot_keys is defined and civicrm_ansible_sftpchroot_keys
   tags:
     - civicrm-sites-sftp
+
+- include: monitoring.yml
+  tags:
+    - civicrm-sites-monitoring

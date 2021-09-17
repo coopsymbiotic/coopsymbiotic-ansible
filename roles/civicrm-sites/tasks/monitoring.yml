@@ -16,9 +16,3 @@
       host: "{{ lookup('ini', 'host file=/var/aegir/config/symbiotic-gitlab-monitoring') }}"
     status_code: 201
   when: monitoring_config.stat.exists
-
-# read config file
-#
-# figure out what my hostname is
-#
-# ping gitlab

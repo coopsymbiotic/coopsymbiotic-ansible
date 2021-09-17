@@ -17,18 +17,37 @@
   tags:
     - packages
 
+- name: Get Icinga Apt Key for IPv6
+  apt_key:
+    url="https://packages6.icinga.com/icinga.key"
+    state=present
+  when: preseed_ipv4_address is not defined
+  tags:
+    - packages
+
 - name: Get Icinga Apt Key
   apt_key:
     url="https://packages.icinga.com/icinga.key"
     state=present
+  when: preseed_ipv4_address is defined
+  tags:
+    - packages
+
+- name: Configure Icinga Apt IPv6-only Repo
+  apt_repository:
+    repo="deb https://packages6.icinga.com/{{ ansible_distribution|lower }} icinga-{{ ansible_distribution_release }} main"
+    update_cache=yes
+    state=present
+  when: preseed_ipv4_address is not defined
   tags:
     - packages
 
 - name: Configure Icinga Apt Repo
   apt_repository:
-    repo="deb http://packages.icinga.com/{{ ansible_distribution|lower }} icinga-{{ ansible_distribution_release }} main"
-    update_cache=yes 
+    repo="deb https://packages.icinga.com/{{ ansible_distribution|lower }} icinga-{{ ansible_distribution_release }} main"
+    update_cache=yes
     state=present
+  when: preseed_ipv4_address is defined
   tags:
     - packages
 

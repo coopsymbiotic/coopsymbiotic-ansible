@@ -13,6 +13,6 @@
     body:
       token: "{{ lookup('ini', 'token file=/var/aegir/config/symbiotic-gitlab-monitoring') }}"
       ref: "{{ lookup('ini', 'ref file=/var/aegir/config/symbiotic-gitlab-monitoring') }}"
-      host: "{{ lookup('ini', 'host file=/var/aegir/config/symbiotic-gitlab-monitoring') }}"
+      variables[ICINGA_HOST]: "{{ lookup('ini', 'host file=/var/aegir/config/symbiotic-gitlab-monitoring') }}"
     status_code: 201
   when: monitoring_config.stat.exists

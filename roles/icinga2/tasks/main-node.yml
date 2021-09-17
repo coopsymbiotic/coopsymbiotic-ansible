@@ -1,29 +1,41 @@
 ---
 
-- apt: name={{ item }} state=present install_recommends=no
-  with_items:
-    - icinga2
-    - monitoring-plugins-basic # required for check_apt
-    - nagios-plugins-contrib # for mysql checks
+- apt:
+    state: present
+    install_recommends: no
+    name: [
+      'icinga2',
+      # required for check_apt
+      'monitoring-plugins-basic',
+      # for mysql checks
+      'nagios-plugins-contrib',
+    ]
   tags:
     - icinga2
     - packages
   when: ansible_distribution == "Debian"
 
 # as of Ubuntu 18.xx, it seems closer to Debian
-- apt: name={{ item }} state=present install_recommends=no
-  with_items:
-    - icinga2
-    - monitoring-plugins-basic # required for check_apt
-    - nagios-plugins-contrib # for mysql checks
+- apt:
+    state: present
+    install_recommends: no
+    name: [
+      'icinga2',
+      # required for check_apt
+      'monitoring-plugins-basic',
+      # for mysql checks
+      'nagios-plugins-contrib',
+    ]
   tags:
     - icinga2
     - packages
   when: ansible_distribution == "Ubuntu"
 
-- apt: name={{ item }} state=present install_recommends=no
-  with_items:
-    - nagios-plugins-contrib # for mysql checks
+- apt:
+    state: present
+    install_recommends: no
+    # for mysql checks
+    name: "nagios-plugins-contrib"
   tags:
     - icinga2-mysql
 

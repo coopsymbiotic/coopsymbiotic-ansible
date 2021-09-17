@@ -1,28 +1,35 @@
 ---
 
 # nb: nagios-plugins-contrib is required for check_ssl_cert
-- apt: name={{ item }} state=present install_recommends=no
-  with_items:
-    - dnsutils # required for check_dig
-    - icinga2
-    - icinga2-ido-mysql
-    - icingacli
-    - monitoring-plugins
-    - monitoring-plugins-basic
-    - monitoring-plugins-common
-    - monitoring-plugins-standard
-    - nagios-plugins-contrib
-    - nginx-full
-    - graphite-carbon
-    - graphite-api
-    - gunicorn3 # for graphite
-    - ufw
-    - uwsgi
-    - uwsgi-plugin-python
-    - php7.0-fpm # otherwise apache gets installed
-    - icingaweb2
-    - icingaweb2-module-monitoring
-    - whois # for domain_expiration check
+- apt:
+    state: present
+    install_recommends: no
+    name: [
+      # required for check_dig
+      'dnsutils',
+      'icinga2',
+      'icinga2-ido-mysql',
+      'icingacli',
+      'monitoring-plugins',
+      'monitoring-plugins-basic',
+      'monitoring-plugins-common',
+      'monitoring-plugins-standard',
+      'nagios-plugins-contrib',
+      'nginx-full',
+      'graphite-carbon',
+      'graphite-api',
+      # for graphite'
+      'gunicorn3',
+      'ufw',
+      'uwsgi',
+      'uwsgi-plugin-python',
+      # otherwise apache gets installed (fixme: php version?)'
+      'php7.0-fpm',
+      'icingaweb2',
+      'icingaweb2-module-monitoring',
+      # for domain_expiration check'
+      'whois',
+    ]
   tags:
     - packages
     - icinga2-base-configs

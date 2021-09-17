@@ -90,3 +90,18 @@
   tags:
     - ufw
     - ufw-fail2ban
+
+- name: Deploy fail2ban configurations for CiviCRM
+  template:
+    src: "etc/fail2ban/{{ item }}"
+    dest: "/etc/fail2ban/{{ item }}"
+    owner: root
+    group: root
+    mode: 0444
+  with_items:
+    - jail.d/civicrm.conf
+    - filter.d/nginx-civicrm.conf
+  notify: restart fail2ban
+  tags:
+    - ufw
+    - ufw-fail2ban

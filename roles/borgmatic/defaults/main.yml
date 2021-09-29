@@ -1,5 +1,6 @@
 borgmatic_backupserver: backupserver.example.org
-borgmatic_retention_daily: 60
+borgmatic_retention_daily: 14
+borgmatic_retention_weekly: 3
 borgmatic_retention_monthly: 4
 borgmatic_passphrase: storedelsewhere
 

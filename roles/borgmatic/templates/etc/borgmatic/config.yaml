@@ -204,7 +204,7 @@ retention:
     keep_daily: {{ borgmatic_retention_daily }}
 
     # Number of weekly archives to keep.
-    #keep_weekly: 4
+    keep_weekly: {{ borgmatic_retention_weekly }}
 
     # Number of monthly archives to keep.
     keep_monthly: {{ borgmatic_retention_monthly }}

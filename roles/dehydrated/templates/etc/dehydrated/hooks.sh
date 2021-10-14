@@ -35,7 +35,7 @@ deploy_cert() {
     # https://wiki.zimbra.com/wiki/Installing_a_LetsEncrypt_SSL_Certificate
     if [ -x /opt/zimbra/bin/zmcontrol ]; then
       echo " + Hook: Deploying certificate in Zimbra..."
-      cat /etc/dehydrated/keys/root-ca-x3.pem /etc/dehydrated/keys/${DOMAIN}/fullchain.pem > /opt/zimbra/ssl/dehydrated/root-and-fullchain.pem
+      cat /etc/dehydrated/keys/ISRG-X1.pem /etc/dehydrated/keys/${DOMAIN}/fullchain.pem > /opt/zimbra/ssl/dehydrated/root-and-fullchain.pem
       cp /etc/dehydrated/keys/${DOMAIN}/{cert,fullchain,privkey}.pem /opt/zimbra/ssl/dehydrated/
       chown zimbra.zimbra /opt/zimbra/ssl/dehydrated/*.pem
       sudo -i -u zimbra zmcertmgr verifycrt comm /opt/zimbra/ssl/dehydrated/privkey.pem /opt/zimbra/ssl/dehydrated/cert.pem /opt/zimbra/ssl/dehydrated/root-and-fullchain.pem

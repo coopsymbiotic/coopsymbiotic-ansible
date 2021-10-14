@@ -12,9 +12,6 @@ deploy_cert() {
       echo " + Hook: Reloading Apache configuration..."
       systemctl reload apache2
     elif [ -x /usr/sbin/apachectl ]; then
-      # for Plesk (qct)
-      cat /etc/dehydrated/keys/${DOMAIN}/privkey.pem /etc/dehydrated/keys/${DOMAIN}/fullchain.pem > /etc/dehydrated/keys/${DOMAIN}/privkey-and-fullchain.pem
-
       echo " + Hook: Reloading Apache configuration..."
       apachectl graceful
     fi
@@ -35,14 +32,6 @@ deploy_cert() {
       /usr/bin/doveadm reload
     fi
 
-    if [ -x /usr/share/logstash/bin/logstash ]; then
-      echo " + Hook: Restarting logstash..."
-      openssl pkcs8 -topk8 -inform PEM -outform PEM -nocrypt -in /etc/dehydrated/keys/${DOMAIN}/privkey.pem -out /etc/dehydrated/keys/${DOMAIN}/privkey.key8
-      chgrp -R logstash /etc/dehydrated/keys/${DOMAIN}
-      chmod -R g+r /etc/dehydrated/keys/${DOMAIN}
-      systemctl restart logstash
-    fi
-
     # https://wiki.zimbra.com/wiki/Installing_a_LetsEncrypt_SSL_Certificate
     if [ -x /opt/zimbra/bin/zmcontrol ]; then
       echo " + Hook: Deploying certificate in Zimbra..."
@@ -53,6 +42,12 @@ deploy_cert() {
       cp /opt/zimbra/ssl/dehydrated/privkey.pem /opt/zimbra/ssl/zimbra/commercial/commercial.key
       sudo -i -u zimbra zmcertmgr deploycrt comm /opt/zimbra/ssl/dehydrated/cert.pem /opt/zimbra/ssl/dehydrated/root-and-fullchain.pem
       sudo -i -u zimbra zmcontrol restart
+    fi
+
+    # For civicrm.org
+    if [ -f /etc/systemd/system/ldapcivi.service ]; then
+      echo " + Hook: Restarting ldapcivi"
+      systemctl restart ldapcivi
     fi
 }
 

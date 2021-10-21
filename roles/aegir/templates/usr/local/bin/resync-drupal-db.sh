@@ -61,4 +61,7 @@ rm $DEV_PLATFORM/sites/${SITE_DEST:1}/files/symbiotic-dev-version-tmp.jpg
 # and other settings.
 drush $SITE_DEST provision-verify
 
+# To avoid weird issues because we patch against flushing this
+drush $SITE_DEST sqlq 'TRUNCATE civicrm_cache;'
+
 echo "All done."

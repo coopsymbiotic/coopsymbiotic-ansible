@@ -115,7 +115,7 @@ count() {
 
           echo "${_THIS_U},${Dom},CiviContact:${CiviContact}"
           echo "${_THIS_U},${Dom},CiviActivity:${CiviActivity}"
-          echo "${_THIS_U},${Dom},CiviContribute:${CiviContact}"
+          echo "${_THIS_U},${Dom},CiviContribute:${CiviContribute}"
           echo "${_THIS_U},${Dom},CiviMember:${CiviMember}"
           echo "${_THIS_U},${Dom},CiviMail:${CiviMail}"
           echo "${_THIS_U},${Dom},CiviSms:${CiviSms}"

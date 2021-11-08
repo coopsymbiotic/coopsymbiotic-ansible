@@ -1,0 +1,59 @@
+---
+
+# Make sure we have correct symlinks for the global plugins
+- name: WordPress | Find plugins to re-create plugin symlink
+  become_user: aegir
+  find:
+    paths: "{{ site_root }}/wp-content/plugins/"
+    file_type: directory
+    recurse: no
+  register: find_plugins
+
+- name: WordPress | Find plugins to re-create plugin symlink
+  become_user: aegir
+  file:
+    src: "{{ site_root }}/wp-content/plugins/{{ item.path | basename }}"
+    dest: "{{ site_path }}/wp-content/plugins/{{ item.path | basename }}"
+    state: link
+  with_items: "{{ find_plugins.files }}"
+
+# If the site was migrated, update a few obvious options that should not cause harm
+# although updating the siteurl/home is perhaps a bit opiniated
+- name: WordPress | Update the wpLoadPhp civicrm_setting
+  become_user: aegir
+  shell:
+    chdir: "{{ site_path }}"
+    cmd: "wp civicrm api Setting.create wpLoadPhp={{ site_root }}/wp-load.php"
+
+- name: WordPress | Update WP home option
+  become_user: aegir
+  shell:
+    chdir: "{{ site_path }}"
+    cmd: wp option update home "https://{{ inventory_hostname}}"
+
+- name: WordPress | Update WP siteurl option
+  become_user: aegir
+  shell:
+    chdir: "{{ site_path }}"
+    cmd: wp option update siteurl "https://{{ inventory_hostname}}"
+
+- name: WordPress | Flush the WP cache
+  become_user: aegir
+  shell:
+    chdir: "{{ site_path }}"
+    cmd: wp cache flush
+
+# TODO (maybe not as-is, especially where we can set relative paths)
+# drush @$SITE_DEST wp cv api Setting.create extensionsDir="$DEST_PLATFORM/sites/$SITE_DEST/wp-content/plugins/extensions/"
+# drush @$SITE_DEST wp cv api Setting.create extensionsURL="https://$SITE_DEST/sites/$SITE_DEST/wp-content/plugins/extensions/"
+# drush @$SITE_DEST wp cv api Setting.create imageUploadURL="https://$SITE_DEST/sites/$SITE_DEST/wp-content/uploads/civicrm/persist/contribute"
+# drush @$SITE_DEST wp cv api Setting.create imageUploadDir="$DEST_PLATFORM/sites/$SITE_DEST/wp-content/uploads/civicrm/persist/contribute/"
+# drush @$SITE_DEST wp cv api Setting.create userFrameworkResourceURL="https://$SITE_DEST/wp-content/plugins/civicrm/civicrm"
+# drush @$SITE_DEST wp cv api Setting.create customFileUploadDir="$DEST_PLATFORM/sites/$SITE_DEST/wp-content/uploads/civicrm/custom/"
+# drush @$SITE_DEST wp cv api Setting.create uploadDir="$DEST_PLATFORM/sites/$SITE_DEST/wp-content/uploads/civicrm/upload"
+# drush @$SITE_DEST wp cv api Extension.refresh
+# drush @$SITE_DEST wp cv api System.flush
+
+- include: wordpress-civicrm-cron.yml
+  tags:
+    - civicrm-sites-cron-wpcivicrm

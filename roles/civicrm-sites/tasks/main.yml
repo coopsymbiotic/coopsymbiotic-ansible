@@ -3,9 +3,10 @@
 # Provides helpers for CiviCRM sites.
 # Eventually it might replace Aegir.
 
-- include: cron-wpcivicrm.yml
+- include: wordpress.yml
   when: cms == "wordpress"
   tags:
+    - civicrm-sites-wordpress
     - civicrm-sites-cron-wpcivicrm
 
 - include: cron-d7civicrm.yml

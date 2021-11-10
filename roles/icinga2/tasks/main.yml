@@ -1,5 +1,11 @@
 ---
 
+- name: Force gathering facts for partial ansible runs
+  setup:
+  tags:
+    - packages
+    - icinga2
+
 - name: Get Icinga Apt Key for IPv6
   apt_key:
     url="https://packages6.icinga.com/icinga.key"
@@ -7,6 +13,7 @@
   when: preseed_ipv4_address is not defined
   tags:
     - packages
+    - icinga2
 
 - name: Get Icinga Apt Key
   apt_key:
@@ -15,6 +22,7 @@
   when: preseed_ipv4_address is defined
   tags:
     - packages
+    - icinga2
 
 - name: Configure Icinga Apt IPv6-only Repo
   apt_repository:
@@ -24,6 +32,7 @@
   when: preseed_ipv4_address is not defined
   tags:
     - packages
+    - icinga2
 
 - name: Configure Icinga Apt Repo
   apt_repository:
@@ -33,12 +42,17 @@
   when: preseed_ipv4_address is defined
   tags:
     - packages
+    - icinga2
 
 - include: main-server.yml
   when: "'icinga_servers' in group_names"
+  tags:
+    - icinga2
 
 - include: main-node.yml
   when: "'icinga_servers' not in group_names"
+  tags:
+    - icinga2
 
 - include: main-conf-host.yml
   when: "'icinga_servers' not in group_names"

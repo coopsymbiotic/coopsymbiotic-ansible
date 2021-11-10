@@ -22,9 +22,9 @@
       'gunicorn3',
       'ufw',
       'uwsgi',
-      'uwsgi-plugin-python',
+      'uwsgi-plugin-python3',
       # otherwise apache gets installed (fixme: php version?)'
-      'php7.0-fpm',
+      'php7.4-fpm',
       'icingaweb2',
       'icingaweb2-module-monitoring',
       # for domain_expiration check'
@@ -76,9 +76,9 @@
 # NB: not using "inventory_hostname" because in our case,
 # it is usually a machine name ("sillyname.example.net"), but we name our CA "icinga.example.org".
 - name: Run icinga2 pki new-cert for our host
-  shell: "icinga2 pki new-cert --cn {{ icinga2_main_node }} --key /etc/icinga2/pki/{{ icinga2_main_node }}.key --cert /etc/icinga2/pki/{{ icinga2_main_node }}.crt"
+  shell: icinga2 pki new-cert --cn {{ icinga2_main_node }} --key "{{ icinga2_cert_dir }}/{{ icinga2_main_node }}.key" --cert "{{ icinga2_cert_dir }}/{{ icinga2_main_node }}.crt"
   args:
-    creates: "/etc/icinga2/pki/{{ icinga2_main_node }}.key"
+    creates: "{{ icinga2_cert_dir }}/{{ icinga2_main_node }}.key"
   tags:
     - icinga2-base-configs
 
@@ -137,15 +137,15 @@
 
 - name: Deploy PHP configuration overrides
   template:
-    src=etc/php/7.0/mods-available/symbiotic-icinga.ini
-    dest=/etc/php/7.0/mods-available/symbiotic-icinga.ini
+    src=etc/php/7.4/mods-available/symbiotic-icinga.ini
+    dest=/etc/php/7.4/mods-available/symbiotic-icinga.ini
     owner=root group=root mode=0644
   notify: restart php-fpm
   tags:
     - icinga2-icingaweb
 
 - name: Symlink PHP configuration to fpm
-  file: src="/etc/php/7.0/mods-available/symbiotic-icinga.ini" dest="/etc/php/7.0/fpm/conf.d/90-symbiotic-icinga.ini" owner=root group=root state=link
+  file: src="/etc/php/7.4/mods-available/symbiotic-icinga.ini" dest="/etc/php/7.4/fpm/conf.d/90-symbiotic-icinga.ini" owner=root group=root state=link
   notify: restart php-fpm
   tags:
     - icinga2-icingaweb
@@ -153,7 +153,7 @@
 - name: Icingaweb2 symlinks for core modules
   file: src="{{ item.path }}" dest="{{ item.dest }}" owner=root group=root state=link
   with_items:
-    - { path: '/usr/share/icingaweb2/modules/monitoring', dest: '/etc/icingaweb2/enabledModules/monitoring' }
+    - { path: '/usr/share/icingaweb2/modules/monitoring', dest: '/etc/icingaweb2/modules/monitoring' }
 
 - name: Download the graphite module
   git: repo=https://github.com/findmypast/icingaweb2-module-graphite.git

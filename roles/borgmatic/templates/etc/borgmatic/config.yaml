@@ -20,9 +20,9 @@ location:
         - {{ item }}
 {% endfor %}
 {% endif %}
-{% if backups_include_extras is defined %}
+{% if backupincludes is defined %}
         # Extra includes specific to this host
-{% for item in backups_include_extras %}
+{% for item in backupincludes %}
         - {{ item }}
 {% endfor %}
 {% endif %}

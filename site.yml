@@ -98,13 +98,6 @@
   tags:
     - buildkit
 
-- hosts: yubiauth_managed
-  become: yes
-  roles:
-    - yubiauth
-  tags:
-    - yubiauth
-
 - hosts: rdiff_backups
   become: yes
   roles:

@@ -31,7 +31,6 @@
       'gpg',
       'gpg-agent',
       'less',
-      'libpam-yubico',
       'ncdu',
       'tmux',
       'tree',

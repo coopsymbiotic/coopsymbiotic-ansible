@@ -1,3 +1,0 @@
----
-yubiauthfile: "{{ lookup('file', '/etc/ansible/files/etc/yubiauth') }}"
-yubipamfile: "{{ lookup('file', '/etc/ansible/files/etc/pam.d/yubiauth') }}"

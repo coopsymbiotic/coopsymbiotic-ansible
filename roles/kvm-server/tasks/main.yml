@@ -158,7 +158,7 @@
 
 # @todo This also requires a cron, but for now we are not auto-enabling on all partitions/VMs
 - name: kvm | Deploy helper shell scripts
-  file:
+  template:
     src="{{ item }}"
     dest="/{{ item }}"
     owner=root

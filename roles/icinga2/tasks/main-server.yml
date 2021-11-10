@@ -24,7 +24,9 @@
       'uwsgi',
       'uwsgi-plugin-python3',
       # otherwise apache gets installed (fixme: php version?)'
+      'mariadb-server',
       'php7.4-fpm',
+      'php7.4-mysql',
       'icingaweb2',
       'icingaweb2-module-monitoring',
       # for domain_expiration check'

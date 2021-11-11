@@ -11,30 +11,30 @@
 #    - opendkim-tools
 
 # DEPRECATED SymbioTIC key
-- name: Test if the symbiotic.coop key is present.
-  stat: path=/etc/ssl/private/wildcard.symbiotic.coop.key
-  register: stkey
-  tags:
-    - postfix
-
-- set_fact:
-    postfix_key: "/etc/ssl/private/wildcard.symbiotic.coop.key"
-    when: stkey.stat.exists
-  tags:
-    - postfix
-
-- name: Test if the symbiotic.coop cert bundle is present.
-  stat: path=/etc/ssl/private/wildcard.symbiotic.coop.bundled.crt
-  register: stcrt
-  tags:
-    - postfix
-
-- set_fact:
-    postfix_cert: "/etc/ssl/private/wildcard.symbiotic.coop.bundled.crt"
-    when: stcrt.stat.exists
-  notify: restart postfix
-  tags:
-    - postfix
+# - name: Test if the symbiotic.coop key is present.
+#   stat: path=/etc/ssl/private/wildcard.symbiotic.coop.key
+#   register: stkey
+#   tags:
+#     - postfix
+#
+# - set_fact:
+#     postfix_key: "/etc/ssl/private/wildcard.symbiotic.coop.key"
+#     when: stkey.stat.exists
+#   tags:
+#     - postfix
+#
+# - name: Test if the symbiotic.coop cert bundle is present.
+#   stat: path=/etc/ssl/private/wildcard.symbiotic.coop.bundled.crt
+#   register: stcrt
+#   tags:
+#     - postfix
+#
+# - set_fact:
+#     postfix_cert: "/etc/ssl/private/wildcard.symbiotic.coop.bundled.crt"
+#     when: stcrt.stat.exists
+#   notify: restart postfix
+#   tags:
+#     - postfix
 
 - name: Set the postfix mailname (and chmod it to be public, required by Aegir).
   template:
@@ -58,21 +58,21 @@
   tags:
     - postfix
 
-- name: Create sasl directory if necessary
-  file: path=/etc/postfix/sasl/ state=directory owner=root group=root mode=0700
-  when: host_postfix_sasl != false
-  notify: restart postfix
-  tags:
-    - postfix
-
-- name: Deploy sasl credentials for the SMTP relay
-  template:
-    src: "etc/postfix/sasl/sasl_pass"
-    dest: "/etc/postfix/sasl/sasl_pass"
-    owner: "root"
-    group: "root"
-    mode: 0600
-  when: host_postfix_sasl != false
-  notify: restart postfix
-  tags:
-    - postfix
+# - name: Create sasl directory if necessary
+#   file: path=/etc/postfix/sasl/ state=directory owner=root group=root mode=0700
+#   when: host_postfix_sasl != false
+#   notify: restart postfix
+#   tags:
+#     - postfix
+#
+# - name: Deploy sasl credentials for the SMTP relay
+#   template:
+#     src: "etc/postfix/sasl/sasl_pass"
+#     dest: "/etc/postfix/sasl/sasl_pass"
+#     owner: "root"
+#     group: "root"
+#     mode: 0600
+#   when: host_postfix_sasl != false
+#   notify: restart postfix
+#   tags:
+#     - postfix

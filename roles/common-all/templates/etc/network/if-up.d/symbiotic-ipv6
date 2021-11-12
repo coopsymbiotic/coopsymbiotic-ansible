@@ -5,6 +5,9 @@
 sysctl -w net.ipv6.conf.all.autoconf=0
 sysctl -w net.ipv6.conf.all.accept_ra=0
 
+# Sometimes weird timing issues with 'interface not ready'
+sleep 1
+
 ip -6 route del default
 
 ip -6 addr add {{ preseed_ipv6_address }} dev {{ preseed_network_interface }}

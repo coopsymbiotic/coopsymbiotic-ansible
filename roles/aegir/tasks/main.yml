@@ -543,6 +543,28 @@
     - aegir-nginx
     - aegir-nginx-conf
 
+- name: nginx | Setup a default vhost
+  template:
+    src: etc/nginx/sites-available/default
+    dest: /etc/nginx/sites-available/default
+    owner: root
+    group: root
+    mode: 0644
+  notify: reload nginx
+  tags:
+    - aegir-nginx
+    - aegir-nginx-conf
+
+- name: nginx | Enable the default vhost
+  file:
+    src: /etc/nginx/sites-available/default
+    dest: /etc/nginx/sites-enabled/default
+    state: link
+  notify: reload nginx
+  tags:
+    - aegir-nginx
+    - aegir-nginx-conf
+
 # Using lineinfile instead of a template so that we can still add other
 # settings in global.inc without ansible.
 - name: Aegir | Enable CiviCRM Native Gettext globally

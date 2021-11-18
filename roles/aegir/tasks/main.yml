@@ -523,11 +523,21 @@
     - aegir-nginx
     - aegir-nginx-conf
 
-- name: Aegir | Disable global error.log
+- name: nginx | Disable global error.log
   lineinfile:
     path: /etc/nginx/nginx.conf
     regexp: 'error_log /var/log/nginx/error.log'
     line: "        # error_log /var/log/nginx/error.log; # disabled by ansible"
+  notify: reload nginx
+  tags:
+    - aegir-nginx
+    - aegir-nginx-conf
+
+- name: nginx | Disable server_tokens
+  lineinfile:
+    path: /etc/nginx/nginx.conf
+    regexp: 'server_tokens off;'
+    line: "  server_tokens off; # set by ansible"
   notify: reload nginx
   tags:
     - aegir-nginx

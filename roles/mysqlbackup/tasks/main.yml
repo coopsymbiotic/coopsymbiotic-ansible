@@ -36,24 +36,25 @@
   tags:
     - mysqlbackup
 
-- name: mysqlbackup | create cron job
-  cron:
-    name="mysqlbackup"
-    hour="{{ mysqlbackup_cron_hour }}"
-    minute="{{ mysqlbackup_cron_minute }}"
-    job="/usr/local/bin/mysqldump-secure --cron"
-    cron_file="mysqlbackup"
-    user="root"
-    state=present
-  tags:
-    - mysqlbackup
-
-- name: mysqlbackup | define cron job PATH
-  cron:
-    name=PATH
-    env=yes
-    value="/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin"
-    cron_file="mysqlbackup"
-    user="root"
-  tags:
-    - mysqlbackup
+# mysqlbackup is now called from borgmatic
+# - name: mysqlbackup | create cron job
+#   cron:
+#     name="mysqlbackup"
+#     hour="{{ mysqlbackup_cron_hour }}"
+#     minute="{{ mysqlbackup_cron_minute }}"
+#     job="/usr/local/bin/mysqldump-secure --cron"
+#     cron_file="mysqlbackup"
+#     user="root"
+#     state=present
+#   tags:
+#     - mysqlbackup
+#
+# - name: mysqlbackup | define cron job PATH
+#   cron:
+#     name=PATH
+#     env=yes
+#     value="/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin"
+#     cron_file="mysqlbackup"
+#     user="root"
+#   tags:
+#     - mysqlbackup

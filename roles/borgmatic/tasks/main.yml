@@ -2,6 +2,7 @@
 
 # Ubuntu 18.x and Debian Buster do not have some of the latest packages
 # so we are fetching from Debian Bullseye
+# [ML] Does not seem necessary on Debian 10
 - name: borgmatic | Install python3-pykwalify
   apt:
     state: present
@@ -68,16 +69,23 @@
     - borgmatic-confs
     - borgmatic-cron
 
-# Run cron randomly between 22:00 AND 02:59
+# Run cron randomly between 23:00 AND 03:59
 - name: borgmatic | Configure cron
   cron:
     name="borgmatic"
     minute="{{ 60 | random }}"
-    hour="{{ ['22','23','0','1','2'] | random }}"
+    hour="{{ ['23','0','1','2','3'] | random }}"
     job="/usr/bin/borgmatic --verbosity 0"
     cron_file="borgmatic"
     user="root"
     state=present
+  tags:
+    - borgmatic
+    - borgmatic-confs
+    - borgmatic-cron
+
+- name: Make sure that the old mysqlbackup cron is absent
+  file: path="/etc/cron.d/mysqlbackup" state=absent
   tags:
     - borgmatic
     - borgmatic-confs
@@ -149,7 +157,7 @@
     - borgmatic-init
 
 - name: borgmatic | Initialize the repository
-  shell: "borgmatic init -e repokey"
+  shell: "env BORG_PASSPHRASE='{{ borgmatic_passphrase }}' borgmatic init -e repokey"
   when: not borgmatic_init_exists.stat.exists
   tags:
     - borgmatic

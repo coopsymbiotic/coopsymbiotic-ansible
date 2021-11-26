@@ -14,3 +14,7 @@
 - name: postmap sasl_pass
   shell: postmap /etc/postfix/sasl/sasl_pass
   notify: restart postfix
+
+- name: reload systemd
+  systemd:
+    daemon_reload: yes

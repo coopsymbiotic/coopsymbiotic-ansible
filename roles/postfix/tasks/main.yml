@@ -58,6 +58,18 @@
   tags:
     - postfix
 
+- name: Override the systemd service unit
+  template:
+    src: "lib/systemd/system/opendkim.service"
+    dest: "/etc/systemd/system/opendkim.service"
+    owner: "root"
+    group: "root"
+    mode: 0644
+  notify: reload systemd
+  tags:
+    - postfix
+
+# Not used for now
 # - name: Create sasl directory if necessary
 #   file: path=/etc/postfix/sasl/ state=directory owner=root group=root mode=0700
 #   when: host_postfix_sasl != false

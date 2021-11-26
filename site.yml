@@ -44,6 +44,13 @@
   tags:
     - mariadb
 
+- hosts: sql_replication_servers
+  become: yes
+  roles:
+    - mariadb
+  tags:
+    - mariadb
+
 - hosts: postfix_servers
   become: yes
   roles:

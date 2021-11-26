@@ -23,22 +23,10 @@
     url: "https://packages.sury.org/php/apt.gpg"
     state: present
     keyring: /etc/apt/trusted.gpg.d/php.gpg
-  when: (phpversion == 7.2 or phpversion == 7.1) and ansible_distribution == "Debian"
   tags:
     - packages
     - packages-php
     - packages-php-gpg
-    - aegir-php
-
-- name: Ubuntu | Add Sury.org apt reporitory key
-  apt_key:
-    url: "https://packages.sury.org/php/apt.gpg"
-    state: present
-    keyring: /etc/apt/trusted.gpg.d/php.gpg
-  when: (phpversion == 7.2 or phpversion == 7.1) and ansible_distribution == "Ubuntu" and ansible_distribution_major_version == "16"
-  tags:
-    - packages
-    - packages-php
     - aegir-php
 
 - name: Debian | Add Sury.org repository
@@ -46,7 +34,7 @@
     repo: deb https://packages.sury.org/php/ {{ ansible_distribution_release }} main
     state: present
     update_cache: yes
-  when: (phpversion == 7.2 or phpversion == 7.1) and ansible_distribution == "Debian"
+  when: ansible_distribution == "Debian"
   tags:
     - packages
     - packages-php
@@ -57,7 +45,7 @@
     repo: deb http://ppa.launchpad.net/ondrej/php/ubuntu {{ ansible_distribution_release }} main
     state: present
     update_cache: yes
-  when: (phpversion == 7.2 or phpversion == 7.1) and ansible_distribution == "Ubuntu" and ansible_distribution_major_version == "16"
+  when: ansible_distribution == "Ubuntu"
   tags:
     - packages
     - packages-php
@@ -65,7 +53,7 @@
 
 - name: Debian | Pin Sury repositories
   template: src=etc/apt/preferences.d/php-symbiotic dest=/etc/apt/preferences.d/php-symbiotic owner=root group=root mode=0444
-  when: (phpversion == 7.2 or phpversion == 7.1) and (ansible_distribution == "Debian" or (ansible_distribution == "Ubuntu" and ansible_distribution_major_version == "16"))
+  when: ansible_distribution == "Debian" or ansible_distribution == "Ubuntu"
   tags:
     - packages
     - packages-php
@@ -74,16 +62,33 @@
 # Required for enabling locales, for CiviCRM native gettext
 - apt: name="locales" state=present install_recommends=no
 
+# Create a aegir_root user for MariaDB (avoids issues with root's empty password)
+- apt: name="pwgen" state=present install_recommends=no
+
+- name: Check a password was created for the aegir_root MySQL user
+  stat: path="/root/.mysql.root"
+  register: aegir_root_sql_pass
+
+- name: Generate a aegir_root password for MySQL
+  shell: pwgen 15 1 > /root/.mysql.root
+  when: not aegir_root_sql_pass.stat.exists
+
+- name: Fetch the aegir_root password for MySQL
+  command: cat /root/.mysql.root
+  register: aegir_root_password
+
+- name: Create the aegir_root user in MySQL
+  shell: /usr/bin/mysql -e "GRANT ALL ON *.* TO 'aegir_root'@'localhost' IDENTIFIED BY '{{ aegir_root_password.stdout }}' WITH GRANT OPTION"
+  when: not aegir_root_sql_pass.stat.exists
+
 # Assumes configurations by the mariadb role
 - name: Preseed Aegir Debian configurations
   shell: "{{ item }} | debconf-set-selections"
   with_items:
-    - echo "mariadb-server-10.3 mysql-server/root_password password `cat /root/.mysql.root`"
-    - echo "mariadb-server-10.3 mysql-server/root_password_again password `cat /root/.mysql.root`"
     - echo "debconf aegir/site string {{ inventory_hostname }}"
     - echo "debconf aegir/db_host string 127.0.0.1"
-    - echo "debconf aegir/db_user string root"
-    - echo "debconf aegir/db_password password `cat /root/.mysql.root`"
+    - echo "debconf aegir/db_user string aegir_root"
+    - echo "debconf aegir/db_password password {{ aegir_root_password.stdout }}"
     - echo "debconf aegir/webserver string nginx"
   tags:
     - packages

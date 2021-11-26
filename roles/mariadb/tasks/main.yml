@@ -9,12 +9,6 @@
     path: /usr/sbin/mysqld
   register: mysqld_exists
 
-- apt: name="pwgen" state=present install_recommends=no
-
-- name: Generate a root password for MySQL
-  shell: pwgen 15 1 > /root/.mysql.root
-  when: not mysqld_exists.stat.exists
-
 - apt_key:
     url: "https://mariadb.org/mariadb_release_signing_key.asc"
     state: present

@@ -59,6 +59,14 @@ if [ -d ./wp-content/uploads ]; then
   find ./wp-content/uploads/ -type d -exec chmod g+s {} \;
 fi
 
+# Yootheme exception
+if [ -d ./wp-content/themes/yootheme ]; then
+  mkdir -p ./wp-content/themes/yootheme/cache
+  chown -R aegir.www-data ./wp-content/themes/yootheme/cache
+  chmod -R g+w ./wp-content/themes/yootheme/cache
+  find ./wp-content/themes/yootheme/cache -type d -exec chmod g+s {} \;
+fi
+
 # Legacy CiviCRM directory
 if [ -d ./wp-content/plugins/files/civicrm ]; then
   chown -R aegir.www-data ./wp-content/plugins/files/civicrm/

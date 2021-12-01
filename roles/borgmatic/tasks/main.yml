@@ -160,7 +160,7 @@
 
 - name: borgmatic | Check if the repository has been initialized
   stat:
-    path: /root/.borgmatic-init
+    path: "/root/.borgmatic-init-{{ borgmatic_backupserver }}"
   register: borgmatic_init_exists
   tags:
     - borgmatic
@@ -168,6 +168,16 @@
 
 - name: borgmatic | Initialize the repository
   shell: "env BORG_PASSPHRASE='{{ borgmatic_passphrase }}' borgmatic init -e repokey"
+  when: not borgmatic_init_exists.stat.exists
+  tags:
+    - borgmatic
+    - borgmatic-init
+
+- name: borgmatic | Touch the init file
+  file:
+    path: "/root/.borgmatic-init-{{ borgmatic_backupserver }}"
+    state: touch
+    mode: 0600
   when: not borgmatic_init_exists.stat.exists
   tags:
     - borgmatic

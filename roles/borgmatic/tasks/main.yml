@@ -148,6 +148,16 @@
     - borgmatic
     - borgmatic-ssh
 
+- name: borgmatic | Add extra ssh keys to the backup server if defined
+  delegate_to: "{{ borgmatic_backupserver }}"
+  authorized_key: user="backups-{{ inventory_hostname_short }}" key="{{ lookup('file', item) }}"
+  with_items: "{{ borgmatic_extra_sshkeys }}"
+  when: borgmatic_extra_sshkeys is defined and borgmatic_extra_sshkeys
+  tags:
+    - borgmatic
+    - borgmatic-ssh
+    - borgmatic-ssh-extra
+
 - name: borgmatic | Check if the repository has been initialized
   stat:
     path: /root/.borgmatic-init

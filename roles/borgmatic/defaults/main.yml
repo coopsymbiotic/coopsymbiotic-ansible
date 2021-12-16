@@ -10,3 +10,7 @@ borgmatic_server_basedir: /backup
 # Require a password to run the sudo command
 # alternative password-less: "NOPASSWD:"
 borgmatic_sudorule: "(root)"
+
+# To run commands after the completion of a backup
+# borgmatic_after_backup:
+# - ls

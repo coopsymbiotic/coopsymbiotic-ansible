@@ -23,5 +23,11 @@
 - name: restart php7.3-fpm
   service: name=php7.3-fpm state=restarted
 
+- name: restart php7.4-fpm
+  service: name=php7.4-fpm state=restarted
+
+- name: restart php8.0-fpm
+  service: name=php8.0-fpm state=restarted
+
 - name: reload systemd
   systemd: daemon_reload=yes

@@ -1,9 +1,9 @@
 ---
 
 # Required for creating database users
-- name: Aegir MySQL users | Install python-mysqldb
+- name: Aegir MySQL users | Install python3-mysqldb
   apt:
-    name: "python-mysqldb"
+    name: "python3-mysqldb"
     state: present
     install_recommends: no
   tags:

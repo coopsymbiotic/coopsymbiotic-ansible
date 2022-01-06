@@ -273,6 +273,7 @@
     - aegir-civicrm-platform
     - aegir-hosting-civicrm
     - aegir-hosting-https
+    - aegir-hosting-usage
     - aegir-hosting-wordpress
     - aegir-ansible
     - aegir-fixownership
@@ -746,6 +747,7 @@
   template: src=etc/sudoers.d/symbiotic-aegir dest=/etc/sudoers.d/symbiotic-aegir owner=root group=root mode=0440
   tags:
     - aegir-sudoers
+    - aegir-sudoers-symbiotic
     - aegir-helper-scripts
     - aegir-ansible
 

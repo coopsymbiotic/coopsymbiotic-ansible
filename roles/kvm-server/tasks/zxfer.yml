@@ -1,0 +1,63 @@
+---
+
+- name: zxfer | Deploy helper shell scripts
+  template:
+    src="{{ item }}"
+    dest="/{{ item }}"
+    owner=root
+    group=root
+    mode=0755
+  with_items:
+    - usr/local/bin/zfs-auto-snapshot
+    - usr/local/bin/zxfer
+
+# Setup the zxfer system service
+- name: zxfer | Setup the zxfer service
+  template:
+    src="etc/systemd/system/zfs-zxfer-partition.service"
+    dest="/etc/systemd/system/zfs-zxfer-{{ partition | replace('/', '') }}.service"
+    owner=root
+    group=root
+    mode=0644
+  loop: "{{ zfs_zxfer_partitions }}"
+  loop_control:
+    loop_var: partition
+  notify: reload systemd
+
+- name: zxfer | Setup the zxfer systemd timer
+  template:
+    src="etc/systemd/system/zfs-zxfer-partition.timer"
+    dest="/etc/systemd/system/zfs-zxfer-{{ partition | replace('/', '') }}.timer"
+    owner=root
+    group=root
+    mode=0644
+  loop: "{{ zfs_zxfer_partitions }}"
+  loop_control:
+    loop_var: partition
+  notify: reload systemd
+
+# My understanding is that this will make the service run once, then the timer will kick-in
+# (because we are using OnUnitInactiveSec=15m; maybe we should use OnCalendar?)
+- name: zxfer | Start the zxfer systemd service
+  systemd:
+    name: "zfs-zxfer-{{ partition | replace('/', '') }}.service"
+    state: started
+  loop: "{{ zfs_zxfer_partitions }}"
+  loop_control:
+    loop_var: partition
+
+- name: zxfer | Enable the zxfer systemd timer
+  systemd:
+    name: "zfs-zxfer-{{ partition | replace('/', '') }}.timer"
+    enabled: yes
+  loop: "{{ zfs_zxfer_partitions }}"
+  loop_control:
+    loop_var: partition
+
+- name: zxfer | Start the zxfer systemd timer
+  systemd:
+    name: "zfs-zxfer-{{ partition | replace('/', '') }}.timer"
+    state: started
+  loop: "{{ zfs_zxfer_partitions }}"
+  loop_control:
+    loop_var: partition

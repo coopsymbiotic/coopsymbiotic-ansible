@@ -1,0 +1,10 @@
+# {{ ansible_managed }}
+[Unit]
+Description="ZFS {{ partition | replace('/', '') }} zxfer service"
+Documentation="https://lab.symbiotic.coop/coopsymbiotic/ops/-/wikis/vps/zfs"
+Wants=zfs-zxfer-{{ partition | replace('/', '') }}.timer
+
+[Service]
+User=root
+ExecStartPre=/usr/local/bin/zfs-auto-snapshot --label=hourly --prefix={{ partition | replace('/', '') }}-auto --keep={{ zfs_zxfer_keep }} {{ partition }}
+ExecStart=/usr/local/bin/zxfer -dFv -g 2 {% if zfs_zxfer_ssh is defined %}-T {{ zfs_zxfer_ssh }} {% endif %}-N {{ partition }} {{ zfs_pool_dst }}

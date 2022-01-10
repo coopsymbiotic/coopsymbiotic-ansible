@@ -1,3 +1,8 @@
 ---
 # The VM user password is changed once the VM is booted, so it does not need to be saved for re-runs
 kvm_preseed_password: "{{ lookup('password', '/dev/null chars=ascii_letters length=15') }}"
+
+# How many snapshots to keep
+zfs_zxfer_keep: 10
+# How often to snapshot/sync (systemd timer notation)
+zfs_zxfer_interval: 15min

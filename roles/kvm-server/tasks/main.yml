@@ -156,16 +156,8 @@
   tags:
     - kvm-server-sudoers
 
-# @todo This also requires a cron, but for now we are not auto-enabling on all partitions/VMs
-- name: kvm | Deploy helper shell scripts
-  template:
-    src="{{ item }}"
-    dest="/{{ item }}"
-    owner=root
-    group=root
-    mode=0755
-  with_items:
-    - usr/local/bin/zfs-auto-snapshot
-    - usr/local/bin/zxfer
+- include: zxfer.yml
+  when: zfs_zxfer_partitions is defined
   tags:
     - kvm-server-scripts
+    - zfs-zxfer

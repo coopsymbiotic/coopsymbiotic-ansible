@@ -1,0 +1,13 @@
+# {{ ansible_managed }}
+[Unit]
+Description="ZFS {{ partition | replace('/', '') }} zxfer timer"
+Requires=zfs-zxfer-{{ partition | replace('/', '') }}.service
+
+[Timer]
+Unit=zfs-zxfer-{{ partition | replace('/', '') }}.service
+OnUnitInactiveSec={{ zfs_zxfer_interval }}
+OnBootSec=30min
+RandomizedDelaySec=30sec
+
+[Install]
+WantedBy=timers.target

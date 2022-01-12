@@ -174,4 +174,27 @@ action >> /var/log/aegir/usage.log 2>&1
 cp /var/log/aegir/usage.log /var/log/aegir/usage.$_NOWDAY.log
 chmod 0644 /var/log/aegir/usage.log
 chmod 0644 /var/log/aegir/usage.$_NOWDAY.log
+
+### Other weekly cleanup
+# Leftover drush files, which are a bug (ideally we would delete more quickly)
+find /tmp -maxdepth 1 -name 'drush_*' -delete
+
+# Leftover wkhtmltopdf files
+find /tmp -maxdepth 1 -name 'xvfb-run*' -exec rm -fr {} \;
+
+# Leftover directories from civicrm extension checks? (the directories are usually empty)
+# being cautious and only removing empty directories for now
+find /tmp -maxdepth 1 -name 'tmp-*' -exec rmdir {} \;
+
+# Delete backups that are more than 3 days old
+# For now lets not go too crazy about cleanup here, but delete the most obvious
+find /var/aegir/backups/ -maxdepth 1 -mtime +3 -name '*.sql' -delete
+find /var/aegir/backups/ -maxdepth 1 -mtime +3 -name '*.sql.gz' -delete
+find /var/aegir/backups/ -maxdepth 1 -mtime +3 -name '*.tar.gz' -delete
+
+# Delete CiviCRM logs that take a lot of space
+find /var/aegir/platforms -name 'CiviCRM.mailchimp.*.log.*' -delete
+# Delete logs not modified for more than 60 days
+find /var/aegir/platforms -name 'CiviCRM.*.log*' -mtime +60 -delete
+
 exit 0

@@ -1,5 +1,11 @@
 ---
 
+- name: Force gathering facts for partial ansible runs
+  setup:
+  tags:
+    - common-all
+    - common-all-aptconf
+
 - name: common-all | Force gathering facts for partial ansible runs
   setup:
   tags:
@@ -12,6 +18,13 @@
   when: ansible_distribution == "Debian"
   tags:
     - common-all
+
+- name: common-all | Deploy apt 80symbiotic customizations
+  template: src=etc/apt/apt.conf.d/80symbiotic dest=/etc/apt/apt.conf.d/80symbiotic owner=root group=root mode=0644
+  when: ansible_distribution == "Debian"
+  tags:
+    - common-all
+    - common-all-aptconf
 
 - apt: update_cache=yes
   tags:

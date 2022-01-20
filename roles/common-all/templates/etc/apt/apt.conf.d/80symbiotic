@@ -1,0 +1,4 @@
+# {{ ansible_managed }}
+# Delete apt archives after upgrade
+# https://superuser.com/questions/1405001/why-does-apt-do-not-store-downloaded-packages-anymore
+APT::Keep-Downloaded-Packages "false";

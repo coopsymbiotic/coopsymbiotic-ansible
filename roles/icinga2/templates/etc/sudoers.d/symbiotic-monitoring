@@ -1,6 +1,8 @@
 # {{ ansible_managed }}
 
 # Hosting (Aegir or not)
+Defaults env_keep += "CIVICRM_SETTINGS"
+{{ icinga2_user }} ALL=(aegir) NOPASSWD: /usr/local/bin/aegir-helpers site-property * site_path
 {{ icinga2_user }} ALL=(aegir) NOPASSWD: /usr/local/bin/drush * cvapi System.check --out=json
 {{ icinga2_user }} ALL=(aegir) NOPASSWD: /usr/local/bin/drush * cvapi Domain.get --out=json
 {{ icinga2_user }} ALL=(aegir) NOPASSWD: /usr/local/bin/drush * status version --format=json

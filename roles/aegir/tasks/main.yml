@@ -141,7 +141,7 @@
       "php{{ phpversion }}-xsl",
       "php{{ phpversion }}-mbstring",
       "php{{ phpversion }}-zip",
-      "php-imagick"
+      "php{{ phpversion }}-imagick"
     ]
     state: present
     install_recommends: no

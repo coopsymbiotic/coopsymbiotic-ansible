@@ -49,7 +49,7 @@ set -e
 cd /tmp/
 sqlfile=`mktemp -p /tmp/ --suffix=.sql`
 
-if [ -n "$EXCLUDE_CIVICRM" ]; then
+if [ "$EXCLUDE_CIVICRM" = "1" ]; then
   cd $SRC_PLATFORM/sites/$SITE_SRC/
   wp db export --exclude_tables="$(wp db tables --all-tables '*civicrm_*' --format=csv)" $sqlfile
 else
@@ -68,7 +68,7 @@ cd $DEST_PLATFORM/sites/$SITE_DEST/
 wp option update home "https://$SITE_DEST"
 wp option update siteurl "https://$SITE_DEST"
 
-if [ -n "$EXCLUDE_CIVICRM" ]; then
+if [ -z "$EXCLUDE_CIVICRM" ]; then
   wp cv api Setting.create extensionsDir="$DEST_PLATFORM/sites/$SITE_DEST/wp-content/plugins/extensions/"
   wp cv api Setting.create extensionsURL="https://$SITE_DEST/sites/$SITE_DEST/wp-content/plugins/extensions/"
   wp cv api Setting.create imageUploadURL="https://$SITE_DEST/sites/$SITE_DEST/wp-content/uploads/civicrm/persist/contribute"
@@ -81,6 +81,11 @@ if [ -n "$EXCLUDE_CIVICRM" ]; then
 fi
 
 wp cache flush
+
+# Delete non-admin users
+if [ "$DELETE_REG_USERS" = "1" ]; then
+  wp sql query "DELETE wu FROM wp_users wu INNER JOIN wp_usermeta ON wu.ID = wp_usermeta.user_id WHERE meta_key = 'wp_capabilities' AND meta_value NOT LIKE '%administrator%'"
+fi
 
 # Verify takes care of detecting that it's a dev site and updating the environment
 # and other settings.

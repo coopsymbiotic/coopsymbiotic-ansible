@@ -47,36 +47,40 @@ set -x
 set -e
 
 cd /tmp/
+sqlfile=`mktemp -p /tmp/ --suffix=.sql`
 
-sqlfile=`mktemp --suffix=.sql`
+if [ -n "$EXCLUDE_CIVICRM" ]; then
+  cd $SRC_PLATFORM/sites/$SITE_SRC/
+  wp db export --exclude_tables="$(wp db tables --all-tables '*civicrm_*' --format=csv)" $sqlfile
+else
+  cd $SRC_PLATFORM/sites/$SITE_SRC/
+  wp db export $sqlfile
+fi
 
-drush "@$SITE_SRC" wp db export $sqlfile
+# Cleanup definers
 perl -pi -e 's#\/\*\!5001[7|3].*?`[^\*]*\*\/##g' $sqlfile
 
-cat $sqlfile | drush @$SITE_DEST wp sql cli
+cd $DEST_PLATFORM/sites/$SITE_DEST/
+cat $sqlfile | wp sql cli
 rm $sqlfile
 
-drush @$SITE_DEST wp option update home "https://$SITE_DEST"
-drush @$SITE_DEST wp option update siteurl "https://$SITE_DEST"
+cd $DEST_PLATFORM/sites/$SITE_DEST/
+wp option update home "https://$SITE_DEST"
+wp option update siteurl "https://$SITE_DEST"
 
-drush @$SITE_DEST wp cv api Setting.create extensionsDir="$DEST_PLATFORM/sites/$SITE_DEST/wp-content/plugins/extensions/"
-drush @$SITE_DEST wp cv api Setting.create extensionsURL="https://$SITE_DEST/sites/$SITE_DEST/wp-content/plugins/extensions/"
-drush @$SITE_DEST wp cv api Setting.create imageUploadURL="https://$SITE_DEST/sites/$SITE_DEST/wp-content/uploads/civicrm/persist/contribute"
-drush @$SITE_DEST wp cv api Setting.create imageUploadDir="$DEST_PLATFORM/sites/$SITE_DEST/wp-content/uploads/civicrm/persist/contribute/"
-drush @$SITE_DEST wp cv api Setting.create userFrameworkResourceURL="https://$SITE_DEST/wp-content/plugins/civicrm/civicrm"
-drush @$SITE_DEST wp cv api Setting.create customFileUploadDir="$DEST_PLATFORM/sites/$SITE_DEST/wp-content/uploads/civicrm/custom/"
-drush @$SITE_DEST wp cv api Setting.create uploadDir="$DEST_PLATFORM/sites/$SITE_DEST/wp-content/uploads/civicrm/upload"
+if [ -n "$EXCLUDE_CIVICRM" ]; then
+  wp cv api Setting.create extensionsDir="$DEST_PLATFORM/sites/$SITE_DEST/wp-content/plugins/extensions/"
+  wp cv api Setting.create extensionsURL="https://$SITE_DEST/sites/$SITE_DEST/wp-content/plugins/extensions/"
+  wp cv api Setting.create imageUploadURL="https://$SITE_DEST/sites/$SITE_DEST/wp-content/uploads/civicrm/persist/contribute"
+  wp cv api Setting.create imageUploadDir="$DEST_PLATFORM/sites/$SITE_DEST/wp-content/uploads/civicrm/persist/contribute/"
+  wp cv api Setting.create userFrameworkResourceURL="https://$SITE_DEST/wp-content/plugins/civicrm/civicrm"
+  wp cv api Setting.create customFileUploadDir="$DEST_PLATFORM/sites/$SITE_DEST/wp-content/uploads/civicrm/custom/"
+  wp cv api Setting.create uploadDir="$DEST_PLATFORM/sites/$SITE_DEST/wp-content/uploads/civicrm/upload"
+  wp cv api Extension.refresh
+  wp cv api System.flush
+fi
 
-drush @$SITE_DEST wp cv api Extension.refresh
-drush @$SITE_DEST wp cv api System.flush
-drush @$SITE_DEST wp cache flush
-
-# Set an image so that users notice the difference between prod and formation.
-DATE=`date +%Y-%m-%d`
-SITE="** DEV **"
-wget -O $DEST_PLATFORM/sites/$SITE_DEST/wp-content/uploads/symbiotic-dev-version-tmp.jpg  "http://lorempixel.com/mono/640/280/food"
-convert -pointsize 80 -fill '#0099FF' -stroke black -strokewidth 2  -annotate +15+100 "$SITE\n$DATE" $DEST_PLATFORM/sites/$SITE_DEST/wp-content/uploads/symbiotic-dev-version-tmp.jpg $DEST_PLATFORM/sites/$SITE_DEST/wp-content/uploads/symbiotic-dev-version.jpg
-rm $DEST_PLATFORM/sites/$SITE_DEST/wp-content/uploads/symbiotic-dev-version-tmp.jpg
+wp cache flush
 
 # Verify takes care of detecting that it's a dev site and updating the environment
 # and other settings.

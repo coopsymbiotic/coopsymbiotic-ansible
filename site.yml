@@ -7,17 +7,11 @@
     - promtail
     - borgmatic
     - mysqlbackup
+    - sshuserkeys
     - ufw
     - unattended-upgrades
   tags:
     - base
-
-- hosts: symbiotic_servers
-  become: yes
-  roles:
-    - sshuserkeys
-  tags:
-    - sshuserkeys
 
 - hosts: kvm_servers
   become: yes

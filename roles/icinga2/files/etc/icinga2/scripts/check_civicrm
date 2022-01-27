@@ -15,13 +15,14 @@ function do_api_call($host, $cms, $entity, $action) {
   $site_path = null;
 
   if ($cms == 'drupal' || $cms == 'drupal8') {
-    exec('sudo -u aegir /usr/local/bin/drush @' . escapeshellarg($host) . ' cvapi ' . escapeshellarg($entity) . '.' . escapeshellarg($action) . ' --out=json', $tmp);
+    exec('sudo -u aegir /usr/local/bin/drush @' . escapeshellarg($host) . ' cvapi ' . escapeshellarg($entity) . '.' . escapeshellarg($action) . ' option.limit=0 --out=json', $tmp);
   }
   elseif ($cms == 'wordpress') {
     exec('sudo -u aegir /usr/local/bin/aegir-helpers site-property ' . escapeshellarg($host) . ' site_path', $site_path);
-    exec('env CIVICRM_SETTINGS=' . escapeshellarg("{$site_path[0]}/wp-content/uploads/civicrm/civicrm.settings.php") . ' sudo -u www-data /usr/local/bin/cv --cwd=' . escapeshellarg($site_path[0]) . ' api ' . escapeshellarg($entity) . '.' . escapeshellarg($action), $tmp);
+    exec('env CIVICRM_SETTINGS=' . escapeshellarg("{$site_path[0]}/wp-content/uploads/civicrm/civicrm.settings.php") . ' sudo -u www-data /usr/local/bin/cv --cwd=' . escapeshellarg($site_path[0]) . ' api ' . escapeshellarg($entity) . '.' . escapeshellarg($action) . ' option.limit=0', $tmp);
   }
   elseif ($cms == 'joomla') {
+    // We do not support Joomla at the moment, so this code is un-maintained and might not work
     global $civicrm_root;
     global $civicrm_cli_ini; // required if TZ is not the same as the server
 

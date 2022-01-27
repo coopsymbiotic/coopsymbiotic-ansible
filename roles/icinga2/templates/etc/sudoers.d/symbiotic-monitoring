@@ -1,20 +1,28 @@
 # {{ ansible_managed }}
 
 # Hosting (Aegir or not)
+# nb: the option.limit=0 is required for the system.check
+# however check_civicrm systematically appends it in an attempt to keep it simple.
 Defaults env_keep += "CIVICRM_SETTINGS"
 {{ icinga2_user }} ALL=(aegir) NOPASSWD: /usr/local/bin/aegir-helpers site-property * site_path
 {{ icinga2_user }} ALL=(aegir) NOPASSWD: /usr/local/bin/drush * cvapi System.check --out=json
+{{ icinga2_user }} ALL=(aegir) NOPASSWD: /usr/local/bin/drush * cvapi System.check option.limit=0 --out=json
 {{ icinga2_user }} ALL=(aegir) NOPASSWD: /usr/local/bin/drush * cvapi Domain.get --out=json
+{{ icinga2_user }} ALL=(aegir) NOPASSWD: /usr/local/bin/drush * cvapi Domain.get option.limit=0 --out=json
 {{ icinga2_user }} ALL=(aegir) NOPASSWD: /usr/local/bin/drush * status version --format=json
 {{ icinga2_user }} ALL=(aegir) NOPASSWD: /usr/local/bin/drush * cc drush
 {{ icinga2_user }} ALL=(aegir) NOPASSWD: /usr/local/bin/wp core version
 {{ icinga2_user }} ALL=(aegir) NOPASSWD: /usr/local/bin/drush * provision-verify
 {{ icinga2_user }} ALL=(aegir) NOPASSWD: /usr/local/lib/icinga2-plugins/check_file_content
 {{ icinga2_user }} ALL=(www-data) NOPASSWD: /usr/local/bin/cv --cwd=* api System.check
+{{ icinga2_user }} ALL=(www-data) NOPASSWD: /usr/local/bin/cv --cwd=* api System.check option.limit=0
 {{ icinga2_user }} ALL=(www-data) NOPASSWD: /usr/local/bin/cv --cwd=* api Domain.get
+{{ icinga2_user }} ALL=(www-data) NOPASSWD: /usr/local/bin/cv --cwd=* api Domain.get option.limit=0
 # Deprecated
 {{ icinga2_user }} ALL=(aegir) NOPASSWD: /usr/local/bin/drush * wp cv api System.check --out=json --strict=0
+{{ icinga2_user }} ALL=(aegir) NOPASSWD: /usr/local/bin/drush * wp cv api System.check option.limit=0 --out=json --strict=0
 {{ icinga2_user }} ALL=(aegir) NOPASSWD: /usr/local/bin/drush * wp cv api Domain.get --out=json --strict=0
+{{ icinga2_user }} ALL=(aegir) NOPASSWD: /usr/local/bin/drush * wp cv api Domain.get option.limit=0 --out=json --strict=0
 {{ icinga2_user }} ALL=(aegir) NOPASSWD: /usr/local/bin/drush * wp core version
 
 # MySQL

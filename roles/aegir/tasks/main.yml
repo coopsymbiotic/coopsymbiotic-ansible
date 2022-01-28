@@ -261,6 +261,26 @@
   tags:
     - aegir-provision-customhtaccess
 
+- name: Download drush utf8mb4_convert from Git
+  become_user: aegir
+  git:
+    repo: https://git.drupalcode.org/project/utf8mb4_convert.git
+    version: 7.x-1.x
+    dest: /var/aegir/.drush/utf8mb4_convert
+    update: yes
+  tags:
+    - aegir-drush-extras
+
+- name: Download drush registry_rebuild from Git
+  become_user: aegir
+  git:
+    repo: https://git.drupalcode.org/project/registry_rebuild.git
+    version: 7.x-2.x
+    dest: /var/aegir/.drush/registry_rebuild
+    update: yes
+  tags:
+    - aegir-drush-extras
+
 ##
 ## Update hosting_civicrm from git
 ##

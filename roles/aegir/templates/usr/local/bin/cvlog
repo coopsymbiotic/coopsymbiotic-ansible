@@ -101,7 +101,7 @@ case $OP in
       exit 1
     fi
     if [ -f "$LOGFILE" ]; then
-      echo "Opening $SITENAME's log file '$LOGPATH/$LOGFILE'
+      echo "Opening $SITENAME log file '$LOGPATH/$LOGFILE'"
       $VIEWER "$LOGFILE"
     else
       echo "Expected to find a CiviCRM log file named '$LOGFILE' under '$LOGPATH'"

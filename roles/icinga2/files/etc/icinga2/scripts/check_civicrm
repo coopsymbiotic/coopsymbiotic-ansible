@@ -142,7 +142,7 @@ foreach ($civistatus->values as $key => $val) {
     $check_descriptions[] = $val->title;
   }
 
-  if ($val->severity == 'error' || $val->severity == 'critical') {
+  if (in_array($val->severity, ['error', 'critical', 'alert'])) {
     $check_status = 2;
   }
 }

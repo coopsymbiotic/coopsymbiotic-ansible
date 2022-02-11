@@ -179,6 +179,9 @@ chmod 0644 /var/log/aegir/usage.$_NOWDAY.log
 # Leftover drush files, which are a bug (ideally we would delete more quickly)
 find /tmp -maxdepth 1 -name 'drush_*' -delete
 
+# Any PDF in /tmp is obviously a leftover from receipt extensions, for example
+find /tmp -maxdepth 1 -iname '*.pdf' -delete
+
 # Leftover wkhtmltopdf files
 find /tmp -maxdepth 1 -name 'xvfb-run*' -exec rm -fr {} \;
 

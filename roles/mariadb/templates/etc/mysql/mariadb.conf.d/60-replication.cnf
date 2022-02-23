@@ -1,0 +1,15 @@
+# MariaDB Replication Configuration
+#
+# {{ ansible_managed }}
+[mariadb]
+server_id = 102
+log_bin = /data/mysql/mysql-bin.log
+binlog-format = mixed
+log_slave_updates = ON
+relay-log = /data/mysql/mysql-relay-bin.log
+expire-logs-days = 5 
+# max_binlog_size = 1GB 
+# log_bin_compress = OFF
+# binlog_annotate_row_events = OFF
+# replicate_annotate_row_events = OFF
+# replicate_wild_ignore_table = '%.civicrm\_tmp\__\_%' 

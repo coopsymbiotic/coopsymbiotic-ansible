@@ -48,3 +48,13 @@ local-infile=1
 
 # For when MySQL data dir is on its own partition
 ignore-db-dir=lost+found
+
+# For Icinga monitoring
+# Allows passwordless auth for the root user
+plugin-load-add = auth_socket.so
+
+{% if groups['sql_servers'] is defined or groups['sql_replication_servers'] is defined %}
+# Assumed to be a separate zfs volume (partition) for easier resync
+datadir = /data/mysql
+log_bin = /data/mysql/mysql-bin.log
+{% endif %}

@@ -41,3 +41,7 @@
     - aegir-mariadb
 
 - include: settings-mysql.yml
+  tags:
+    - aegir
+    - aegir-mariadb
+    - aegir-mariadb-settings

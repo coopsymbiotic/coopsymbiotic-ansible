@@ -4,9 +4,14 @@
     dest=/etc/mysql/conf.d/symbiotic.cnf
     owner=root group=root mode=0644
   notify: restart mysql
-  tags:
-    - aegir-mysql
-    - aegir-mariadb
+
+- name: MySQL | Deploy our MySQL configuration overrides for replication
+  template:
+    src=etc/mysql/mariadb.conf.d/60-replication.cnf
+    dest=/etc/mysql/mariadb.conf.d/60-replication.cnf
+    owner=root group=root mode=0644
+  when: "'sql_servers' in group_names or 'sql_replication_servers'"
+  notify: restart mysql
 
 - name: MySQL | Deploy our MySQL systemd overrides
   template:
@@ -14,6 +19,3 @@
     dest=/etc/systemd/system/mariadb.service.d/symbiotic.conf
     owner=root group=root mode=0644
   notify: reload systemd
-  tags:
-    - aegir-mysql
-    - aegir-mariadb

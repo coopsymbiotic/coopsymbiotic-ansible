@@ -444,8 +444,11 @@
 ##
 ## Configurations
 ##
+# This command sometimes freezes the ansible run, so we async to wait for 60 seconds, poll every 5 seconds
 - name: Aegir modules | Enable a few extra Aegir modules
   shell: "drush @hostmaster en hosting_https hosting_letsencrypt hosting_alias hosting_clone hosting_tasks_extra hosting_remote_import hosting_civicrm aegir_ansible_inventory hosting_civicrm_ansible hosting_wpsite -y"
+  async: 60
+  poll: 5
   become: true
   become_user: aegir
   tags:
@@ -458,11 +461,15 @@
 # ixiam/hosting#67
 - name: Aegir modules | Disable hosting_platform_composer_git because we do not need it and seems buggy
   shell: "drush @hostmaster dis hosting_platform_composer_git -y"
+  async: 60
+  poll: 5
   become: true
   become_user: aegir
 
 - name: Aegir modules | Enable hosting_nginx_https
   shell: "drush @hostmaster en hosting_nginx_https -y"
+  async: 60
+  poll: 5
   become: true
   become_user: aegir
   when: "'aegir_apache' not in group_names"
@@ -471,6 +478,8 @@
 
 - name: Aegir modules | Enable hosting_apache_https
   shell: "drush @hostmaster en hosting_apache_https -y"
+  async: 60
+  poll: 5
   become: true
   become_user: aegir
   when: "'aegir_apache' in group_names"
@@ -479,6 +488,8 @@
 
 - name: Aegir modules | Disable the annoying Drupal overlay
   shell: "drush @hostmaster dis overlay -y"
+  async: 60
+  poll: 5
   become: true
   become_user: aegir
 

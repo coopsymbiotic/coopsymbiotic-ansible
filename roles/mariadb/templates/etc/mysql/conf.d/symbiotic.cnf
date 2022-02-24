@@ -46,9 +46,6 @@ sql-mode="NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION"
 # [ML] Some clients use this for imports (required for MariaDB 10.3)
 local-infile=1
 
-# For when MySQL data dir is on its own partition
-ignore-db-dir=lost+found
-
 # For Icinga monitoring
 # Allows passwordless auth for the root user
 plugin-load-add = auth_socket.so

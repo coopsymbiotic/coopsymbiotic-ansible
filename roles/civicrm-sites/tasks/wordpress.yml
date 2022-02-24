@@ -16,6 +16,7 @@
     dest: "{{ site_path }}/wp-content/plugins/{{ item.path | basename }}"
     state: link
   with_items: "{{ find_plugins.files }}"
+  ignore_errors: yes
 
 # If the site was migrated, update a few obvious options that should not cause harm
 # although updating the siteurl/home is perhaps a bit opiniated

@@ -31,7 +31,9 @@
     name: [
       "mariadb-client-{{ mariadb_version }}",
       "mariadb-server-{{ mariadb_version }}",
-      "mariadb-server"
+      "mariadb-server",
+      # For MySQL health monitoring
+      "libdbd-mysql-perl"
     ]
     state: present
     install_recommends: no

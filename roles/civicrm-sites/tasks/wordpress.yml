@@ -1,5 +1,10 @@
 ---
 
+- name: WordPress | Run fix permissions
+  shell:
+    chdir: "{{ site_path }}"
+    cmd: "/usr/local/bin/fix-wordpress-permissions.sh --site-path='{{ site_path }}'"
+
 # Make sure we have correct symlinks for the global plugins
 - name: WordPress | Find plugins to re-create plugin symlink
   become_user: aegir

@@ -44,20 +44,25 @@ fi
 
 cd $site_path
 
-# For plugin upgrades, in combination with ssh-sftp-updater-support
+# Relax permissions on wp-content, so that www-data can write in it
+# For example, WordFence requires this in order to create wp-content/wflogs
+chown aegir.www-data wp-content
+chmod 0775 wp-content
+
+# Ensure the basic directories exist
+mkdir -p ./wp-content/languages
+mkdir -p ./wp-content/plugins
 mkdir -p ./wp-content/upgrade
+mkdir -p ./wp-content/uploads
+mkdir -p ./wp-content/themes
 
-if [ -d ./wp-content/upgrade ]; then
-  chown -R aegir.www-data ./wp-content/upgrade/
-  chmod -R g+w ./wp-content/upgrade/
-  find ./wp-content/upgrade/ -type d -exec chmod g+s {} \;
-fi
-
-if [ -d ./wp-content/uploads ]; then
-  chown -R aegir.www-data ./wp-content/uploads/
-  chmod -R g+w ./wp-content/uploads/
-  find ./wp-content/uploads/ -type d -exec chmod g+s {} \;
-fi
+# Set the permissions
+# - owner by aegir.www-data (so that Aegir can backup/delete files)
+# - www-data can write
+# - all directories are setgid to inherit group ownership
+chown -R aegir.www-data ./wp-content/{languages,plugins,upgrade,uploads,themes}
+chmod -R g+w ./wp-content/{languages,plugins,upgrade,uploads,themes}
+find ./wp-content/{languages,plugins,upgrade,uploads,themes}/ -type d -exec chmod g+s {} \;
 
 # Yootheme exception
 if [ -d ./wp-content/themes/yootheme ]; then

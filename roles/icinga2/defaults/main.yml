@@ -25,3 +25,11 @@ icinga2_conf_host_import: "aegir-host"
 # monitoring. Usually required when the host is using a DNS record set by the
 # client, and they did not bother creating a AAAA record.
 icinga2_host_ignore_ipv6: false
+
+# Can be used to ignore that the frontpage returns an HTTP 200
+icinga2_disable_all_http200_checks: 0
+
+# To avoid duplicating configurations, use the preseed info by default
+# but not all hosts have that variable, if not hosted on our infra
+icinga2_node_ipv4_address: "{{ preseed_ipv4_address }}"
+icinga2_node_ipv6_address: "{{ preseed_ipv6_address | default(false) }}"

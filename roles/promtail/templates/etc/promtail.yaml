@@ -51,9 +51,18 @@ scrape_configs:
           # Example: "127.0.0.1" vhost1.example.org [01/Jan/2021:00:00:01 +0000] "GET /civicrm HTTP/1.1" 200 <body_bytes_sent> <request_length> <bytes_sent> "http://example.com/lekkebot.html" "curl/7.58.0"
           # c.f. /var/aegir/config/server_master/nginx.conf
           # The body_bytes_sent excludes the headers
-          expression: '^"(?P<remote_ip>[\w\.]+)" (?P<vhost>[\w\.]+) \[(?P<timestamp>.*)\] "(?P<method>[^ ]*) (?P<request_url>[^ ]*) (?P<request_http_protocol>[^ ]*)" (?P<status>[\d]+) (?P<body_bytes_sent>[\d]+) (?P<request_length>[\d]+) (?P<bytes_sent>[\d]+) "(?P<http_referer>[^"]*)" "(?P<user_agent>[^"]*)"?'
+          expression: '^"(?P<remote_addr>[^"]+)" (?P<vhost>[^ ]+) \[(?P<time_local>.*)\] "(?P<method>[^ ]*) (?P<request>[^ ]*) (?P<protocol>[^ ]*)" (?P<status>[\d]+) (?P<body_bytes_sent>[\d]+) (?P<request_length>[\d]+) (?P<bytes_sent>[\d]+) "(?P<http_referer>[^"]*)" "(?P<http_user_agent>[^"]*)" (?P<response_time>[\d\.]+)'
       - labels:
-          remote_ip:
+          remote_addr:
           vhost:
+          time_local:
           method:
+          request:
+          protocol:
           status:
+          body_bytes_sent:
+          request_length:
+          bytes_sent:
+          http_referer:
+          http_user_agent:
+          response_time:

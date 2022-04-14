@@ -20,7 +20,7 @@ if [ -n "$tag" ]; then
     exit 1
   fi
 
-  ansible-playbook --connection=local -i /usr/local/coopsymbiotic-ansible/aegir-inventory -l $host --tags $tag /usr/local/coopsymbiotic-ansible/site.yml
+  ansible-playbook --connection=local -i /usr/local/coopsymbiotic-ansible/bin/aegir-inventory -l $host --tags $tag /usr/local/coopsymbiotic-ansible/site.yml
 else
-  ansible-playbook --connection=local -i /usr/local/coopsymbiotic-ansible/aegir-inventory -l $host /usr/local/coopsymbiotic-ansible/site.yml
+  ansible-playbook --connection=local -i /usr/local/coopsymbiotic-ansible/bin/aegir-inventory -l $host /usr/local/coopsymbiotic-ansible/site.yml
 fi

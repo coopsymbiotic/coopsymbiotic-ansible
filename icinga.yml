@@ -2,7 +2,7 @@
 
 # Used by Gitlab to update our icinga configuration
 # Example:
-# env AEGIR_HOSTMASTER_HOSTNAME='aegir.example.org' ansible-playbook --connection=local -i ../ansible/ansible-symbiotic/hosts -i ./aegir-inventory -l aegir.example.org --tags icinga2-conf-host-local ./icinga.yml
+# env AEGIR_HOSTMASTER_HOSTNAME='aegir.example.org' ansible-playbook --connection=local -i ../ansible/ansible-symbiotic/hosts -i ./bin/aegir-inventory -l aegir.example.org --tags icinga2-conf-host-local ./icinga.yml
 
 - hosts: all
   become: false

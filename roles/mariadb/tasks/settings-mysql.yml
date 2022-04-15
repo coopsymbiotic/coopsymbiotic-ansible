@@ -10,7 +10,7 @@
     src=etc/mysql/mariadb.conf.d/60-replication.cnf
     dest=/etc/mysql/mariadb.conf.d/60-replication.cnf
     owner=root group=root mode=0644
-  when: "'sql_servers' in group_names or 'sql_replication_servers'"
+  when: "'sql_servers' in group_names or 'sql_replication_servers' in group_names"
   notify: restart mysql
 
 - name: MySQL | Deploy our MySQL systemd overrides

@@ -3,12 +3,13 @@
 User_Alias     HOSTMASTERS = {{ aegir_sudoers }}
 HOSTMASTERS ALL=(aegir) NOPASSWD: ALL
 
-aegir ALL=NOPASSWD: /bin/systemctl restart php5-fpm
-aegir ALL=NOPASSWD: /bin/systemctl restart php7.0-fpm
+aegir ALL=NOPASSWD: /etc/init.d/nginx
 aegir ALL=NOPASSWD: /bin/systemctl restart php7.2-fpm
 aegir ALL=NOPASSWD: /bin/systemctl restart php7.3-fpm
 aegir ALL=NOPASSWD: /bin/systemctl restart hosting-queued
 aegir ALL=NOPASSWD: /bin/systemctl restart mariadb
+aegir ALL=NOPASSWD: /bin/systemctl restart nginx
+aegir ALL=NOPASSWD: /bin/systemctl reload nginx
 aegir ALL=NOPASSWD: /usr/local/bin/aegir-reload-nginx.sh
 aegir ALL=NOPASSWD: /usr/local/bin/aegir-systemctl-status
 www-data ALL=NOPASSWD: /usr/local/bin/aegir-systemctl-status

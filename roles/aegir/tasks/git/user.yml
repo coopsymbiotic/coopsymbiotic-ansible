@@ -1,0 +1,30 @@
+---
+- name: Create 'aegir' group
+  group:
+    name: "{{ aegir_user }}"
+    system: yes
+  become: yes
+- name: Create 'aegir' user
+  user:
+    name: "{{ aegir_user }}"
+    system: yes
+    home: "{{ aegir_root }}"
+    group: "{{ aegir_user }}"
+    groups: "{{ aegir_web_group }},adm"
+    shell: /bin/bash
+    append: yes
+  become: yes
+- name: Create 'aegir' user home.
+  file:
+    path: /var/aegir/
+    state: directory
+    owner: "{{ aegir_user }}"
+    group: "{{ aegir_user }}"
+  become: yes
+- name: Create ~/.drush/ for 'aegir' user.
+  file:
+    path: /var/aegir/.drush
+    state: directory
+    owner: "{{ aegir_user }}"
+    group: "{{ aegir_user }}"
+  become: yes

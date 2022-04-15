@@ -1,0 +1,7 @@
+---
+- name: Build Hostmaster platform.
+  shell: "drush make {{ aegir_makefile_path }} {{ aegir_root }}/hostmaster --working-copy --no-gitinfofile"
+  args:
+    creates: "{{ aegir_root }}/hostmaster/"
+  become: yes
+  become_user: "{{ aegir_user }}"

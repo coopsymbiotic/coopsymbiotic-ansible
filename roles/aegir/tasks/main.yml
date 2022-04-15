@@ -9,6 +9,7 @@
     - packages
     - packages-php
     - aegir-php
+    - aegir-install
     - packages-php-gpg
 
 - include_vars: "{{ ansible_distribution }}_{{ ansible_distribution_major_version }}.yml"
@@ -68,35 +69,31 @@
 - name: Check a password was created for the aegir_root MySQL user
   stat: path="/root/.mysql.root"
   register: aegir_root_sql_pass
+  tags:
+    - aegir-install
 
 - name: Generate a aegir_root password for MySQL
   shell: pwgen 15 1 > /root/.mysql.root
   when: not aegir_root_sql_pass.stat.exists
+  tags:
+    - aegir-install
 
 - name: Fetch the aegir_root password for MySQL
   command: cat /root/.mysql.root
   register: aegir_root_password
+  changed_when: false
+  tags:
+    - aegir-install
+
+- name: Set a fact for the mysql root password
+  set_fact:
+    aegir_db_password: "{{ aegir_root_password.stdout }}"
+  tags:
+    - aegir-install
 
 - name: Create the aegir_root user in MySQL
   shell: /usr/bin/mysql -e "GRANT ALL ON *.* TO 'aegir_root'@'localhost' IDENTIFIED BY '{{ aegir_root_password.stdout }}' WITH GRANT OPTION"
   when: not aegir_root_sql_pass.stat.exists
-
-# Assumes configurations by the mariadb role
-- name: Preseed Aegir Debian configurations
-  shell: "{{ item }} | debconf-set-selections"
-  with_items:
-    - echo "debconf aegir/site string {{ inventory_hostname }}"
-    - echo "debconf aegir/db_host string 127.0.0.1"
-    - echo "debconf aegir/db_user string aegir_root"
-    - echo "debconf aegir/db_password password {{ aegir_root_password.stdout }}"
-    - echo "debconf aegir/webserver string nginx"
-  tags:
-    - packages
-    - aegir-nginx
-    - aegir-mariadb
-
-# "echo debconf aegir/email string $aegir_email | debconf-set-selections"
-# "echo debconf aegir/makefile string $aegir_makefile | debconf-set-selections"
 
 - name: Making sure the drush package is removed (aegir3 installs through composer)
   apt: pkg=drush state=absent
@@ -227,20 +224,20 @@
     - aegir
     - aegir-locales
 
-- apt:
-    name: aegir3
-    state: present
-    install_recommends: no
+# Has to happen early, used by the hostmaster installation
+- name: sudo | Deploy sudoers file for people who are allowed to sudo to aegir
+  template: src=etc/sudoers.d/symbiotic-aegir dest=/etc/sudoers.d/symbiotic-aegir owner=root group=root mode=0440
   tags:
-    - aegir
+    - aegir-sudoers
+    - aegir-sudoers-symbiotic
+    - aegir-helper-scripts
+    - aegir-ansible
+    - aegir-install
 
-- name: Add the aegir user to the admin group
-  user: name="aegir"
-        groups=adm
-        append=yes
+- name: Install Aegir using git
+  include: git.yml
   tags:
-    - aegir
-    - aegir-adm
+    - aegir-install
 
 - name: Download provision_symbiotic from Github
   become_user: aegir
@@ -446,7 +443,7 @@
 ##
 # This command sometimes freezes the ansible run, so we async to wait for 60 seconds, poll every 5 seconds
 - name: Aegir modules | Enable a few extra Aegir modules
-  shell: "drush @hostmaster en hosting_https hosting_letsencrypt hosting_alias hosting_clone hosting_tasks_extra hosting_remote_import hosting_civicrm aegir_ansible_inventory hosting_civicrm_ansible hosting_wpsite -y"
+  shell: "drush @hostmaster en hosting_queued hosting_https hosting_letsencrypt hosting_alias hosting_clone hosting_tasks_extra hosting_remote_import hosting_civicrm aegir_ansible_inventory hosting_civicrm_ansible hosting_wpsite -y"
   async: 60
   poll: 5
   become: true
@@ -638,8 +635,29 @@
   tags:
     - aegir-globalinc
 
-- name: Restart Aegir hosting queue
+- name: hosting-queued | Deploy hosting-queued unit file
+  template:
+    src: etc/systemd/system/hosting-queued.service
+    dest: /etc/systemd/system/hosting-queued.service
+    owner: root
+    group: root
+    mode: 0444
+  notify: reload systemd
+  tags:
+    - aegir-hosting-queued
+
+- name: hosting-queued | Enable the hosting-queued service
+  systemd:
+    name: hosting-queued
+    enabled: yes
+    masked: no
+  tags:
+    - aegir-hosting-queued
+
+- name: hosting-queued | Restart Aegir hosting queue
   service: name=hosting-queued state=restarted
+  tags:
+    - aegir-hosting-queued
 
 # Requirements for the wkhtmltox 0.15 package
 - apt: name={{ item }} state=absent install_recommends=no
@@ -658,27 +676,6 @@
   tags:
     - aegir
     - aegir-wkhtmltopdf
-
-# c.f. https://www.drupal.org/project/hosting_civicrm/issues/2972031
-# We mostly execute these scripts so that it deploys the sudo files.
-# We override the shell scripts below.
-- name: Configure the fix-ownership scripts
-  shell: "bash {{ hostmaster_root.stdout }}/profiles/hostmaster/modules/aegir/hosting_tasks_extra/{{ item }}/scripts/install.sh"
-  with_items:
-    - fix_ownership
-  args:
-    creates: /etc/sudoers.d/fix-drupal-site-ownership
-  tags:
-    - aegir-fixownership
-
-- name: Configure the fix-permissions scripts
-  shell: "bash {{ hostmaster_root.stdout }}/profiles/hostmaster/modules/aegir/hosting_tasks_extra/{{ item }}/scripts/install.sh"
-  with_items:
-    - fix_permissions
-  args:
-    creates: /etc/sudoers.d/fix-drupal-site-permissions
-  tags:
-    - aegir-fixownership
 
 #
 # c.f. https://www.drupal.org/project/hosting_civicrm/issues/2972031
@@ -773,14 +770,6 @@
     - .profile
   tags:
     - aegir-bash
-
-- name: sudo | Deploy sudoers file for people who are allowed to sudo to aegir
-  template: src=etc/sudoers.d/symbiotic-aegir dest=/etc/sudoers.d/symbiotic-aegir owner=root group=root mode=0440
-  tags:
-    - aegir-sudoers
-    - aegir-sudoers-symbiotic
-    - aegir-helper-scripts
-    - aegir-ansible
 
 - name: Deploy our duct tape script to safely reload nginx
   template: src=usr/local/bin/aegir-reload-nginx.sh dest=/usr/local/bin/aegir-reload-nginx.sh owner=root group=root mode=0755

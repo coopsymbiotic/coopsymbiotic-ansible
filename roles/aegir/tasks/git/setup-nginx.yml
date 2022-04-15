@@ -1,0 +1,12 @@
+---
+
+- name: Make Aegir's Nginx config available.
+  file:
+    state: link
+    path: /etc/nginx/conf.d/aegir.conf
+    src: "{{ aegir_root }}/config/nginx.conf"
+    follow: no  # the target doesn't exist yet
+    force: yes  # the target doesn't exist yet
+  become: yes
+  when: (ansible_distribution == "Ubuntu") or (ansible_distribution == "Debian")
+

@@ -1,4 +1,27 @@
 ---
+
+aegir_root: /var/aegir
+aegir_user: aegir
+aegir_web_group: www-data
+aegir_db_user: aegir_root
+aegir_provision_repo: https://git.drupalcode.org/project/provision.git
+aegir_provision_version: 7.x-3.x
+aegir_provision_update: true
+aegir_platform_version: 7.x-3.x
+aegir_makefile_path: /var/aegir/.drush/provision/aegir.make
+aegir_admin_email: 'root@localhost'
+aegir_http_service_type: nginx
+aegir_frontend_url: "{{ inventory_hostname }}"
+
+aegir_drush_version: 8.3.4
+aegir_drush_source_repo: https://github.com/drush-ops/drush.git
+aegir_drush_source_install_bin_path: /usr/local/bin/drush
+aegir_drush_source_install_path: /usr/local/share/drush
+aegir_drush_source_install_version: "8.3.4"
+aegir_drush_source_update: true
+aegir_drush_source_force_update: false
+aegir_drush_source_clone_depth: 1
+
 # Override in /etc/ansible/group_vars/all
 # or per-host in /etc/ansible/host_vars/[host]
 aegir_sudoers: johndoe

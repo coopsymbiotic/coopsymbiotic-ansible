@@ -1,0 +1,32 @@
+---
+
+# Based on: https://gitlab.com/consensus.enterprises/ansible-roles/ansible-role-aegir/
+
+# Ref.: http://docs.aegirproject.org/en/3.x/install/#31-create-the-aegir-user
+- name: Create 'aegir' user, group, home and Drush directories.
+  include: git/user.yml
+
+# Ref.: http://docs.aegirproject.org/en/3.x/install/#41-install-drush
+- name: Install Drush
+  include: git/drush.yml
+
+# Ref.: http://docs.aegirproject.org/en/3.x/install/#43-install-provision
+- name: Clone Provision
+  include: git/provision.yml
+
+# Ref.: http://docs.aegirproject.org/en/3.x/install/#322-nginx-configuration
+- name: Setup Nginx.
+  include: git/setup-nginx.yml
+
+- name: Build hostmaster platform.
+  include: git/platform.yml
+
+- name: Fix permissions and ownership before site install.
+  include: git/fix_permissions_and_ownership.yml
+
+# Ref.: http://docs.aegirproject.org/en/3.x/install/#44-running-hostmaster-install
+- name: Install Aegir front-end.
+  include: git/install.yml
+
+- name: Upgrade Aegir front-end.
+  include: git/upgrade.yml

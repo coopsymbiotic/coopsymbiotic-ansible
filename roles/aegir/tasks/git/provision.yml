@@ -1,0 +1,19 @@
+---
+
+- name: Deploy Provision from custom repo and/or branch.
+  git:
+    repo: "{{ aegir_provision_repo }}"
+    dest: "{{ aegir_root }}/.drush/provision"
+    update: "{{ aegir_provision_update }}"
+    version: "{{ aegir_provision_version }}"
+    force: yes
+  become: yes
+  become_user: "{{ aegir_user }}"
+  register: aegir_provision_git_deploy_result
+
+- name: Clear Drush cache for Provision extension
+  shell: drush @none cc drush
+  become: yes
+  become_user: "{{ aegir_user }}"
+  when: aegir_provision_git_deploy_result.changed | bool
+

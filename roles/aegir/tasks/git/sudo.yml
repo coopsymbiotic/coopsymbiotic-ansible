@@ -1,0 +1,7 @@
+---
+- name: Configure sudo for aegir user
+  template:
+    dest: "/etc/sudoers.d/{{ aegir_user }}"
+    src: sudoers.j2
+    mode: 0440
+  become: yes

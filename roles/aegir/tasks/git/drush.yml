@@ -1,0 +1,37 @@
+---
+
+- name: Clone Drush from GitHub.
+  git:
+    repo: "{{ aegir_drush_source_repo }}"
+    dest: "{{ aegir_drush_source_install_path }}"
+    version: "{{ aegir_drush_source_install_version }}"
+    update: "{{ aegir_drush_source_update }}"
+    force: "{{ aegir_drush_source_force_update }}"
+    depth: "{{ aegir_drush_source_clone_depth }}"
+  register: drush_clone_result
+  become: yes
+
+- name: Run Drush updates.
+  when: drush_clone_result.changed
+  block:
+  - name: Install Drush dependencies with Composer.
+    command: "composer install --prefer-dist --no-interaction"
+    args:
+      chdir: "{{ aegir_drush_source_install_path }}"
+    become: yes
+  - name: Create drush symlink.
+    file:
+      src: "{{ aegir_drush_source_install_path }}/drush"
+      dest: "{{ aegir_drush_source_install_bin_path }}"
+      state: link
+      force: true
+    become: yes
+  - name: Clear Drush cache
+    shell: drush @none cc drush
+    become: yes
+    become_user: "{{ aegir_user }}"
+  - name: Run drush to finish setting it up.
+    command: "{{ aegir_drush_source_install_bin_path }}"
+    register: drush_result
+    changed_when: "'Execute a drush command' not in drush_result.stdout"
+    become: false

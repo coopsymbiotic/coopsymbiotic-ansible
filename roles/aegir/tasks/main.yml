@@ -94,6 +94,8 @@
 - name: Create the aegir_root user in MySQL
   shell: /usr/bin/mysql -e "GRANT ALL ON *.* TO 'aegir_root'@'localhost' IDENTIFIED BY '{{ aegir_root_password.stdout }}' WITH GRANT OPTION"
   when: not aegir_root_sql_pass.stat.exists
+  tags:
+    - aegir-install
 
 - name: Making sure the drush package is removed (aegir3 installs through composer)
   apt: pkg=drush state=absent

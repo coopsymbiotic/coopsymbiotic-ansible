@@ -6,22 +6,14 @@
     cmd: "/usr/local/bin/fix-wordpress-permissions.sh --site-path='{{ site_path }}'"
 
 # Make sure we have correct symlinks for the global plugins
-- name: WordPress | Find plugins to re-create plugin symlink
-  become_user: aegir
-  find:
-    paths: "{{ site_root }}/wp-content/plugins/"
-    file_type: directory
-    recurse: no
-  register: find_plugins
-
-- name: WordPress | Find plugins to re-create plugin symlink
-  become_user: aegir
-  file:
-    src: "{{ site_root }}/wp-content/plugins/{{ item.path | basename }}"
-    dest: "{{ site_path }}/wp-content/plugins/{{ item.path | basename }}"
-    state: link
-  with_items: "{{ find_plugins.files }}"
-  ignore_errors: yes
+- include_tasks: wordpress-symlinks.yml
+  loop:
+    - { root_dir: "{{ site_root }}", subdir: "plugins" }
+    - { root_dir: "{{ site_root }}", subdir: "themes" }
+    - { root_dir: "/var/aegir/client-custom/wordpress", subdir: "plugins" }
+    - { root_dir: "/var/aegir/client-custom/wordpress", subdir: "themes" }
+  loop_control:
+    loop_var: symlink_options
 
 # If the site was migrated, update a few obvious options that should not cause harm
 # although updating the siteurl/home is perhaps a bit opiniated

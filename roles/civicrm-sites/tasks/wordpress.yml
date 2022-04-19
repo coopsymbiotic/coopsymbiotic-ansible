@@ -30,6 +30,7 @@
   shell:
     chdir: "{{ site_path }}"
     cmd: "wp civicrm api Setting.create wpLoadPhp={{ site_root }}/wp-load.php"
+  when: "'civicrm_sites' in group_names"
 
 - name: WordPress | Update WP home option
   become_user: aegir
@@ -61,5 +62,6 @@
 # drush @$SITE_DEST wp cv api System.flush
 
 - include: wordpress-civicrm-cron.yml
+  when: "'civicrm_sites' in group_names"
   tags:
     - civicrm-sites-cron-wpcivicrm

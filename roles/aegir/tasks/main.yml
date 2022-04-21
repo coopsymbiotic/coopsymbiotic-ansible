@@ -136,6 +136,7 @@
       "php{{ phpversion }}-ldap",
       "php{{ phpversion }}-mysql",
       "php{{ phpversion }}-soap",
+      "php{{ phpversion }}-ssh2",
       "php{{ phpversion }}-zip",
       "php{{ phpversion }}-xsl",
       "php{{ phpversion }}-mbstring",

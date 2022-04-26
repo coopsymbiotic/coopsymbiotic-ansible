@@ -37,7 +37,7 @@
     name="gitlab-backup"
     minute="20"
     hour="22"
-    job="/opt/gitlab/bin/gitlab-rake gitlab:backup:create CRON=1 SKIP=uploads,tar"
+    job="/opt/gitlab/bin/gitlab-rake gitlab:backup:create CRON=1 SKIP=uploads,builds,tar,repositories"
     cron_file="gitlab-backup"
     user="root"
     state=present

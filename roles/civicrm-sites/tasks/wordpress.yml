@@ -10,10 +10,20 @@
   loop:
     - { root_dir: "{{ site_root }}", subdir: "plugins" }
     - { root_dir: "{{ site_root }}", subdir: "themes" }
+  loop_control:
+    loop_var: symlink_options
+
+- name: Check for a client-custom directory for global plugins and themes
+  stat: path=/var/aegir/client-custom/wordpress
+  register: p
+
+- include_tasks: wordpress-symlinks.yml
+  loop:
     - { root_dir: "/var/aegir/client-custom/wordpress", subdir: "plugins" }
     - { root_dir: "/var/aegir/client-custom/wordpress", subdir: "themes" }
   loop_control:
     loop_var: symlink_options
+  when: p.stat.exists
 
 # If the site was migrated, update a few obvious options that should not cause harm
 # although updating the siteurl/home is perhaps a bit opiniated

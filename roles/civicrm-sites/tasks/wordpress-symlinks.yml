@@ -1,9 +1,5 @@
 ---
 
-- name: Print outer and inner items
-  ansible.builtin.debug:
-    var: symlink_options
-
 - name: WordPress | Get list of directories to symlink
   become_user: aegir
   find:

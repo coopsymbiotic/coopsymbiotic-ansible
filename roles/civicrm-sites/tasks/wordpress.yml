@@ -4,6 +4,8 @@
   shell:
     chdir: "{{ site_path }}"
     cmd: "/usr/local/bin/fix-wordpress-permissions.sh --site-path='{{ site_path }}'"
+  tags:
+    - wordpress-fixpermissions
 
 # Make sure we have correct symlinks for the global plugins
 - include_tasks: wordpress-symlinks.yml

@@ -64,12 +64,11 @@ chown -R aegir.www-data ./wp-content/{languages,plugins,upgrade,uploads,themes}
 chmod -R g+w ./wp-content/{languages,plugins,upgrade,uploads,themes}
 find ./wp-content/{languages,plugins,upgrade,uploads,themes}/ -type d -exec chmod g+s {} \;
 
-# Yootheme exception
+# Yootheme exception (ex: yootheme/cache, yootheme/css; yootheme is a mess..)
 if [ -d ./wp-content/themes/yootheme ]; then
-  mkdir -p ./wp-content/themes/yootheme/cache
-  chown -R aegir.www-data ./wp-content/themes/yootheme/cache
-  chmod -R g+w ./wp-content/themes/yootheme/cache
-  find ./wp-content/themes/yootheme/cache -type d -exec chmod g+s {} \;
+  chown -R aegir.www-data ./wp-content/themes/yootheme
+  chmod -R g+w ./wp-content/themes/yootheme
+  find ./wp-content/themes/yootheme -type d -exec chmod g+s {} \;
 fi
 
 # Legacy CiviCRM directory

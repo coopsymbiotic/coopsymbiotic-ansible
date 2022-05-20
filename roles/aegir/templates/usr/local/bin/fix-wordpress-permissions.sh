@@ -49,6 +49,10 @@ cd $site_path
 chown aegir.www-data wp-content
 chmod 0775 wp-content
 
+# drushrc.php must be readable by www-data (it's where we store salts)
+chgrp www-data drushrc.php
+chmod g+r drushrc.php
+
 # Ensure the basic directories exist
 mkdir -p ./wp-content/languages
 mkdir -p ./wp-content/plugins

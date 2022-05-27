@@ -1,5 +1,11 @@
 ---
 
+- name: Force gathering facts for partial ansible runs
+  setup:
+  tags:
+    - packages
+    - borgmatic
+
 # Ubuntu 18.x and Debian Buster do not have some of the latest packages
 # so we are fetching from Debian Bullseye
 # [ML] Does not seem necessary on Debian 10
@@ -7,6 +13,7 @@
   apt:
     state: present
     deb: "http://ftp.us.debian.org/debian/pool/main/p/pykwalify/python3-pykwalify_1.7.0-2_amd64.deb"
+  when: ansible_distribution == "Debian" or ansible_distribution == "Ubuntu"
   tags:
     - borgmatic
     - packages
@@ -24,6 +31,7 @@
       'borgbackup',
       'xz-utils',
     ]
+  when: ansible_distribution == "Debian" or ansible_distribution == "Ubuntu"
   tags:
     - borgmatic
     - packages
@@ -32,6 +40,7 @@
   apt:
     state: present
     deb: "http://ftp.us.debian.org/debian/pool/main/b/borgmatic/borgmatic_1.5.12-2_all.deb"
+  when: ansible_distribution == "Debian" or ansible_distribution == "Ubuntu"
   tags:
     - borgmatic
     - packages

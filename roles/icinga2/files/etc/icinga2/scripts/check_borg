@@ -18,6 +18,8 @@ elif [ -r /usr/lib/nagios/plugins/utils.sh ] && [ -f /usr/lib/nagios/plugins/uti
 	. /usr/lib/nagios/plugins/utils.sh
 elif [ -r /usr/lib/monitoring-plugins/utils.sh ] && [ -f /usr/lib/monitoring-plugins/utils.sh ]; then
 	. /usr/lib/monitoring-plugins/utils.sh
+elif [ -r /usr/lib64/nagios/plugins/utils.sh ] && [ -f /usr/lib64/nagios/plugins/utils.sh ]; then
+        . /usr/lib64/nagios/plugins/utils.sh
 else
 	echo "Cannot source utils.sh from monitoring-plugins!" >&2
 	exit 128

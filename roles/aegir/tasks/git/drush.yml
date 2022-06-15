@@ -1,6 +1,6 @@
 ---
 
-- name: Clone Drush from GitHub.
+- name: Clone Drush from GitHub
   git:
     repo: "{{ aegir_drush_source_repo }}"
     dest: "{{ aegir_drush_source_install_path }}"
@@ -11,8 +11,9 @@
   register: drush_clone_result
   become: yes
 
-- name: Run Drush updates.
-  when: drush_clone_result.changed
+# nb: we always run this, because it often happens that we re-run part of a broken install
+# and otherwise we tend to use tags to do partial ansible runs
+- name: Run Drush updates
   block:
   - name: Install Drush dependencies with Composer.
     command: "composer install --prefer-dist --no-interaction"

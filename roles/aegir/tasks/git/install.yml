@@ -6,3 +6,5 @@
     creates: "{{ aegir_root }}/.drush/hostmaster.alias.drushrc.php"
   become: yes
   become_user: "{{ aegir_user }}"
+  tags:
+    - aegir-install-hostmaster

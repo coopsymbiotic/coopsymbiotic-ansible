@@ -23,9 +23,9 @@
 - hosts: aegir_managed
   become: yes
   roles:
+    - postfix
     - mariadb
     - aegir
-    - postfix
     - dehydrated
   tags:
     - aegir

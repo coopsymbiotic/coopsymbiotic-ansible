@@ -68,6 +68,7 @@
   notify: reload systemd
   tags:
     - postfix
+    - postfix-opendkim
 
 # Not used for now
 # - name: Create sasl directory if necessary

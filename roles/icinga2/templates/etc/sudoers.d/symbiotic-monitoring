@@ -27,6 +27,7 @@ Defaults env_keep += "CIVICRM_SETTINGS"
 
 # MySQL
 {{ icinga2_user }} ALL=(root) NOPASSWD: /usr/lib/nagios/plugins/pmp-check-mysql-status *
+{{ icinga2_user }} ALL=(root) NOPASSWD: /usr/lib/nagios/plugins/check_mysql_health *
 
 # Backups
 {{ icinga2_user }} ALL=(root) NOPASSWD: /usr/local/lib/icinga2-plugins/check_backup -s *

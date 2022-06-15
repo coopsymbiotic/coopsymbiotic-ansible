@@ -237,6 +237,11 @@
     - aegir-ansible
     - aegir-install
 
+- name: Install composer
+  include: composer.yml
+  tags:
+    - aegir-composer
+
 - name: Install Aegir using git
   include: git.yml
   tags:

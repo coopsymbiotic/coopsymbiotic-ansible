@@ -1,0 +1,21 @@
+---
+
+# Cutting corners much. Based on https://unix.stackexchange.com/a/615688
+
+- name: Download and install Composer
+  shell: curl -sS https://getcomposer.org/installer | php
+  args:
+    chdir: /tmp
+    creates: /tmp/composer.phar
+    warn: false
+  become: yes
+
+- name: Add Composer to global path
+  copy: 
+    dest: /usr/local/bin/composer
+    group: root
+    mode: '0755'
+    owner: root
+    src: /tmp/composer.phar
+    remote_src: yes
+  become: yes

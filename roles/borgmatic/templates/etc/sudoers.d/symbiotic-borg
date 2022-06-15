@@ -1,3 +1,5 @@
 # {{ ansible_managed }}
 aegir ALL={{ borgmatic_sudorule }} /usr/local/bin/borg-mount
+# Used when the SQL server is on another server
+aegir ALL={{ borgmatic_sudorule }} /usr/local/bin/borg-mount-sql
 aegir ALL=NOPASSWD: /usr/local/bin/borg-umount

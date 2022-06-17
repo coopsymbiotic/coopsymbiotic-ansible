@@ -6,18 +6,6 @@
     - packages
     - borgmatic
 
-# Ubuntu 18.x and Debian Buster do not have some of the latest packages
-# so we are fetching from Debian Bullseye
-# [ML] Does not seem necessary on Debian 10
-- name: borgmatic | Install python3-pykwalify
-  apt:
-    state: present
-    deb: "http://ftp.us.debian.org/debian/pool/main/p/pykwalify/python3-pykwalify_1.7.0-2_amd64.deb"
-  when: ansible_distribution == "Debian" or ansible_distribution == "Ubuntu"
-  tags:
-    - borgmatic
-    - packages
-
 # zx-utils is required for installing .deb files manually (borgmatic)
 - name: borgmatic | Install python3 requirements and borgbackup
   apt:

@@ -158,6 +158,7 @@
     - check_mysqldump-secure
     - check_php_fpm
     - check_ufw
+    - check_zfs
     - check_zpool
     - restart_service
     - run_aegir_verify
@@ -188,6 +189,7 @@
     - md_raid
     - mysql_uptime
     - ufw
+    - zfs
     - zpool
   notify: restart icinga2
   tags:

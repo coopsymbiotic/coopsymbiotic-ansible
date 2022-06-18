@@ -56,7 +56,7 @@ _getopts() {
 
 _performance_data() {
 cat <<- _EOF_
-|used=$USED;$WARNING_VALUE;$CRITICAL_VALUE;0;$QUOTA available=$AVAIL;;;;$QUOTA refer=$REFER;;;;$QUOTA
+| used=$USED; available=$AVAIL; total=$TOTAL;
 _EOF_
 }
 
@@ -107,26 +107,16 @@ WARNING_VALUE=$(( $USED*$WARNING_PERCENT/100|bc -l ))
 CRITICAL_VALUE=$(( $USED*$CRITICAL_PERCENT/100|bc -l ))
 
 ##----------- Informational output follows
-read -d '' FYI <<- _EOF_
-Dataset information about $ZFS_DATASET:
-  - Total:     $TOTAL_READABLE
-  - Used:      $USED_READABLE
-  - Available: $AVAIL_READABLE
-_EOF_
-
 if [ "$AVAIL_PERCENT" -lt "$CRITICAL_PERCENT" ] ; then
-  echo "CRITICAL: only $AVAIL_PERCENT% ($AVAIL_READABLE) available on $ZFS_DATASET"
-  echo "$FYI"
+  echo -n "CRITICAL: only $AVAIL_PERCENT% ($AVAIL_READABLE) available on $ZFS_DATASET "
   _performance_data
   exit $STATE_CRITICAL
 elif [ "$AVAIL_PERCENT" -lt "$WARNING_PERCENT" ] ; then
-  echo "WARNING: only $AVAIL_PERCENT% ($AVAIL_READABLE) available on $ZFS_DATASET"
-  echo "$FYI"
+  echo -n "WARNING: only $AVAIL_PERCENT% ($AVAIL_READABLE) available on $ZFS_DATASET "
   _performance_data
   exit $STATE_WARNING
 else 
-  echo "OK: $AVAIL_PERCENT% ($AVAIL_READABLE) available on $ZFS_DATASET"
-  echo "$FYI"
+  echo -n "OK: $AVAIL_PERCENT% ($AVAIL_READABLE) available on $ZFS_DATASET "
   _performance_data
   exit $STATE_OK
 fi

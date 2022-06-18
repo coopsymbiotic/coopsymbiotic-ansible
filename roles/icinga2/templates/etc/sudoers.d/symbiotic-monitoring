@@ -37,6 +37,7 @@ Defaults env_keep += "CIVICRM_SETTINGS"
 # RAID and ZFS
 {{ icinga2_user }} ALL=(root) NOPASSWD: /usr/local/lib/icinga2-plugins/check_md_raid
 {{ icinga2_user }} ALL=(root) NOPASSWD: /usr/local/lib/icinga2-plugins/check_zpool
+{{ icinga2_user }} ALL=(root) NOPASSWD: /usr/local/lib/icinga2-plugins/check_zfs
 
 # Firewall
 {{ icinga2_user }} ALL=(root) NOPASSWD: /usr/local/lib/icinga2-plugins/check_ufw

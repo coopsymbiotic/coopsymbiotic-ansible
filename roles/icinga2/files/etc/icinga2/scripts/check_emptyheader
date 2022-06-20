@@ -1,0 +1,21 @@
+#!/bin/bash
+
+# Checks if the HTML page starts with "<", normally <DOCTYPE> or other HTML
+# and not an empty line, which sometimes happens when devs accidentally insert
+# an empty line before the <?php tag of a file (and is hell to locate).
+
+STATE_OK=0
+STATE_WARNING=1
+STATE_CRITICAL=2
+STATE_UNKNOWN=3
+
+line=$(/usr/bin/curl -s $1 | head -1)
+first=${line:0:1}
+
+if [ "$first" != "<" ]; then
+  echo "CRITICAL - output may have empty line: $line"
+  exit $STATE_CRITICAL
+else
+  echo "OK - $line"
+  exit $STATE_OK
+fi

@@ -152,6 +152,7 @@
     - check_borg
     - check_civicrm
     - check_cmsversion
+    - check_emptyheader
     - check_file_content
     - check_memory
     - check_md_raid

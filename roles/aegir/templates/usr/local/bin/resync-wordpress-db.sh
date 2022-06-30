@@ -46,6 +46,10 @@ set -x
 # stop on first error
 set -e
 
+# Fix permissions, just in case
+sudo /usr/local/bin/fix-wordpress-permissions.sh --site-path=$SRC_PLATFORM/sites/$SITE_SRC/
+sudo /usr/local/bin/fix-wordpress-permissions.sh --site-path=$DEST_PLATFORM/sites/$SITE_DEST/
+
 cd /tmp/
 sqlfile=`mktemp -p /tmp/ --suffix=.sql`
 

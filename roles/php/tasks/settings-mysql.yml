@@ -1,9 +1,0 @@
-- name: MySQL | Deploy our MySQL configuration overrides
-  template:
-    src=etc/mysql/conf.d/symbiotic.cnf
-    dest=/etc/mysql/conf.d/symbiotic.cnf
-    owner=root group=root mode=0644
-  notify: restart mysql
-  tags:
-    - php70-mysql
-    - php70-mariadb

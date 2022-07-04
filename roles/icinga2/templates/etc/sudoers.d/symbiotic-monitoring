@@ -51,3 +51,6 @@ Defaults env_keep += "CIVICRM_SETTINGS"
 {{ icinga2_user }} ALL=(root) NOPASSWD: /bin/systemctl restart php7.2-fpm
 {{ icinga2_user }} ALL=(root) NOPASSWD: /bin/systemctl restart php7.3-fpm
 {{ icinga2_user }} ALL=(root) NOPASSWD: /bin/systemctl restart hosting-queued
+
+# KVM servers
+nagios ALL=(root) NOPASSWD: /usr/bin/virsh start *

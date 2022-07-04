@@ -12,6 +12,9 @@ innodb_file_per_table=true
 innodb_buffer_pool_size = {{ (ansible_memtotal_mb/1024/4)|round|int }}G
 innodb_buffer_pool_instances = 1
 
+# Limit the ibtmp file to 2GB
+innodb_temp_data_file_path = ibtmp1:12M:autoextend:max:2G
+
 join_buffer_size = 512K
 
 # http://www.mysqlperformanceblog.com/2007/11/03/choosing-innodb_buffer_pool_size/

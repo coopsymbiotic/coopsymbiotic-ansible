@@ -255,6 +255,11 @@ hooks:
     before_backup:
         - umount /mnt/restore 2>/dev/null || true
         - /usr/local/bin/mysqldump-secure --cron || true
+{% if borgmatic_before_backup is defined %}
+{% for item in borgmatic_before_backup %}
+        - {{ item }}
+{% endfor %}
+{% endif %}
 
 {% if borgmatic_after_backup is defined %}
     after_backup:

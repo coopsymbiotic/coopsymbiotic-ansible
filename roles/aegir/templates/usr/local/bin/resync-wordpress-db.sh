@@ -69,6 +69,11 @@ cat $sqlfile | wp sql cli
 rm $sqlfile
 
 cd $DEST_PLATFORM/sites/$SITE_DEST/
+
+# Clear some caches
+rm -f wp-content/uploads/civicrm/templates_c/Cached*
+
+# Front page
 wp option update home "https://$SITE_DEST"
 wp option update siteurl "https://$SITE_DEST"
 

@@ -56,6 +56,9 @@ sqlfile=`mktemp -p /tmp/ --suffix=.sql`
 if [ "$EXCLUDE_CIVICRM" = "1" ]; then
   cd $SRC_PLATFORM/sites/$SITE_SRC/
   wp db export --exclude_tables="$(wp db tables --all-tables '*civicrm_*' --format=csv)" $sqlfile
+elif [ -n "$EXCLUDE_TABLES" ]; then
+  cd $SRC_PLATFORM/sites/$SITE_SRC/
+  wp db export --exclude_tables="$EXCLUDE_TABLES" $sqlfile
 else
   cd $SRC_PLATFORM/sites/$SITE_SRC/
   wp db export $sqlfile
@@ -86,6 +89,7 @@ if [ -z "$EXCLUDE_CIVICRM" ]; then
   wp cv api Setting.create customFileUploadDir="$DEST_PLATFORM/sites/$SITE_DEST/wp-content/uploads/civicrm/custom/"
   wp cv api Setting.create uploadDir="$DEST_PLATFORM/sites/$SITE_DEST/wp-content/uploads/civicrm/upload"
   wp cv api Extension.refresh
+  wp cv api Extension.upgrade
   wp cv api System.flush
 fi
 

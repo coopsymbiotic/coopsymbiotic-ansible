@@ -88,6 +88,7 @@ if [ -z "$EXCLUDE_CIVICRM" ]; then
   wp cv api Setting.create userFrameworkResourceURL="https://$SITE_DEST/wp-content/plugins/civicrm/civicrm"
   wp cv api Setting.create customFileUploadDir="$DEST_PLATFORM/sites/$SITE_DEST/wp-content/uploads/civicrm/custom/"
   wp cv api Setting.create uploadDir="$DEST_PLATFORM/sites/$SITE_DEST/wp-content/uploads/civicrm/upload"
+  wp cv upgrade-db
   wp cv api Extension.refresh
   wp cv api Extension.upgrade
   wp cv api System.flush
@@ -106,3 +107,7 @@ fi
 # drush $SITE_DEST provision-verify
 
 echo "All done."
+echo ""
+echo "REMINDER: restarting php-fpm is recommended to avoid ClassLoader bugs"
+PHPVER=$(php -r '$v = explode(".", phpversion()); echo "{$v[0]}.{$v[1]}";')
+echo "sudo /bin/systemctl restart php$PHPVER-fpm"

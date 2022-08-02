@@ -420,6 +420,21 @@
     - packages
     - aegir-ansible
 
+- stat:
+    path: /usr/local/coopsymbiotic-ansible/bin/aegir-ansible
+  register: aegir_ansible_link
+  tags:
+    - aegir-ansible-symlink
+
+- name: Delete the old aegir-ansible script
+  file:
+    path: /usr/local/bin/aegir-ansible
+    state: absent
+  when: aegir_ansible_link.stat.isreg is defined and aegir_ansible_link.stat.isreg
+  tags:
+    - aegir-ansible
+    - aegir-ansible-symlink
+
 - name: Symlink the aegir-ansible script
   file:
     src: /usr/local/coopsymbiotic-ansible/bin/aegir-ansible

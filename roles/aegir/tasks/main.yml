@@ -410,13 +410,24 @@
   tags:
     - aegir-hosting-civicrm-ansible
     - aegir-ansible
+    - aegir-ansible-symlink
 
-- apt: name={{ item }} state=present install_recommends=no
+- name: Install Ansible via Debian apt
+  apt: name={{ item }} state=present install_recommends=no
   with_items:
     - ansible
   tags:
     - packages
     - aegir-ansible
+
+- name: Symlink the aegir-ansible script
+  file:
+    src: /usr/local/coopsymbiotic-ansible/bin/aegir-ansible
+    dest: /usr/local/bin/aegir-ansible
+    state: link
+  tags:
+    - aegir-ansible
+    - aegir-ansible-symlink
 
 ##
 ## Deploy hosting_usage

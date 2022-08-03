@@ -1,25 +1,36 @@
 ---
 
-- apt: pkg=apt-transport-https state=installed
+- apt: pkg=apt-transport-https state=present
   tags:
     - docker
     - packages
 
 - name: Get the Docker repo key
-  apt_key: url=https://apt.dockerproject.org/gpg state=present
+  apt_key:
+    url: https://download.docker.com/linux/debian/gpg
+    state: present
+    keyring: /etc/apt/trusted.gpg.d/docker.gpg
   tags:
     - docker
     - packages
 
 - apt_repository:
-    repo='deb https://apt.dockerproject.org/repo debian-{{ ansible_distribution_release }} main'
+    repo='deb https://download.docker.com/linux/debian {{ ansible_distribution_release }} stable'
     state=present
     update_cache=yes
   tags:
     - docker
     - packages
 
-- apt: pkg=docker-engine state=installed
+- apt:
+    name: [
+      "docker-ce",
+      "docker-ce-cli",
+      "containerd.io",
+      "docker-compose-plugin"
+    ]
+    state: latest
+    install_recommends: no
   tags:
-    - docker
     - packages
+    - docker

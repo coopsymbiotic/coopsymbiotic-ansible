@@ -41,12 +41,6 @@
   tags:
     - ufw
 
-- name: Allow Munin to munin servers and monitoring servers
-  ufw: proto=tcp port=4949 rule=allow src="{{ item }}"
-  with_items: "{{ ufw_munin_allow_src }}"
-  tags:
-    - ufw
-
 - name: Allow access to icinga2 5665 from icinga2 servers
   ufw: proto=tcp port=5665 rule=allow src="{{ item }}"
   with_items: "{{ ufw_icinga_allow_src }}"

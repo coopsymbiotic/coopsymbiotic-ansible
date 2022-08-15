@@ -95,6 +95,7 @@
   with_items:
     - jail.d/civicrm.conf
     - filter.d/nginx-civicrm.conf
+    - action.d/ufw.conf
   when: "'aegir_managed' in group_names"
   notify: restart fail2ban
   tags:

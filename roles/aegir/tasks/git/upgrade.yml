@@ -1,4 +1,12 @@
 ---
+
+- name: Truncate hosting_task_log before the upgrade to speed things up
+  shell: "drush @hostmaster sqlq 'truncate hosting_task_log'"
+  become: yes
+  become_user: "{{ aegir_user }}"
+  tags:
+    - aegir-upgrade-hostmaster
+
 - name: Upgrade Aegir front-end.
   shell: "drush @hostmaster --yes hostmaster-migrate {{ aegir_frontend_url }} {{ aegir_root }}/hostmaster/ --debug --working-copy"
   args:
@@ -6,3 +14,5 @@
   become: yes
   become_user: "{{ aegir_user }}"
   register: aegir_upgrade_task_result
+  tags:
+    - aegir-upgrade-hostmaster

@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # Based on check_borg, modified by Symbiotic to use borgmatic
+# requires the 'jq' command
 
 set -o nounset
 set -e
@@ -118,16 +119,19 @@ if [ -z "${sec_last}" ]; then
 	error "unknown error"
 fi
 
+# Check the size of the backup
+backup_size="$(borgmatic info --json | jq '.[].cache.stats.unique_csize')"
+
 # interpret the amount of fails
 if [ "${sec_crit}" -gt "${sec_last}" ]; then
 	state="${STATE_CRITICAL}"
-	msg="BORG CRITICAL, last backup made on ${last}"
+	msg="BORG CRITICAL, last backup made on ${last} | unique_csize=$backup_size;"
 elif [ "${sec_warn}" -gt "${sec_last}" ]; then
 	state="${STATE_WARNING}"
-	msg="BORG WARN, last backup made on ${last}"
+	msg="BORG WARN, last backup made on ${last} | unique_csize=$backup_size;"
 else
 	state="${STATE_OK}"
-	msg="BORG OK, last backup made on ${last}"
+	msg="BORG OK, last backup made on ${last} | unique_csize=$backup_size;"
 fi
 
 echo "${msg}"

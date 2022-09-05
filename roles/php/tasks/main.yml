@@ -1,27 +1,23 @@
 ---
-# Assumes Debian, with MariaDB, Nginx, php-7.x-fpm
+# Assumes Debian/Ubuntu, with MariaDB, Nginx, php-7.x-fpm
 #
-# FIXME: duplicates a lot of things from the 'aegir' role,
-# but we might not want to add a dependency, because the aegir
-# role will probably switch to php7 before this role does.
+# @todo Duplicates a lot of things from the 'aegir' role
+# and no longer a reason to duplicate
+
+- name: Force gathering facts for partial ansible runs
+  setup:
+  tags:
+    - packages
+    - packages-php
+    - php-php
+    - php-settings
 
 - name: Debian | Add Sury.org apt reporitory key
   apt_key:
     url: "https://packages.sury.org/php/apt.gpg"
     state: present
     keyring: /etc/apt/trusted.gpg.d/php.gpg
-  when: (phpversion == 7.2 or phpversion == 7.1) and ansible_distribution == "Debian"
-  tags:
-    - packages
-    - packages-php
-    - php-php
-
-- name: Ubuntu | Add Sury.org apt reporitory key
-  apt_key:
-    url: "https://packages.sury.org/php/apt.gpg"
-    state: present
-    keyring: /etc/apt/trusted.gpg.d/php.gpg
-  when: (phpversion == 7.2 or phpversion == 7.1) and ansible_distribution == "Ubuntu" and ansible_distribution_major_version == "16"
+  when: ansible_distribution == "Debian" or ansible_distribution == "Ubuntu"
   tags:
     - packages
     - packages-php
@@ -32,7 +28,7 @@
     repo: deb https://packages.sury.org/php/ {{ ansible_distribution_release }} main
     state: present
     update_cache: yes
-  when: (phpversion == 7.2 or phpversion == 7.1) and ansible_distribution == "Debian"
+  when: ansible_distribution == "Debian" or ansible_distribution == "Ubuntu"
   tags:
     - packages
     - packages-php
@@ -45,80 +41,75 @@
     - packages-php
     - php-php
 
-# https://github.com/gaspaio/ansible-devbox/blob/master/roles/mysql/tasks/server.yml
-# Install server using a preseed file to set the root password
-- name: Check for previous MySQL installation
-  shell: "[ -f /usr/sbin/mysqld ]"
-  ignore_errors: True
-  register: mysqld_exists
-
-- apt: name={{ item }} state=present install_recommends=no
-  with_items:
-    - pwgen
-
-- name: Generate a root password for MySQL
-  shell: pwgen 15 1 > /root/.mysql.root
-  when: mysqld_exists|failed
-
-- apt:
-    name: "{{ item }}"
-    state: present
-    install_recommends: no
-    default_release: jessie-backports
-  with_items:
-    - nginx
-  when: ansible_distribution_release == "jessie"
-  tags:
-    - packages
-
 - apt: name={{ item }} state=present install_recommends=no
   with_items:
     - curl
     - gettext
-    - "php{{ php_version }}-fpm"
-    - "php{{ php_version }}-gd"
-    - "php{{ php_version }}-cli"
-    - "php{{ php_version }}-curl"
-    - "php{{ php_version }}-intl"
-    - "php{{ php_version }}-json"
-    - "php{{ php_version }}-ldap"
-    - "php{{ php_version }}-mysql"
-    - "php{{ php_version }}-mbstring"
-    - "php{{ php_version }}-soap"
-    - "php{{ php_version }}-zip"
-    - "php{{ php_version }}-xsl"
-    - "php{{ php_version }}-bcmath"
-    - "php{{ php_version }}-imap"
-    - "php-imagick"
   tags:
     - packages
     - packages-php
+    - php-php
+
+- apt:
+    name: [
+      "php{{ phpversion }}",
+      "php{{ phpversion }}-bcmath",
+      "php{{ phpversion }}-gd",
+      "php{{ phpversion }}-cli",
+      "php{{ phpversion }}-curl",
+      "php{{ phpversion }}-intl",
+      "php{{ phpversion }}-json",
+      "php{{ phpversion }}-ldap",
+      "php{{ phpversion }}-mysql",
+      "php{{ phpversion }}-soap",
+      "php{{ phpversion }}-ssh2",
+      "php{{ phpversion }}-zip",
+      "php{{ phpversion }}-xsl",
+      "php{{ phpversion }}-mbstring",
+      "php{{ phpversion }}-zip",
+      "php{{ phpversion }}-imagick"
+    ]
+    state: present
+    install_recommends: no
+  when: phpversion != 8.0
+  tags:
+    - packages
+    - packages-php
+    - php-php
+
+# PHP 8.0 does not have php8.0-json
+- apt:
+    name: [
+      "php{{ phpversion }}",
+      "php{{ phpversion }}-bcmath",
+      "php{{ phpversion }}-gd",
+      "php{{ phpversion }}-cli",
+      "php{{ phpversion }}-curl",
+      "php{{ phpversion }}-intl",
+      "php{{ phpversion }}-ldap",
+      "php{{ phpversion }}-mysql",
+      "php{{ phpversion }}-soap",
+      "php{{ phpversion }}-ssh2",
+      "php{{ phpversion }}-zip",
+      "php{{ phpversion }}-xsl",
+      "php{{ phpversion }}-mbstring",
+      "php{{ phpversion }}-zip",
+      "php{{ phpversion }}-imagick"
+    ]
+    state: present
+    install_recommends: no
+  when: phpversion == 8.0
+  tags:
+    - packages
+    - packages-php
+    - php-php
 
 # A bit off topic, but too often had the issue where mailname was misconfigured
+# @todo Is it relevant in this role? maybe common-all? (probably old copy-paste)
 - copy: content="{{ inventory_hostname }}" dest=/etc/mailname
 - file: path=/etc/mailname owner=root group=root mode=0644
 
-# MariaDB
-- apt_key: keyserver=keyserver.ubuntu.com id=0xF1656F24C74CD1D8
-  tags:
-    - packages
-    - php-mariadb
-
-- apt_repository:
-    repo="deb http://ftp.osuosl.org/pub/mariadb/repo/10.2/debian {{ ansible_distribution_release }} main"
-    update_cache=yes
-    state=present
-  tags:
-    - packages
-    - php-mariadb
-
-- apt: name={{ item }} state=present install_recommends=no
-  with_items:
-    - mariadb-server
-    - mariadb-client
-  tags:
-    - packages
-    - php-mariadb
-
 - include: settings-php.yml
-- include: settings-mysql.yml
+  tags:
+    - php-php
+    - php-settings

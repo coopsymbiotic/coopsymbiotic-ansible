@@ -200,4 +200,8 @@ find /var/aegir/platforms -name 'CiviCRM.mailchimp.*.log.*' -delete
 # Delete logs not modified for more than 60 days
 find /var/aegir/platforms -name 'CiviCRM.*.log*' -mtime +60 -delete
 
+# Purge system logs older than 30 days
+# not too sure what the Debian default is
+journalctl --vacuum-time=30d
+
 exit 0

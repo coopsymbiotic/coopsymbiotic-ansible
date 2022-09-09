@@ -18,6 +18,8 @@
       'python3-ruamel.yaml',
       'borgbackup',
       'xz-utils',
+      # required for the monitoring scripts
+      'jq',
     ]
   when: ansible_distribution == "Debian" or ansible_distribution == "Ubuntu"
   tags:

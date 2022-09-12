@@ -9,3 +9,6 @@ fail2ban_ignoreip: 127.0.0.1/8
 # or in some cases, we whitelist specific IPs
 ufw_ipv4_allow_ssh: true
 ufw_ipv6_allow_ssh: true
+
+# How aggressively to ban
+fail2ban_civicrm_maxretry = 10

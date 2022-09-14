@@ -1,0 +1,22 @@
+---
+
+# Remove gitlab-runner
+# To use it: $ ansible-playbook ./helpers/remove_gitlab.yml 
+
+- hosts: aegir_managed
+  tasks:
+    - apt: pkg=gitlab-runner state=absent
+  become: true
+  become_user: root
+
+- hosts: aegir_managed
+  tasks:
+    - file: path="/etc/apt/sources.list.d/packages_gitlab_com_runner_gitlab_runner_debian.list" state=absent
+  become: true
+  become_user: root
+
+- hosts: aegir_managed
+  tasks:
+    - file: path="/etc/apt/sources.list.d/packages_gitlab_com_runner_gitlab_ci_multi_runner_debian.list" state=absent
+  become: true
+  become_user: root

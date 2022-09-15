@@ -1,0 +1,12 @@
+#!/bin/bash
+
+# Notes:
+# - the first grep excludes duplicate log lines, for older misconfigured servers
+# - the awk adds the vhost into the request column, so that the "top hits" are more useful
+# - we store the file under hostmaster's "private" directory so that hosting_usage controls access
+
+DEST="$(aegir-helpers site-property hostmaster site_path)/private/files/goaccess-report.html"
+
+grep '^"' /var/log/nginx/access.log | awk '$6=$2" "$6 ' | goaccess - --no-parsing-spinner --ignore-panel=VISITORS --http-protocol=no --log-format='"%h" %v %^[%d:%t %^] "%r" %s %b %^ %^ "%R" "%u" %T %^' --date-format='%d/%b/%Y' --time-format='%T' -o "$DEST" - 2>&1
+
+chown aegir.aegir "$DEST"

@@ -10,6 +10,7 @@
     - packages-php
     - aegir-php
     - aegir-install
+    - aegir-goaccess
     - packages-php-gpg
 
 - include_vars: "{{ ansible_distribution }}_{{ ansible_distribution_major_version }}.yml"
@@ -240,6 +241,7 @@
     - aegir-helper-scripts
     - aegir-ansible
     - aegir-install
+    - aegir-goaccess
 
 - name: Install composer
   include: composer.yml
@@ -306,6 +308,7 @@
     - aegir-hosting-wordpress
     - aegir-ansible
     - aegir-fixownership
+    - aegir-goaccess
 
 # Unless we check if it's already a git repo, in most cases it's static
 # since it has been updated by the aegir3 debian packages.
@@ -457,6 +460,7 @@
   ignore_errors: yes
   tags:
     - aegir-hosting-usage
+    - aegir-goaccess
 
 ##
 ## Required so that our ansible scripts can access the server's site inventory
@@ -848,3 +852,7 @@
 - include: cleanuptmp.yml
   tags:
     - aegir-cleanuptmp
+
+- include: goaccess.yml
+  tags:
+    - aegir-goaccess

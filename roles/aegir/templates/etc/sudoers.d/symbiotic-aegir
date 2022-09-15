@@ -17,6 +17,7 @@ aegir ALL=NOPASSWD: /usr/local/bin/aegir-ansible
 aegir ALL=NOPASSWD: /usr/local/bin/fix-wordpress-permissions.sh
 aegir ALL=NOPASSWD: /usr/local/bin/aegir-db-filestats
 www-data ALL=NOPASSWD: /usr/local/bin/aegir-db-filestats
+www-data ALL=NOPASSWD: /usr/local/bin/goaccess-aegir
 # @todo Implement/Replace with aegir-helpers?
 aegir ALL=NOPASSWD: /root/bin/gandi-dns-new-record.sh
 aegir ALL=NOPASSWD: /root/bin/gandi-dns-delete-record.sh

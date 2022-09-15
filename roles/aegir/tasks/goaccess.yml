@@ -1,0 +1,43 @@
+# We use a combination of goaccess (https://goaccess.io), and hosting_usage
+# to generate HTML graphs that admins with access to Aegir can view.
+#
+# hosting_access will invoke a shell wrapper using sudo, which then calls
+# goaccess to parse the access.log, providing live stats. It can be useful
+# to see the most active vhosts and the most active IPs (bad bots).
+
+- name: Debian | Add goaccess upstream apt repo gpg key
+  apt_key:
+    url: "https://deb.goaccess.io/gnugpg.key"
+    state: present
+    keyring: /etc/apt/trusted.gpg.d/goaccess.gpg
+  when: ansible_distribution == "Debian" or ansible_distribution == "Ubuntu"
+
+- name: Debian | Add goaccess upstream apt repo
+  apt_repository:
+    repo: deb [signed-by=/etc/apt/trusted.gpg.d/goaccess.gpg] https://deb.goaccess.io/ {{ ansible_distribution_release }} main
+    filename: goaccess.list
+    state: present
+    update_cache: yes
+  when: ansible_distribution == "Debian" or ansible_distribution == "Ubuntu"
+
+- name: Debian | Install the goaccess package
+  apt: name=goaccess state=present install_recommends=no
+  when: ansible_distribution == "Debian" or ansible_distribution == "Ubuntu"
+
+- name: Deploy our helper to generate goaccess stats
+  template: src=usr/local/bin/goaccess-aegir dest=/usr/local/bin/goaccess-aegir owner=root group=root mode=0755
+
+# Use of async/poll is to avoid ansible sometimes getting stuck running shell commands
+- name: Make sure that hosting_usage is enabled
+  become: true
+  become_user: aegir
+  shell: "drush @hostmaster en hosting_usage -y"
+  async: 60
+  poll: 5
+
+- name: Flush Hostmaster cache in case hosting_usage was updated and partial ansible run
+  become: true
+  become_user: aegir
+  shell: "drush @hostmaster cc all"
+  async: 60
+  poll: 5

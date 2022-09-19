@@ -7,4 +7,8 @@ Wants=zfs-zxfer-{{ partition | replace('/', '') }}.timer
 [Service]
 User=root
 ExecStartPre=/usr/local/bin/zfs-auto-snapshot --label=hourly --prefix={{ partition | replace('/', '') }}-auto --keep={{ zfs_zxfer_keep }} {{ partition }}
+{% if zfs_zxfer_ssh is defined and zfs_pool_dst is defined %}
 ExecStart=/usr/local/bin/zxfer -dFv -g 2 {% if zfs_zxfer_ssh is defined %}-T {{ zfs_zxfer_ssh }} {% endif %}-N {{ partition }} {{ zfs_pool_dst }}
+{% else %}
+ExecStart=echo "Not running zxfer because no zfs_zxfer_ssh or zfs_pool_dst is defined (local snapshots only)"
+{% endif %}

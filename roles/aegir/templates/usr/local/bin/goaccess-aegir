@@ -9,4 +9,5 @@ DEST="$(aegir-helpers site-property hostmaster site_path)/private/files/goaccess
 
 grep '^"' /var/log/nginx/access.log | awk '$6=$2" "$6 ' | goaccess - --no-parsing-spinner --ignore-panel=VISITORS --http-protocol=no --log-format='"%h" %v %^[%d:%t %^] "%r" %s %b %^ %^ "%R" "%u" %T %^' --date-format='%d/%b/%Y' --time-format='%T' -o "$DEST" - 2>&1
 
-chown aegir.aegir "$DEST"
+chown aegir.www-data "$DEST"
+chmod 0644 "$DEST"

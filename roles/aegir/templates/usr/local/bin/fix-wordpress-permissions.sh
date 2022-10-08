@@ -44,6 +44,15 @@ fi
 
 cd $site_path
 
+# Fix the main site directory
+chown aegir.www-data $site_path
+chmod 0770 $site_path
+chmod g+s $site_path
+
+# wp-config.php might not exist, ignore errors
+chown aegir.www-data wp-config.php || true
+chmod 0750 wp-config.php || true
+
 # Relax permissions on wp-content, so that www-data can write in it
 # For example, WordFence requires this in order to create wp-content/wflogs
 chown aegir.www-data wp-content

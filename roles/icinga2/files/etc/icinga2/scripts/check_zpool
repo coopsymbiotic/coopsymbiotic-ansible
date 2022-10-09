@@ -9,5 +9,5 @@ if [ $status -eq 0 ]; then
   exit 0
 else
   echo "ZFS CRITICAL - Verify zpool status"
-  exit 3
+  exit 2
 fi

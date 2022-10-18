@@ -1,5 +1,7 @@
 ---
 
+# todo: deploy ssh keys for when the zxfer is done remotely
+
 - name: zxfer | Deploy helper shell scripts
   template:
     src="{{ item }}"

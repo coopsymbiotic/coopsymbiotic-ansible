@@ -3,7 +3,7 @@
 # Fix drush on Aegir and re-run the upgrade
 # To use it: $ ansible-playbook ./hacks/fix_icinga2_aegir.yml 
 
-- hosts: aegir-managed
+- hosts: aegir_managed
   tasks:
     - name: Download provision_symbiotic from Github
       git: repo=https://github.com/coopsymbiotic/provision_symbiotic.git

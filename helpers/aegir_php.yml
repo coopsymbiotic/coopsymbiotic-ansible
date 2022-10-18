@@ -1,0 +1,17 @@
+---
+
+# To use it: $ ansible-playbook ./helpers/aegir_php.yml
+
+- hosts: all
+  tasks:
+    - shell: drush @server_master provision-verify
+      become: true
+      become_user: aegir
+    - shell: drush @hm provision-verify
+      become: true
+      become_user: aegir
+    - shell: apt-get remove -y --purge php8.1-cli php8.0-cli php7.4-cli
+      when: phpversion == 7.4
+    - shell: systemctl restart hosting-queued
+  become: true
+  become_user: root

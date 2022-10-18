@@ -1,0 +1,23 @@
+---
+
+# To use it: $ ansible-playbook ./helpers/fix_php.yml
+
+- hosts: all
+  tasks:
+    - shell: apt update
+      ignore_errors: True
+    - shell: yes n | apt upgrade
+      ignore_errors: True
+    - shell: apt-get remove -y --purge php8.1-cli php8.0-cli
+      when: phpversion == 7.4
+      ignore_errors: True
+    - shell: apt-get remove -y --purge php8.1-cli php8.0-cli php7.4-cli
+      when: phpversion == 7.3
+      ignore_errors: True
+    - shell: apt-get remove -y --purge php8.1-cli php8.0-cli php7.4-cli php7.3-cli
+      when: phpversion == 7.2
+      ignore_errors: True
+    - shell: /etc/init.d/hosting-queued restart
+      ignore_errors: True
+  become: true
+  become_user: root

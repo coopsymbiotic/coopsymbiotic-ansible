@@ -6,9 +6,23 @@
 - hosts: all
   tasks:
     - shell: apt update
-    - shell: yes n | dpkg --configure -a
       ignore_errors: True
+      async: 60
+      poll: 5
+    - shell: yes n | apt upgrade
+      ignore_errors: True
+      async: 60
+      poll: 5
+    - shell: dpkg --configure -a
+      ignore_errors: True
+      async: 60
+      poll: 5
     - shell: apt -f install -y
       ignore_errors: True
+      async: 60
+      poll: 5
+    - shell: apt upgrade -y
+      async: 60
+      poll: 5
   become: true
   become_user: root

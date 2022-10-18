@@ -9,10 +9,11 @@
     - civicrm-sites-wordpress
     - civicrm-sites-cron-wpcivicrm
 
-- include: cron-d7civicrm.yml
+- include: drupal.yml
   when: cms == "drupal"
   tags:
-    - civicrm-sites-cron-d7civicrm
+    - civicrm-sites-drupal
+    - civicrm-sites-cron-drupal
 
 - include: cron-extra.yml
   tags:

@@ -1,0 +1,31 @@
+---
+
+- name: Drupal | Clear annoying drush cache to avoid errors
+  become_user: aegir
+  shell:
+    chdir: "{{ site_path }}"
+    cmd: drush cc drush
+
+- name: Drupal | Run civicrm database upgrades
+  become_user: aegir
+  shell:
+    chdir: "{{ site_path }}"
+    cmd: drush civicrm-upgrade-db
+
+- name: Drupal | Update logging schema as a precaution after upgrades
+  become_user: aegir
+  shell:
+    chdir: "{{ site_path }}"
+    cmd: drush cvapi symbiotic.fixschemalog
+  ignore_errors: yes
+
+- name: Drupal | Run civicrm extension database upgrades
+  become_user: aegir
+  shell:
+    chdir: "{{ site_path }}"
+    cmd: drush cvapi Extension.upgrade
+
+- include: drupal-civicrm-cron.yml
+  when: "'civicrm_sites' in group_names"
+  tags:
+    - civicrm-sites-cron-drupal

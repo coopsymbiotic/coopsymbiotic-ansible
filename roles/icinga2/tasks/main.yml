@@ -6,30 +6,12 @@
     - packages
     - icinga2
 
-- name: Get Icinga Apt Key for IPv6
-  apt_key:
-    url="https://packages6.icinga.com/icinga.key"
-    state=present
-  when: preseed_ipv4_address is not defined
-  tags:
-    - packages
-    - icinga2
-
+# Not accessible on ipv6-only hosts, so in those situations we use the standard Debian packages
 - name: Get Icinga Apt Key
   apt_key:
     url="https://packages.icinga.com/icinga.key"
     state=present
   when: preseed_ipv4_address is defined
-  tags:
-    - packages
-    - icinga2
-
-- name: Configure Icinga Apt IPv6-only Repo
-  apt_repository:
-    repo="deb https://packages6.icinga.com/{{ ansible_distribution|lower }} icinga-{{ ansible_distribution_release }} main"
-    update_cache=yes
-    state=present
-  when: preseed_ipv4_address is not defined
   tags:
     - packages
     - icinga2

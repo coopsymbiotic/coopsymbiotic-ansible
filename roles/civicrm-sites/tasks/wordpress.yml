@@ -54,16 +54,26 @@
     chdir: "{{ site_path }}"
     cmd: wp cache flush
 
-# TODO (maybe not as-is, especially where we can set relative paths)
-# drush @$SITE_DEST wp cv api Setting.create extensionsDir="$DEST_PLATFORM/sites/$SITE_DEST/wp-content/plugins/extensions/"
-# drush @$SITE_DEST wp cv api Setting.create extensionsURL="https://$SITE_DEST/sites/$SITE_DEST/wp-content/plugins/extensions/"
-# drush @$SITE_DEST wp cv api Setting.create imageUploadURL="https://$SITE_DEST/sites/$SITE_DEST/wp-content/uploads/civicrm/persist/contribute"
-# drush @$SITE_DEST wp cv api Setting.create imageUploadDir="$DEST_PLATFORM/sites/$SITE_DEST/wp-content/uploads/civicrm/persist/contribute/"
-# drush @$SITE_DEST wp cv api Setting.create userFrameworkResourceURL="https://$SITE_DEST/wp-content/plugins/civicrm/civicrm"
-# drush @$SITE_DEST wp cv api Setting.create customFileUploadDir="$DEST_PLATFORM/sites/$SITE_DEST/wp-content/uploads/civicrm/custom/"
-# drush @$SITE_DEST wp cv api Setting.create uploadDir="$DEST_PLATFORM/sites/$SITE_DEST/wp-content/uploads/civicrm/upload"
-# drush @$SITE_DEST wp cv api Extension.refresh
-# drush @$SITE_DEST wp cv api System.flush
+- name: WordPress | Run civicrm database upgrades
+  become_user: aegir
+  shell:
+    chdir: "{{ site_path }}"
+    cmd: wp civicrm upgrade-db
+
+- name: WordPress | Update logging schema as a precaution after upgrades
+  become_user: aegir
+  shell:
+    chdir: "{{ site_path }}"
+    cmd: wp civicrm api symbiotic.fixschemalog
+  ignore_errors: yes
+
+# @todo Check if upgrades are necessary, to avoid using ignore_errors:yes
+- name: WordPress | Run civicrm extension database upgrades
+  become_user: aegir
+  shell:
+    chdir: "{{ site_path }}"
+    cmd: wp civicrm api Extension.upgrade
+  ignore_errors: yes
 
 - include: wordpress-civicrm-cron.yml
   when: "'civicrm_sites' in group_names"

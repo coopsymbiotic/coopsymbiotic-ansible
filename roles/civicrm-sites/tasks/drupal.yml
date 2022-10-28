@@ -12,7 +12,7 @@
   become_user: aegir
   shell:
     chdir: "{{ site_path }}"
-    cmd: "drush @encatcknowledgehub.civi-go.net php-eval \"\\Drupal::service('civicrm')->initialize(); echo CRM_Core_BAO_Domain::isDBUpdateRequired() ? \"yes\" : \"no\";\""
+    cmd: "drush @{{ inventory_hostname }} php-eval \"if (function_exists('civicrm_initialize')) { civicrm_initialize(); } else { \\Drupal::service('civicrm')->initialize(); } echo CRM_Core_BAO_Domain::isDBUpdateRequired() ? \"yes\" : \"no\";\""
   register: civiupdb
 
 - name: Drupal | Run civicrm database upgrades

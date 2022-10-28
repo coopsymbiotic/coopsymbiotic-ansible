@@ -6,11 +6,21 @@
     chdir: "{{ site_path }}"
     cmd: drush cc drush
 
+# The BAO function was added in 2020, not sure to which version that correspond exactly
+# We could use a provision_symbiotic call instead, but more moving code
+- name: Drupal | Check if a CiviCRM database upgrade is required
+  become_user: aegir
+  shell:
+    chdir: "{{ site_path }}"
+    cmd: "drush @encatcknowledgehub.civi-go.net php-eval \"\\Drupal::service('civicrm')->initialize(); echo CRM_Core_BAO_Domain::isDBUpdateRequired() ? \"yes\" : \"no\";\""
+  register: civiupdb
+
 - name: Drupal | Run civicrm database upgrades
   become_user: aegir
   shell:
     chdir: "{{ site_path }}"
     cmd: drush civicrm-upgrade-db
+  when: civiupdb.stdout == "yes"
 
 - name: Drupal | Update logging schema as a precaution after upgrades
   become_user: aegir

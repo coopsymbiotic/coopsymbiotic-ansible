@@ -54,11 +54,21 @@
     chdir: "{{ site_path }}"
     cmd: wp cache flush
 
+# The BAO function was added in 2020, not sure to which version that correspond exactly
+# We could use a provision_symbiotic call instead, but more moving code
+- name: WordPress | Check if a CiviCRM database upgrade is required
+  become_user: aegir
+  shell:
+    chdir: "{{ site_path }}"
+    cmd: "wp eval \"civicrm_initialize(); echo CRM_Core_BAO_Domain::isDBUpdateRequired() ? \"yes\" : \"no\";\""
+  register: civiupdb
+
 - name: WordPress | Run civicrm database upgrades
   become_user: aegir
   shell:
     chdir: "{{ site_path }}"
     cmd: wp civicrm upgrade-db
+  when: civiupdb.stdout == "yes"
 
 - name: WordPress | Update logging schema as a precaution after upgrades
   become_user: aegir

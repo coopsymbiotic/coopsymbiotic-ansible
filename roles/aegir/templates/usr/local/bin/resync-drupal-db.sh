@@ -19,6 +19,7 @@ fi
 
 DEV_PLATFORM="${DEV_PLATFORM:=/var/aegir/platforms/civicrm-d8}"
 PROD_PLATFORM="${PROD_PLATFORM:=/var/aegir/platforms/civicrm-d8}"
+SKIP_TABLES="${SKIP_TABLES:=watchdog,civicrm_log,civicrm_mailing_recipients,civicrm_mailing_event_bounce,civicrm_mailing_event_confirm civicrm_mailing_event_delivered civicrm_mailing_event_forward civicrm_mailing_event_opened civicrm_mailing_event_queue civicrm_mailing_event_reply civicrm_mailing_event_subscribe civicrm_mailing_event_trackable_url_open civicrm_mailing_event_unsubscribe}"
 
 if [ ! -f "$PROD_PLATFORM/sites/$SITE_SRC/settings.php" ]; then
   echo "Prod: $PROD_PLATFORM/sites/$SITE_SRC is not a valid Drupal directory"
@@ -43,19 +44,12 @@ cd /tmp/
 
 sqlfile=`mktemp --suffix=.sql`
 
-drush $SITE_SRC sql-dump > $sqlfile
+drush $SITE_SRC sql-dump --skip-tables-list $SKIP_TABLES > $sqlfile
 perl -pi -e 's#\/\*\!5001[7|3].*?`[^\*]*\*\/##g' $sqlfile
 
 cat $sqlfile | drush $SITE_DEST sqlc
 
 rm $sqlfile
-
-# Set an image so that users notice the difference between prod and formation.
-DATE=`date +%Y-%m-%d`
-SITE="** DEV **"
-wget -O $DEV_PLATFORM/sites/${SITE_DEST:1}/files/symbiotic-dev-version-tmp.jpg  "http://lorempixel.com/mono/640/280/food"
-convert -pointsize 80 -fill '#0099FF' -stroke black -strokewidth 2  -annotate +15+100 "$SITE\n$DATE" $DEV_PLATFORM/sites/${SITE_DEST:1}/files/symbiotic-dev-version-tmp.jpg $DEV_PLATFORM/sites/${SITE_DEST:1}/files/symbiotic-dev-version.jpg
-rm $DEV_PLATFORM/sites/${SITE_DEST:1}/files/symbiotic-dev-version-tmp.jpg
 
 # Verify takes care of detecting that it's a dev site and updating the environment
 # and other settings.

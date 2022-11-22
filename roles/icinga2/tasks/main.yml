@@ -37,13 +37,11 @@
     - icinga2
 
 - include: main-conf-host.yml
-  when: "'icinga_servers' not in group_names"
   tags:
     - never
     - icinga2-conf-host
 
 - include: main-conf-host-local.yml
-  when: "'icinga_servers' in group_names"
   tags:
     - never
     - icinga2-conf-host-local

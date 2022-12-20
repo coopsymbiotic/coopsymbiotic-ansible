@@ -223,7 +223,6 @@
     - pt_PT.UTF-8
     - sk_SK.UTF-8
     - sq_AL.UTF-8
-    - sr_RS.utf8@latin
   tags:
     - aegir
     - aegir-locales

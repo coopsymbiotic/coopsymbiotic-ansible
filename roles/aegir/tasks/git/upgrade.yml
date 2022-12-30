@@ -7,6 +7,13 @@
   tags:
     - aegir-upgrade-hostmaster
 
+- name: Force a drush cache flush because it can easily fail
+  shell: "rm -fr /var/aegir/.drush/cache"
+  become: yes
+  become_user: "{{ aegir_user }}"
+  tags:
+    - aegir-upgrade-hostmaster
+
 - name: Upgrade Aegir front-end.
   shell: "drush @hostmaster --yes hostmaster-migrate {{ aegir_frontend_url }} {{ aegir_root }}/hostmaster/ --debug --working-copy"
   args:

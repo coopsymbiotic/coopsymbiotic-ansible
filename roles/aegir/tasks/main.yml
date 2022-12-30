@@ -310,6 +310,7 @@
 - name: Delete the old hosting_civicrm directory
   file: path="{{ hostmaster_root.stdout }}/profiles/hostmaster/modules/aegir/hosting_civicrm" state=absent
   tags:
+    - aegir-hosting-civicrm
     - aegir-ansible
 
 - name: Deploy latest hosting_civicrm from Git

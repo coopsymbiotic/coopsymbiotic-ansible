@@ -5,9 +5,6 @@
   become: yes
   become_user: root
 
-- debug:
-    msg: Perform fix_ownership tasks.
-
 - name: Run the install script.
   shell: "/bin/bash {{ aegir_root }}/hostmaster/profiles/hostmaster/modules/aegir/hosting_tasks_extra/fix_ownership/scripts/install.sh"
   args:

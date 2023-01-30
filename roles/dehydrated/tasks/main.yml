@@ -1,5 +1,14 @@
 ---
 
+- name: Install bsdextrautils for hexdump
+  apt:
+    name: "bsdextrautils"
+    state: present
+    install_recommends: no
+  tags:
+    - dehydrated
+    - packages
+
 - name: Clone dehydrated repo into configured directory.
   git:
     repo: "https://github.com/lukas2511/dehydrated.git"

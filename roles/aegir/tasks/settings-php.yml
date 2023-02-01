@@ -73,3 +73,13 @@
   tags:
     - aegir-php
     - aegir-php-fpm
+
+- name: Deploy our php-fpm systemd overrides
+  template:
+    src=etc/systemd/system/php{{ phpversion }}-fpm.service.d/symbiotic.conf
+    dest=/etc/systemd/system/php{{ phpversion }}-fpm.service.d/symbiotic.conf
+    owner=root group=root mode=0644
+  notify: reload systemd
+  tags:
+    - aegir-php
+    - aegir-php-fpm

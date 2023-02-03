@@ -7,7 +7,6 @@
   args:
     chdir: /tmp
     creates: /tmp/composer.phar
-    warn: false
   become: yes
 
 - name: Add Composer to global path

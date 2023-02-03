@@ -14,6 +14,9 @@ location:
         - /home
         - /usr/local
         - /var
+{% if mysqlbackup_backupdir != "/var/backups/mysql" %}
+        - {{ mysqlbackup_backupdir }}
+{% endif %}
 {% if borgmatic_includes is defined %}
         # Includes specific to this host
 {% for item in borgmatic_includes %}

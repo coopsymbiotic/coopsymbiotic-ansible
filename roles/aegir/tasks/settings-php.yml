@@ -74,6 +74,17 @@
     - aegir-php
     - aegir-php-fpm
 
+- name: Make sure systemd fpm override directory exists
+  file:
+    path="/etc/systemd/system/php{{ phpversion }}-fpm.service.d"
+    state=directory
+    owner="root"
+    group="root"
+    mode=0755
+  tags:
+    - aegir-php
+    - aegir-php-fpm
+
 - name: Deploy our php-fpm systemd overrides
   template:
     src=etc/systemd/system/php{{ phpversion }}-fpm.service.d/symbiotic.conf

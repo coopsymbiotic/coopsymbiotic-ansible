@@ -241,6 +241,7 @@
 - name: Install composer
   include: composer.yml
   tags:
+    - aegir-install
     - aegir-composer
 
 - name: Install Aegir using git

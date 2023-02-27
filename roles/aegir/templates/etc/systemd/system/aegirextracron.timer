@@ -11,7 +11,6 @@ OnCalendar="{{ item.value.on_calendar }}
 {% endif %}
 {% if item.value.on_unit_inactive_sec is defined %}
 OnUnitInactiveSec={{ item.value.on_unit_inactive_sec }}
-OnBootActiveSec=10m
 {% endif %}
 {% if item.value.randomized_delay_sec is defined %}
 RandomizedDelaySec={{ item.value.randomized_delay_sec }}

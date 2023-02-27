@@ -1,0 +1,10 @@
+# {{ ansible_managed }}
+
+[Unit]
+Description="{{ item.value.description }}"
+Documentation="https://github.com/coopsymbiotic/coopsymbiotic-ansible/tree/master/roles/aegir"
+Wants=aegir_extra_{{ item.key }}.timer
+
+[Service]
+User={{ item.value.user }}
+ExecStart={{ item.value.exec }}

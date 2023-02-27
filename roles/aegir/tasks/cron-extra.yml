@@ -1,0 +1,33 @@
+---
+
+# Setup extra crons
+
+- template:
+    src="etc/systemd/system/aegirextracron.service"
+    dest="/etc/systemd/system/aegir_extra_{{ item.key }}.service"
+    owner=root
+    group=root
+    mode=0644
+  with_dict: "{{ aegir_extra_crons | default({}) }}"
+  notify: reload systemd
+
+##replace civi by aegir
+- template:
+    src="etc/systemd/system/aegirextracron.timer"
+    dest="/etc/systemd/system/aegir_extra_{{ item.key }}.timer"
+    owner=root
+    group=root
+    mode=0644
+  with_dict: "{{ aegir_extra_crons | default({}) }}"
+  notify: reload systemd
+
+# Not necessary?
+# - systemd:
+#     name: "civicrm_{{ item.key }}_{{ inventory_hostname_short }}.service"
+#     enabled: yes
+#   with_dict: "{{ civicrm_sites_extra_crons | default({}) }}"
+
+- systemd:
+    name: "aegir_extra_{{ item.key }}.timer"
+    enabled: yes
+  with_dict: "{{ aegir_extra_crons | default({}) }}"

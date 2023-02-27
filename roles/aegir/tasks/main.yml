@@ -850,6 +850,10 @@
   tags:
     - aegir-cleanuptmp
 
+- include: cron-extra.yml
+  tags:
+    - aegir-cron-extra
+
 - include: goaccess.yml
   tags:
     - aegir-goaccess

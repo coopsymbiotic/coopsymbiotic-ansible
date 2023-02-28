@@ -7,4 +7,7 @@ Wants=aegir_extra_{{ item.key }}.timer
 
 [Service]
 User={{ item.value.user }}
+{% if item.value.exec_pre is defined %}
+ExecStartPre={{ item.value.exec_pre }}
+{% endif %}
 ExecStart={{ item.value.exec }}

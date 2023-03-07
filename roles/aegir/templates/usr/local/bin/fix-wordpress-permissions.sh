@@ -16,7 +16,7 @@ HELP
 exit 0
 }
 
-site_path=${1%/}
+site_path=`pwd`
 
 # Parse Command Line Arguments
 while [ "$#" -gt 0 ]; do

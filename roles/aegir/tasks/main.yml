@@ -384,6 +384,7 @@
   ignore_errors: yes
   tags:
     - aegir-hosting-civicrm-ansible
+    - aegir-hosting-civicrm
     - aegir-ansible
 
 - name: Deploy latest aegir_ansible from Git
@@ -396,6 +397,7 @@
   ignore_errors: yes
   tags:
     - aegir-hosting-civicrm-ansible
+    - aegir-hosting-civicrm
     - aegir-ansible
 
 # This is perhaps a bit weird and overkill, but for now everything is in the
@@ -409,6 +411,7 @@
   ignore_errors: yes
   tags:
     - aegir-hosting-civicrm-ansible
+    - aegir-hosting-civicrm
     - aegir-ansible
     - aegir-ansible-symlink
 
@@ -424,7 +427,8 @@
     path: /usr/local/coopsymbiotic-ansible/bin/aegir-ansible
   register: aegir_ansible_link
   tags:
-    - aegir-ansible-symlink
+    - aegir-ansible
+    - aegir-hosting-civicrm
 
 - name: Delete the old aegir-ansible script
   file:
@@ -433,7 +437,7 @@
   when: aegir_ansible_link.stat.isreg is defined and aegir_ansible_link.stat.isreg
   tags:
     - aegir-ansible
-    - aegir-ansible-symlink
+    - aegir-hosting-civicrm
 
 - name: Symlink the aegir-ansible script
   file:
@@ -442,7 +446,7 @@
     state: link
   tags:
     - aegir-ansible
-    - aegir-ansible-symlink
+    - aegir-hosting-civicrm
 
 ##
 ## Deploy hosting_usage

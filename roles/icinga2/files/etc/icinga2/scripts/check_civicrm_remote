@@ -1,0 +1,78 @@
+#!/usr/bin/php
+<?php
+
+$url = trim($argv[1]); 
+$site_key = trim($argv[2]); 
+
+$context = stream_context_create([
+  'http' => [
+    'method'  => 'POST',
+    'content' => 'key=' . $site_key,
+    'header' => 'Content-Type: application/x-www-form-urlencoded',
+    // @todo Authorization: ..
+  ],
+]);
+
+$output = file_get_contents($url, false, $context);
+
+if (!$output) {
+  echo 'Output was empty';
+  exit(3);
+}
+
+$results = json_decode($output);
+
+$check_status = 0;
+$check_descriptions = [];
+$upgrade_status = 1;
+$version = 0;
+
+foreach ($results as $val) {
+  if ($val->name == 'checkVersion_upgrade') {
+    $upgrade_status = $upgrade_status_options[$val->severity_id];
+  }
+
+  // Issue was acknowledged (hidden from the Status Check UI).
+  if (!$val->is_visible) {
+    continue;
+  }
+
+  // Ignore extension updates
+  if ($val->title == 'Extension Update Available') {
+    continue;
+  }
+  elseif ($val->title == 'Actualização de Extensão Disponível') {
+    continue;
+  }
+  elseif ($val->title == 'actualización de extensión disponible') {
+    continue;
+  }
+
+  // Currently we only return warnings and above, so we can ignore this check
+  // if (in_array($val->severity_id, ['warning', 'error', 'alert', 'critical'])) {
+    // We don't want to downgrade an 'error' status to 'warning'.
+    if ($check_status == 0) {
+      $check_status = 1;
+    }
+
+    $check_descriptions[] = $val->title;
+  // }
+
+  // Warning = 3
+  if ($val->severity_id > 3) {
+    $check_status = 2;
+  }
+}
+
+$metrics = "upgrade=$upgrade_status; civiver=$version";
+
+if ($check_status == 0) {
+  echo "OK | $metrics";
+  exit(0);
+}
+else {
+  echo implode(' ', $check_descriptions) . " | $metrics";
+  exit($check_status);
+}
+
+exit(2);

@@ -61,7 +61,7 @@
     dest: "/home/{{ item.name }}/pw.txt"
     owner: "{{ item.name }}"
     mode: '0600'
-    force: "no"
+    force: false
   with_items:
     - "{{ password_dict }}"
   tags:

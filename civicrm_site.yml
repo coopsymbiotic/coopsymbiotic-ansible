@@ -1,0 +1,12 @@
+---
+
+- hosts: civicrm_sites
+  become: yes
+  roles:
+    - civicrm-sites
+
+# Temporary until we fix hosting_wordpress or hosting_civicrm_ansible
+- hosts: wordpress_sites
+  become: yes
+  roles:
+    - civicrm-sites

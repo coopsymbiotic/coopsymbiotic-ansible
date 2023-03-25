@@ -33,8 +33,10 @@ else {
   $hostname =  strtolower(gethostbyaddr(gethostbyname(php_uname('n'))));
 }
 
+$query_args = getenv('AEGIR_INVENTORY_ARGS');
+
 // Get JSON from an Aegir server.
-$contents = file_get_contents("https://{$hostname}/inventory");
+$contents = file_get_contents("https://{$hostname}/inventory{$query_args}");
 if ($contents) {
   print $contents;
   exit(0);

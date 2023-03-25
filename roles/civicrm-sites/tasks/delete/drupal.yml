@@ -1,0 +1,9 @@
+---
+
+- name: Run fix permissions
+  shell:
+    chdir: "{{ site_path }}"
+    cmd: "/usr/local/bin/fix-drupal-site-permissions.sh --site-path='{{ site_path }}'"
+
+- include: drupal-civicrm-cron.yml
+  when: "'civicrm_sites' in group_names"

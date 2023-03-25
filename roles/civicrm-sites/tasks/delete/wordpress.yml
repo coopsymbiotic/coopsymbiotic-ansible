@@ -1,0 +1,4 @@
+---
+
+- include: delete/wordpress-civicrm-cron.yml
+  when: "'civicrm_sites' in group_names"

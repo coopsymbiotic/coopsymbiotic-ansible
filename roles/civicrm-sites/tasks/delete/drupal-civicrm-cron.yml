@@ -1,0 +1,9 @@
+---
+
+- name: systemd | Remove the Drupal7 CiviCRM Cron service
+  file: path="/etc/systemd/system/d7civicron_{{ site_shortname }}.service" state=absent
+  notify: reload systemd
+
+- name: systemd | Remove the Drupal7 CiviCRM Cron timer
+  file: path="/etc/systemd/system/d7civicron_{{ site_shortname }}.timer" state=absent
+  notify: reload systemd

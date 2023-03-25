@@ -3,27 +3,22 @@
 # Provides helpers for CiviCRM sites.
 # Eventually it might replace Aegir.
 
-- include: wordpress.yml
-  when: cms == "wordpress"
+# For now, install and verify are the same (setup crons, etc)
+- name: Include tasks for verify.yml
+  import_tasks: verify.yml
   tags:
-    - civicrm-sites-wordpress
-    - civicrm-sites-cron-wpcivicrm
+    - never
+    - civicrm-sites-install
+    - civicrm-sites-verify
 
-- include: drupal.yml
-  when: cms == "drupal"
+# same with disable and delete (remove crons)
+- name: Include tasks for delete.yml
+  import_tasks: delete.yml
   tags:
-    - civicrm-sites-drupal
-    - civicrm-sites-cron-drupal
+    - never
+    - civicrm-sites-disable
+    - civicrm-sites-delete
 
-- include: cron-extra.yml
-  tags:
-    - civicrm-sites-cron-extra
-
-- include: sftp.yml
-  when: civicrm_ansible_sftpchroot_keys is defined and civicrm_ansible_sftpchroot_keys
-  tags:
-    - civicrm-sites-sftp
-
-- include: monitoring.yml
+- import_tasks: monitoring.yml
   tags:
     - civicrm-sites-monitoring

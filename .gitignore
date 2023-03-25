@@ -1,3 +1,2 @@
-site.retry
-setup.retry
+*.retry
 *.swp

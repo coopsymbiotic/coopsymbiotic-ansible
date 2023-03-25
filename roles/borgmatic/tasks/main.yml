@@ -142,7 +142,10 @@
 
 - name: borgmatic | Add the public ssh key to backup account on the backup server
   delegate_to: "{{ borgmatic_backupserver }}"
-  authorized_key: user="backups-{{ inventory_hostname_short }}" key="{{root_pub_key.stdout}}"
+  authorized_key:
+    user: "backups-{{ inventory_hostname_short }}"
+    key: "{{root_pub_key.stdout}}"
+    key_options: "command=\"borg serve --restrict-to-path /backup/{{ inventory_hostname }}/borg/\",no-pty,no-agent-forwarding,no-port-forwarding,no-X11-forwarding,no-user-rc"
   tags:
     - borgmatic
     - borgmatic-ssh

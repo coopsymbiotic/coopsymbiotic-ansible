@@ -1,10 +1,6 @@
 # {{ ansible_managed }}
 deb http://ftp.ca.debian.org/debian/ {{ ansible_distribution_release }} main contrib
-{% if ansible_distribution_release == "bullseye" %}
 deb https://security.debian.org/debian-security {{ ansible_distribution_release }}-security main contrib
-{% else %}
-deb http://security.debian.org/ {{ ansible_distribution_release }}/updates main contrib
-{% endif %}
 
 # previously known as 'volatile'
 deb http://ftp.ca.debian.org/debian/ {{ ansible_distribution_release }}-updates main

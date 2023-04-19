@@ -6,7 +6,7 @@ Requires=wpcivicron_{{ site_shortname }}.service
 
 [Timer]
 Unit=wpcivicron_{{ site_shortname }}.service
-OnUnitInactiveSec=15min
+OnUnitInactiveSec={{ civicrm_ansible_cron_interval }}sec
 OnBootSec=10min
 RandomizedDelaySec=30sec
 

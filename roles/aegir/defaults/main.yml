@@ -13,6 +13,9 @@ aegir_admin_email: 'root@localhost'
 aegir_http_service_type: nginx
 aegir_frontend_url: "{{ inventory_hostname }}"
 
+# Max number of crons to run in parallel
+aegir_getlock_maxcrons: 3
+
 aegir_drush_version: 8.4.11
 aegir_drush_source_repo: https://github.com/drush-ops/drush.git
 aegir_drush_source_install_bin_path: /usr/local/bin/drush

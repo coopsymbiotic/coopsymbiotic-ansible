@@ -11,6 +11,8 @@
     home: "{{ aegir_root }}"
     group: "{{ aegir_user }}"
     groups: "{{ aegir_web_group }},adm"
+    password_lock: false
+    password: '*'
     shell: /bin/bash
     append: yes
   become: yes

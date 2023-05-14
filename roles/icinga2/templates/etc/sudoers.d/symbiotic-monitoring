@@ -54,7 +54,7 @@ Defaults env_keep += "CIVICRM_SETTINGS"
 
 # KVM servers
 nagios ALL=(root) NOPASSWD: /usr/bin/virsh start *
-nagios ALL=(root) NOPASSWD: /usr/bin/virsh domstats *
+nagios ALL=(root) NOPASSWD: /usr/bin/virsh domstats
 
 # This is an Ansible pipeline running on x10 as the aegir user
 # (it's only called 'aegir' because it updates monitoring for aegir hosts)

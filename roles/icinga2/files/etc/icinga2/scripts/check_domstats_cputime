@@ -1,0 +1,13 @@
+#!/bin/bash
+
+# {{ ansible_managed }}
+
+# Monitor libvirt dom cpu.time
+
+stats=$(sudo /usr/bin/virsh domstats | awk 'BEGIN {DOMAIN=""} match($0, "^Domain: (.*)") {DOMAIN=$2;} { print DOMAIN, $1 }' | grep cpu.time | sed  "s/'//g" | sed 's/ cpu.time//')
+
+echo -n "Libvirt cpu.time OK |"
+
+while read -r line; do
+  echo -n " $line;"
+done <<< "$stats"

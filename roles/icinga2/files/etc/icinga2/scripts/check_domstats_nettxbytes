@@ -1,0 +1,13 @@
+#!/bin/bash
+
+# {{ ansible_managed }}
+
+# Monitor libvirt dom net.0.tx.bytes
+
+stats=$(sudo /usr/bin/virsh domstats | awk 'BEGIN {DOMAIN=""} match($0, "^Domain: (.*)") {DOMAIN=$2;} { print DOMAIN, $1 }' | grep net.0.tx.bytes | sed  "s/'//g" | sed 's/ net.0.tx.bytes//')
+
+echo -n "Libvirt net.0.tx.bytes OK |"
+
+while read -r line; do
+  echo -n " $line;"
+done <<< "$stats"

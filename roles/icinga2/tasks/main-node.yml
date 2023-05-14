@@ -133,7 +133,7 @@
     - icinga2-custom-checks
 
 - name: Deploy custom checks
-  copy: src="etc/icinga2/scripts/{{ item }}" dest="/usr/local/lib/icinga2-plugins/{{ item }}" owner=root group=root mode=0755
+  copy: src="usr/local/lib/icinga2-plugins/{{ item }}" dest="/usr/local/lib/icinga2-plugins/{{ item }}" owner=root group=root mode=0755
   with_items:
     - check_aegir_disk
     - check_aegir_sql
@@ -152,6 +152,11 @@
     - check_borg
     - check_civicrm
     - check_cmsversion
+    - check_domstats_blockrdbytes
+    - check_domstats_blockwrbytes
+    - check_domstats_cputime
+    - check_domstats_netrxbytes
+    - check_domstats_nettxbytes
     - check_emptyheader
     - check_file_content
     - check_memory

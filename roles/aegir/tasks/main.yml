@@ -552,8 +552,6 @@
   become_user: aegir
   shell: "drush @hostmaster vset {{ item.name }} {{ item.value }}"
   with_items:
-    - { name: 'hosting_feature_git', value: '1' }
-    - { name: 'hosting_feature_git_pull', value: '1' }
     - { name: 'hosting_feature_http_basic_auth', value: '1' }
     - { name: 'hosting_feature_migrate', value: '1' }
     - { name: 'hosting_feature_remote_import', value: '1' }

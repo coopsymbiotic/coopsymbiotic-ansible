@@ -4,7 +4,12 @@
 
 # Monitor libvirt dom block.0.wr.bytes
 
-stats=$(sudo /usr/bin/virsh domstats | awk 'BEGIN {DOMAIN=""} match($0, "^Domain: (.*)") {DOMAIN=$2;} { print DOMAIN, $1 }' | grep block.0.wr.bytes | sed  "s/'//g" | sed 's/ block.0.wr.bytes//')
+set -e
+
+mkdir -p /var/lib/icinga2/domstats
+sudo /usr/bin/virsh domstats | awk 'BEGIN {DOMAIN=""} match($0, "^Domain: (.*)") {DOMAIN=$2;} { print DOMAIN, $1 }' | grep block.0.wr.bytes | sed  "s/'//g" | sed 's/ block.0.wr.bytes//' > /var/lib/icinga2/domstats/blockwrbytes.new
+stats=$(paste /var/lib/icinga2/domstats/blockwrbytes /var/lib/icinga2/domstats/blockwrbytes.new | awk -F'[= ]' '{print $1 "=" ($3 - $2) }')
+mv /var/lib/icinga2/domstats/blockwrbytes.new /var/lib/icinga2/domstats/blockwrbytes
 
 echo -n "Libvirt block.0.wr.bytes OK |"
 

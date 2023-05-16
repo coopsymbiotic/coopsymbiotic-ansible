@@ -4,7 +4,12 @@
 
 # Monitor libvirt dom net.0.rx.bytes
 
-stats=$(sudo /usr/bin/virsh domstats | awk 'BEGIN {DOMAIN=""} match($0, "^Domain: (.*)") {DOMAIN=$2;} { print DOMAIN, $1 }' | grep net.0.rx.bytes | sed  "s/'//g" | sed 's/ net.0.rx.bytes//')
+set -e
+
+mkdir -p /var/lib/icinga2/domstats
+sudo /usr/bin/virsh domstats | awk 'BEGIN {DOMAIN=""} match($0, "^Domain: (.*)") {DOMAIN=$2;} { print DOMAIN, $1 }' | grep net.0.rx.bytes | sed  "s/'//g" | sed 's/ net.0.rx.bytes//' > /var/lib/icinga2/domstats/net.0.rx.bytes.new
+stats=$(paste /var/lib/icinga2/domstats/net.0.rx.bytes /var/lib/icinga2/domstats/net.0.rx.bytes.new | awk -F'[= ]' '{print $1 "=" ($3 - $2) }')
+mv /var/lib/icinga2/domstats/net.0.rx.bytes.new /var/lib/icinga2/domstats/net.0.rx.bytes
 
 echo -n "Libvirt net.0.rx.bytes OK |"
 

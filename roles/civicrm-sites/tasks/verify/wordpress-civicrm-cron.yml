@@ -9,6 +9,7 @@
     owner=root
     group=root
     mode=0644
+  when: civicrm_ansible_cron_interval is defined and civicrm_ansible_cron_interval != "-1"
   notify: reload systemd
 
 - name: systemd | Setup the WP CiviCRM Cron timer
@@ -18,6 +19,7 @@
     owner=root
     group=root
     mode=0644
+  when: civicrm_ansible_cron_interval is defined and civicrm_ansible_cron_interval != "-1"
   notify: reload systemd
 
 # My understanding is that this will make the service run once, then the timer will kick-in
@@ -26,13 +28,16 @@
   systemd:
     name: "wpcivicron_{{ site_shortname }}.service"
     state: started
+  when: civicrm_ansible_cron_interval is defined and civicrm_ansible_cron_interval != "-1"
 
 - name: systemd | Enable the WP CiviCRM Cron timer
   systemd:
     name: "wpcivicron_{{ site_shortname }}.timer"
     enabled: yes
+  when: civicrm_ansible_cron_interval is defined and civicrm_ansible_cron_interval != "-1"
 
 - name: systemd | Start the WP CiviCRM Cron timer
   systemd:
     name: "wpcivicron_{{ site_shortname }}.timer"
     state: started
+  when: civicrm_ansible_cron_interval is defined and civicrm_ansible_cron_interval != "-1"

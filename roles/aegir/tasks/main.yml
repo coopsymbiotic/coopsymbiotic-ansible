@@ -559,9 +559,6 @@
     - { name: 'hosting_feature_sync', value: '1' }
     - { name: 'hosting_feature_tasks_extra', value: '1' }
     - { name: 'hosting_feature_task_gc', value: '1' }
-    - { name: 'hosting_queue_civicrm_cron_enabled', value: '1' }
-    - { name: 'hosting_queue_civicrm_cron_frequency', value: '300' }
-    - { name: 'hosting_queue_civicrm_cron_items', value: '50' }
     - { name: 'hosting_feature_fix_ownership', value: '1' }
     - { name: 'hosting_feature_fix_permissions', value: '1' }
   tags:

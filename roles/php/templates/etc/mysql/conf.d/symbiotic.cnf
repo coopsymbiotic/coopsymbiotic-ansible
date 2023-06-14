@@ -1,5 +1,8 @@
 # {{ ansible_managed }}
 
+[mysql]
+default-character-set=utf8mb4
+
 [mysqld]
 table_cache            = 8192
 open_files_limit       = 25000
@@ -7,20 +10,28 @@ open_files_limit       = 25000
 tmp_table_size  = 512M
 max_heap_table_size = 512M
 
-innodb_large_prefix=true
 innodb_file_per_table=true
-innodb_buffer_pool_size = {{ (ansible_memtotal_mb/1024/2)|round|int }}G
+# @todo Make configurable if dedicated MySQL server
+innodb_buffer_pool_size = {{ (ansible_memtotal_mb/1024/4)|round|int }}G
+innodb_buffer_pool_instances = 1
+
+# Limit the ibtmp file to 2GB
+innodb_temp_data_file_path = ibtmp1:12M:autoextend:max:2G
 
 join_buffer_size = 512K
 
 # http://www.mysqlperformanceblog.com/2007/11/03/choosing-innodb_buffer_pool_size/
 innodb_flush_method=O_DIRECT
 
-query_cache_limit       = 12M
-query_cache_size        = 128M
+# MariaDB 10.1.7 disables the query cache
+# and does not make much sense for a shared server
+# and CiviCRM in general is very DB-heavy, not cache-friendly.
+query_cache_size = 0
+query_cache_type = 0
 
-# log_slow_queries        = /var/log/mysql/mysql-slow.log
-long_query_time = 2
+slow_query_log = 1
+slow_query_log_file = /var/log/mysql/mysql-slow.log
+long_query_time = 5.0
 
 # https://mariadb.com/kb/en/mariadb/server-system-variables/#max_statement_time
 # Maximum time in seconds that a query can execute before being aborted.
@@ -32,3 +43,26 @@ max_statement_time = 360
 
 # https://dev.mysql.com/doc/refman/5.7/en/stored-programs-logging.html
 log_bin_trust_function_creators=1
+
+# [ML] Since MariaDB 10.2, sql-mode also includes: STRICT_TRANS_TABLES
+# but this is a bit too brutal for legacy code.
+# https://mariadb.com/kb/en/library/sql-mode/
+sql-mode="NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION"
+
+# [ML] Some clients use this for imports (required for MariaDB 10.3)
+local-infile=1
+
+# For Icinga monitoring
+# Allows passwordless auth for the root user
+plugin-load-add = auth_socket.so
+
+{% if groups['sql_servers'] is defined or groups['sql_replication_servers'] is defined %}
+# Assumed to be a separate zfs volume (partition) for easier resync
+datadir = /data/mysql
+log_bin = /data/mysql/mysql-bin.log
+{% endif %}
+
+# [ML] Default CiviCRM recommended charset
+collation-server = utf8mb4_unicode_ci
+init-connect='SET NAMES utf8mb4'
+character-set-server = utf8mb4

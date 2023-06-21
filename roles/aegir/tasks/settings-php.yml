@@ -3,15 +3,6 @@
   tags:
     - aegir-php
 
-- name: Symlink PHP5 configuration directory, for Debian-Jessie support
-  file:
-    src="/etc/php5"
-    dest="/etc/php/5"
-    owner=root group=root state=link
-  when: ansible_distribution_release == "jessie"
-  tags:
-    - aegir-php
-
 - name: Apache | Deploy our PHP ini overrides.
   template:
     src="etc/php/{{ phpversion }}/mods-available/90-symbiotic.ini"

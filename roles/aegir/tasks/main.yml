@@ -710,7 +710,7 @@
 
 - name: Install wkhtmltopdf from deb
   apt:
-    deb: https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.5/wkhtmltox_0.12.5-1.stretch_amd64.deb
+    deb: https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6.1-3/wkhtmltox_0.12.6.1-3.bookworm_amd64.deb
   tags:
     - aegir
     - aegir-wkhtmltopdf

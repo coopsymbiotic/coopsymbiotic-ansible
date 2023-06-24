@@ -468,7 +468,7 @@
 # @todo Remove hardcoded IPs
 ##
 - name: Aegir | Add our IPs to system allowlist
-  shell: "drush @hm vset provision_symbiotic_system_whitelist '76.10.173.17,2607:f2c0:f00f:2900::/56,2607:f2c0:a000::/48,205.204.73.202,2605:9000:402:6a17::61'"
+  shell: "drush @hm vset provision_symbiotic_system_whitelist '2606:6d00:100:2600::/56,51.161.62.208/32,2607:5300:203:7e04:1::/128'"
   become: true
   become_user: aegir
   tags:

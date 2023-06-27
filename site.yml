@@ -67,12 +67,14 @@
 
 # NB: icinga role intentionally not added because it is already
 # running for all servers, so it would make the role run twice.
+# unattend-upgrades added because right now it's running on baremetal
 - hosts: icinga_servers
   become: yes
   roles:
     - grafana
     - gitlab-runner
     - loki
+    - unattended-upgrades
   tags:
     - icinga
     - icinga2

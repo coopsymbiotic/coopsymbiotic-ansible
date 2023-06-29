@@ -67,39 +67,9 @@ function do_api_call($host, $cms, $entity, $action) {
   return $civistatus;
 }
 
-$domain = do_api_call($host, $cms, 'Domain', 'get');
 $civistatus = do_api_call($host, $cms, 'System', 'check');
 
-// Fetch the CiviCRM version
-$version = 'unknown';
-
-if (!empty($domain->values)) {
-  $values = (array) $domain->values;
-  $t = array_shift($values);
-  $version = $t->version;
-
-  // Convert the version to an integer. Performance metrics do not handle strings.
-  // Ex: 5.19.beta1 => 005 019 000.01
-  // Ex: 5.19.3 => 005 019 003.00
-  // Ex: 5.19 => 005 019 000.00
-  $parts = explode('.', $version);
-  $formatted = '';
-
-  while (count($parts)) {
-    $t = array_pop($parts);
-
-    if (substr($t, 0, 4) == 'beta') {
-      // In a way, 5.19.beta1 is actually 5.19.0.1
-      $formatted = '000.' . sprintf('%02d', substr($t, 4));
-    }
-    else {
-      $formatted = sprintf('%03d', $t) . $formatted;
-    }
-  }
-
-  $version = $formatted;
-}
-
+$metrics = '';
 $check_status = 0;
 $check_descriptions = [];
 $upgrade_status = 1;
@@ -115,6 +85,10 @@ $upgrade_status_options = [
 foreach ($civistatus->values as $key => $val) {
   if ($val->name == 'checkVersion_upgrade') {
     $upgrade_status = $upgrade_status_options[$val->severity];
+  }
+
+  if ($val->name == 'symbiotic_metrics') {
+    $metrics = $val->message;
   }
 
   // Issue was acknowledged (hidden from the Status Check UI).
@@ -147,7 +121,7 @@ foreach ($civistatus->values as $key => $val) {
   }
 }
 
-$metrics = "upgrade=$upgrade_status; civiver=$version";
+$metrics = "upgrade=$upgrade_status; $metrics";
 
 if ($check_status == 0) {
   echo "OK | $metrics";

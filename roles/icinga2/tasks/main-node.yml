@@ -202,15 +202,6 @@
   with_items:
     - aegir_disk
     - aegir_sql
-    - aegir_civicrm_contacts
-    - aegir_civicrm_activities
-    - aegir_civicrm_contributions
-    - aegir_civicrm_memberships
-    - aegir_civicrm_mailings
-    - aegir_civicrm_sms
-    - aegir_civicrm_cases
-    - aegir_civicrm_events
-    - aegir_civicrm_participants
     - mysqldump
   notify: restart icinga2
   tags:
@@ -225,21 +216,3 @@
     - icinga2
     - icinga2-custom-checks
     - icinga2-sudo
-
-# Remove old sudo configurations before they were merged
-- file: path=/etc/sudoers.d/{{ item }} state=absent
-  with_items:
-    - aegir-icinga2
-    - backup-icinga2
-    - mdadm-icinga2
-    - mysql-icinga2
-    - zfs-icinga2
-    - ufw-icinga2
-  tags:
-    - icinga2
-    - icinga2-custom-checks
-
-- file: path=/etc/icinga2/conf.d/services/mem.conf state=absent
-  tags:
-    - icinga2
-    - icinga2-custom-checks

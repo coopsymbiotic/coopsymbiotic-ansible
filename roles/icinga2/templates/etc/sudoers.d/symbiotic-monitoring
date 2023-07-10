@@ -34,10 +34,11 @@ Defaults env_keep += "CIVICRM_SETTINGS"
 {{ icinga2_user }} ALL=(root) NOPASSWD: /usr/local/lib/icinga2-plugins/check_mysqldump-secure *
 {{ icinga2_user }} ALL=(root) NOPASSWD: /usr/local/lib/icinga2-plugins/check_borg *
 
-# RAID and ZFS
+# Baremetal disk health
 {{ icinga2_user }} ALL=(root) NOPASSWD: /usr/local/lib/icinga2-plugins/check_md_raid
 {{ icinga2_user }} ALL=(root) NOPASSWD: /usr/local/lib/icinga2-plugins/check_zpool
 {{ icinga2_user }} ALL=(root) NOPASSWD: /usr/local/lib/icinga2-plugins/check_zfs
+{{ icinga2_user }} ALL=(root) NOPASSWD: /usr/local/lib/icinga2-plugins/check_smart_attributes -dbj /usr/local/lib/icinga2-plugins/check_smart_attributes_smartdb.json -r *
 
 # Firewall
 {{ icinga2_user }} ALL=(root) NOPASSWD: /usr/local/lib/icinga2-plugins/check_ufw

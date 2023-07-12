@@ -36,33 +36,33 @@
     - nodejs
     - packages
 
-- name: civicrm | Download civix, civistrings and git-scan
-  get_url:
-    url="https://download.civicrm.org/{{ item }}/{{ item }}.phar"
-    dest="/usr/local/bin/{{ item }}"
-  with_items:
-    - civix
-    - civistrings
-    - git-scan
-  tags:
-    - packages
-    - aegir-civicrm-tools
-
-# We have a fork of cv for multisite, see:
-# https://github.com/civicrm/cv/pull/58
-- name: civicrm | Download our fork of cv for multisite
-  get_url:
-    url="https://github.com/mlutfy/cv/releases/download/v0.3.15-multisite/cv.phar"
-    dest="/usr/local/bin/cv"
-  tags:
-    - packages
-    - aegir-civicrm-tools
-
-- name: civicrm | Ensure that civicrm tools (civix, cv, etc) are executable
-  file: path="/usr/local/bin/{{ item }}" mode=0755
+- name: civicrm | Deploy our wrappers for civix and cv
+  template: src=usr/local/bin/{{ item }} dest=/usr/local/bin/{{ item }} owner=root group=root mode=0755
   with_items:
     - civix
     - cv
+  tags:
+    - packages
+    - aegir-civicrm-tools
+
+- name: civicrm | Download civix and cv
+  get_url:
+    url="https://download.civicrm.org/{{ item }}/{{ item }}.phar"
+    dest="/usr/local/bin/{{ item }}.real"
+    mode=0755
+  with_items:
+    - civix
+    - cv
+  tags:
+    - packages
+    - aegir-civicrm-tools
+
+- name: civicrm | Download civistrings and git-scan
+  get_url:
+    url="https://download.civicrm.org/{{ item }}/{{ item }}.phar"
+    dest="/usr/local/bin/{{ item }}"
+    mode=0755
+  with_items:
     - civistrings
     - git-scan
   tags:

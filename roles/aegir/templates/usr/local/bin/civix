@@ -10,7 +10,7 @@ set -e
 # Based on https://unix.stackexchange.com/a/35265
 path=`pwd`
 
-while [[ $path != "/" && ! -e "$path/drushrc.php" && ! -e "$path/wp-config.php" && ! -e "$path/civicrm.settings.php" ]];
+while [[ $path != "/" && ! -e "$path/drushrc.php" && ! -e "$path/wp-config.php" ]];
 do
   path="$(readlink -f "$path"/..)"
 done
@@ -19,6 +19,10 @@ host=$(basename $path)
 
 if [[ "$host" != "/" ]]; then
   export HTTP_HOST=$host
+
+  if [ -e "$path/wp-content" ]; then
+    export CIVICRM_SETTINGS="$path/wp-content/uploads/civicrm/civicrm.settings.php"
+  fi
 fi
 
 /usr/local/bin/civix.real $@

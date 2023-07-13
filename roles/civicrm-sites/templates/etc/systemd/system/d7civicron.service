@@ -6,6 +6,7 @@ Documentation="https://github.com/coopsymbiotic/coopsymbiotic-ansible/tree/maste
 Wants=d7civicron_{{ site_shortname }}.timer
 
 [Service]
-User=aegir
-ExecStartPre=/usr/local/bin/drush cc drush
-ExecStart=/usr/local/bin/aegir-getlock /usr/local/bin/drush --user="{{ civicrm_ansible_cron_user }}" @{{ inventory_hostname }} cvapi Job.execute auth=0
+User=www-data
+WorkingDirectory={{ site_path }}
+Environment="CIVICRM_SETTINGS=wp-content/uploads/civicrm/civicrm.settings.php"
+ExecStart=/usr/local/bin/aegir-getlock /usr/local/bin/cv api Job.execute --user={{ cron_user }}

@@ -8,5 +8,5 @@ Wants=d7civicron_{{ site_shortname }}.timer
 [Service]
 User=www-data
 WorkingDirectory={{ site_path }}
-Environment="CIVICRM_SETTINGS=wp-content/uploads/civicrm/civicrm.settings.php"
+Environment="CIVICRM_SETTINGS="{{ site_path }}/civicrm.settings.php"
 ExecStart=/usr/local/bin/aegir-getlock /usr/local/bin/cv api Job.execute --user={{ cron_user }}

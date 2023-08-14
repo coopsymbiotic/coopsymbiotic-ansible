@@ -37,6 +37,12 @@
   tags:
     - icinga2
 
+# Always deploy custom checks (server and nodes) because the server
+# also needs most of those checks locally
+- include: custom-checks.yml
+  tags:
+    - icinga2-custom-checks
+
 - include: main-conf-host.yml
   tags:
     - never

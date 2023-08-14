@@ -115,7 +115,7 @@
     - icinga2-custom-checks
 
 - name: Deploy custom checks
-  copy: src="etc/icinga2/scripts/{{ item }}" dest="/usr/local/lib/icinga2-plugins/{{ item }}" owner=root group=root mode=0755
+  copy: src="usr/local/lib/icinga2-plugins/{{ item }}" dest="/usr/local/lib/icinga2-plugins/{{ item }}" owner=root group=root mode=0755
   with_items:
     - check_ssl_cert
     - check_domain_expiration

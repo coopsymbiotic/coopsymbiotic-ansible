@@ -11,3 +11,6 @@ User={{ item.value.user }}
 ExecStartPre={{ item.value.exec_pre }}
 {% endif %}
 ExecStart={{ item.value.exec }}
+{% if item.value.exec_post is defined %}
+ExecStartPost={{ item.value.exec_post }}
+{% endif %}

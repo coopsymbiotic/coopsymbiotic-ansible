@@ -23,7 +23,7 @@ www-data ALL=NOPASSWD: /usr/local/bin/aegir-db-filestats
 www-data ALL=NOPASSWD: /usr/local/bin/goaccess-aegir
 # Unban IPs blocked by fail2ban
 aegir ALL=NOPASSWD: /usr/sbin/ufw status
-aegir ALL=NOPASSWD: /usr/bin/fail2ban-client set
+aegir ALL=NOPASSWD: /usr/bin/fail2ban-client set *
 # @todo Implement/Replace with aegir-helpers?
 aegir ALL=NOPASSWD: /root/bin/gandi-dns-new-record.sh
 aegir ALL=NOPASSWD: /root/bin/gandi-dns-delete-record.sh

@@ -1,0 +1,21 @@
+# Most of the time, the NodeJS version in Debian is too far behind
+- name: Get the nodejs repo key
+  apt_key: url=https://deb.nodesource.com/gpgkey/nodesource.gpg.key state=present
+  tags:
+    - nodejs
+    - packages
+
+- apt_repository:
+    repo="deb https://deb.nodesource.com/node_12.x {{ ansible_distribution_release }} main"
+    state=present
+    update_cache=yes
+  tags:
+    - nodejs
+    - packages
+
+- apt: name={{ item }} state=present install_recommends=no
+  with_items:
+    - nodejs
+  tags:
+    - nodejs
+    - packages

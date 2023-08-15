@@ -792,6 +792,10 @@
   tags:
     - aegir-civicrm
 
+- include: nodejs.yml
+  tags:
+    - aegir-nodejs
+
 - include: aegir-helpers.yml
   tags:
     - aegir-helpers

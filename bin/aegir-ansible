@@ -18,6 +18,9 @@ if [ $? != 0 ]; then
   exit 1
 fi
 
+# Avoid displaying skipped tasks, not useful except when debugging Ansible
+export ANSIBLE_DISPLAY_SKIPPED_HOSTS=false
+
 # Validate that the tag looks valid
 if [ -n "$tag" ]; then
   echo $tag | grep -q -E "^[-a-zA-Z0-9]+$"
@@ -27,13 +30,16 @@ if [ -n "$tag" ]; then
     exit 1
   fi
 
+  # If necessary, make sure the inventory lists deleted sites so that we can remove their crons
   query_args=""
   if [ "$tag" == "civicrm-sites-delete" ]; then
     query_args="?include_disabled=1"
   fi
 
+  export AEGIR_INVENTORY_ARGS=$query_args
+
   # Limit to 2 tasks in parallel because running many DB upgrades can overload the system
-  env AEGIR_INVENTORY_ARGS=$query_args ansible-playbook -f 2 --connection=local -i /usr/local/coopsymbiotic-ansible/bin/aegir-inventory -l $host --tags $tag /usr/local/coopsymbiotic-ansible/civicrm_site.yml
+  ansible-playbook -f 2 --connection=local -i /usr/local/coopsymbiotic-ansible/bin/aegir-inventory -l $host --tags $tag /usr/local/coopsymbiotic-ansible/civicrm_site.yml
 else
   ansible-playbook -f 2 --connection=local -i /usr/local/coopsymbiotic-ansible/bin/aegir-inventory -l $host /usr/local/coopsymbiotic-ansible/civicrm_site.yml
 fi

@@ -14,10 +14,14 @@
     - { root_dir: "{{ site_root }}", subdir: "themes" }
   loop_control:
     loop_var: symlink_options
+  tags:
+    - civicrm-sites-wordpress-symlinks
 
 - name: Check for a client-custom directory for global plugins and themes
   stat: path=/var/aegir/client-custom/wordpress
   register: p
+  tags:
+    - civicrm-sites-wordpress-symlinks
 
 - include_tasks: wordpress-symlinks.yml
   loop:
@@ -26,6 +30,15 @@
   loop_control:
     loop_var: symlink_options
   when: p.stat.exists
+  tags:
+    - civicrm-sites-wordpress-symlinks
+
+- name: WordPress | Check if CiviCRM is enabled
+  become_user: aegir
+  shell:
+    chdir: "{{ site_path }}"
+    cmd: "wp plugin list --status=active --name=civicrm --format=count"
+  register: civicrm_is_active
 
 # If the site was migrated, update a few obvious options that should not cause harm
 # although updating the siteurl/home is perhaps a bit opiniated
@@ -34,7 +47,7 @@
   shell:
     chdir: "{{ site_path }}"
     cmd: "wp civicrm api Setting.create wpLoadPhp={{ site_root }}/wp-load.php"
-  when: "'civicrm_sites' in group_names"
+  when: civicrm_is_active.stdout == "1"
 
 - name: WordPress | Update WP home option
   become_user: aegir
@@ -47,6 +60,12 @@
   shell:
     chdir: "{{ site_path }}"
     cmd: wp option update siteurl "https://{{ inventory_hostname}}"
+
+- name: WordPress | Update WP database
+  become_user: aegir
+  shell:
+    chdir: "{{ site_path }}"
+    cmd: wp core update-db
 
 - name: WordPress | Flush the WP cache
   become_user: aegir
@@ -62,20 +81,25 @@
     chdir: "{{ site_path }}"
     cmd: "wp eval \"civicrm_initialize(); echo CRM_Core_BAO_Domain::isDBUpdateRequired() ? \"yes\" : \"no\";\""
   register: civiupdb
+  when: civicrm_is_active.stdout == "1"
 
 - name: WordPress | Run civicrm database upgrades
   become_user: aegir
   shell:
     chdir: "{{ site_path }}"
     cmd: wp civicrm upgrade-db
-  when: civiupdb.stdout == "yes"
+  when: civicrm_is_active.stdout == "1" and civiupdb.stdout == "yes"
 
 - name: WordPress | Update logging schema as a precaution after upgrades
   become_user: aegir
   shell:
     chdir: "{{ site_path }}"
     cmd: wp civicrm api symbiotic.fixschemalog
+  when: civicrm_is_active.stdout == "1"
   ignore_errors: yes
+  tags:
+    - civicrm-sites-schemalog
+    - civicrm-sites-wordpress-schemalog
 
 # @todo Check if upgrades are necessary, to avoid using ignore_errors:yes
 - name: WordPress | Run civicrm extension database upgrades
@@ -83,8 +107,10 @@
   shell:
     chdir: "{{ site_path }}"
     cmd: wp civicrm api Extension.upgrade
+  when: civicrm_is_active.stdout == "1"
   ignore_errors: yes
 
+# @todo Remove the cron if the CiviCRM plugin is disabled
 - include: wordpress-civicrm-cron.yml
   when: "'civicrm_sites' in group_names"
   tags:

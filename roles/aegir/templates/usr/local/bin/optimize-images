@@ -1,0 +1,146 @@
+#!/bin/bash
+
+# Optimize and Compress JPEG or PNG Images in Linux command line
+# Initially based on:
+# https://github.com/filipnet/optimize-images
+# License: BSD 3-Clause "New" or "Revised" License
+# Part of Coop Symbiotic's hosting scripts:
+# https://github.com/coopsymbiotic/coopsymbiotic-ansible/tree/master/roles/aegir/templates/usr/local/bin
+
+force="no"
+devsite="no"
+ignore_warning="no"
+quiet="no"
+
+# For the before/after calculations
+size_before=0
+size_after=0
+
+# Lower the priority of this scripts because it can be very intensive
+renice -n 10 $$ > /dev/null
+
+# Help menu
+print_help() {
+cat <<-HELP
+Optimize or resize images in a given directory
+Usage:
+
+  --force: Run on all files, not just new files from the last 24hours
+  --devsite-cleanup: Reduce images to max 300x300, which is highly destructive
+                     and assumes you do not care about the images on this site.
+                     Assumes --force.
+  --yolo: Ignore the confirmation prompt from --devsite-cleanup
+  --quiet: Reduce output, e.g. for crons (todo)
+
+Example: ${0##*/} --devsite-cleanup ./wp-content/uploads/
+HELP
+exit 0
+}
+
+log_message() {
+  if [ "$quiet" == "no" ]; then
+    echo $1
+  fi
+}
+
+# Parse Command Line Arguments
+while [ "$#" -gt 0 ]; do
+  case "$1" in
+    --force) force="yes" ;;
+    --devsite-cleanup) devsite="yes"; force="yes" ;;
+    --yolo) ignore_warning="yes" ;;
+    --quiet) quiet="yes" ;;
+    --help) print_help;;
+    --*)
+      printf "Error: Invalid argument, run --help for valid arguments.\n"
+      exit 1
+        ;;
+    *) image_folder=$1;;
+  esac
+  shift
+done
+
+if [ -z "${image_folder}" ]; then
+  printf "Please specify an image folder. Type --help for examples.\n"
+  exit 1
+fi
+if [ ! -e "$image_folder" ]; then
+  printf "$image_folder: no such file or directory\n"
+  exit 1
+fi
+
+# Check dependencies
+command -v jpegoptim >/dev/null 2>&1 || { echo >&2 "Package jpegoptim is required but not installed. Aborting."; exit 1; }
+command -v optipng >/dev/null 2>&1 || { echo >&2 "Package optipng is required but not installed. Aborting."; exit 1; }
+
+if [ "$devsite" == "yes" ]; then
+  command -v mogrify >/dev/null 2>&1 || { echo >&2 "Package imagemagick is required for mogrify. Aborting."; exit 1; }
+fi
+
+# Compression options
+JPEGOPTIM_ARGS="--strip-all --overwrite --threshold=2 --max=80 --totals --all-progressive"
+OPTIPNG_ARGS="-o7 -f4 -strip all -clobber"
+
+# On dev sites, reduces images to max 200k
+if [ "$devsite" == "yes" ]; then
+  JPEGOPTIM_ARGS="--strip-all --overwrite --threshold=2 --max=80 --size=200k --totals --all-progressive"
+fi
+
+# Prompt for confirmation before a dangerous operation
+if [ "$devsite" == "yes" ] && [ "$ignore_warning" == "no" ]; then
+  echo "Are you sure? This is irreversible. It will resize images to max 300x300"
+  read -p "Type 'yes' to confirm:  " -r
+  if [ $REPLY != "yes" ]; then
+    echo "Exiting"
+    exit 1
+  fi
+fi
+
+# Calculate size before running cleanup
+size_before=`du -s $image_folder | awk '{ printf "%d", $1/1024 }'`
+
+# Find files to optimize
+# @todo Replace this with plain find/exec?
+if [ "$force" == "yes" ]; then
+  log_message "Force optimization and compression of all images"
+  JPGFILES=`find $image_folder -type f -size +256k -iname '*.jp*g'`
+  PNGFILES=`find $image_folder -type f -size +256k -iname '*.png'`
+
+else
+  log_message "Optimization and compression of new images"
+  JPGFILES=`find $image_folder -newermt "-24 hours" -size +256k -type f -iname '*.jp*g'`
+  PNGFILES=`find $image_folder -newermt "-24 hours" -size +100k -type f -iname '*.png'`
+fi
+
+# Safe optimizations
+for i in $JPGFILES 
+do
+  echo "Optimizing $i"
+  jpegoptim $JPEGOPTIM_ARGS $i
+done
+
+for i in $PNGFILES 
+do
+  echo "Optimizing $i"
+  optipng $OPTIPNG_ARGS $i
+done
+
+# Brutal resizing for dev sites
+if [ "$devsite" == "yes" ]; then
+  log_message "Resizing large images to 300x300"
+  print=""
+  if [ "$quiet" == "no" ]; then
+    print="-print"
+  fi
+  find $image_folder -type f -size +200k \( -iname '*.png' -o -iname '*.jp*g' \) $print -exec mogrify -resize 300x300 {} \;
+fi
+
+# Check size after
+size_after=`du -s $image_folder | awk '{ printf "%d", $1/1024 }'`
+size_diff="$(( $size_before - $size_after ))"
+
+if [ "$quiet" == "no" ]; then
+  echo "Folder size before: $size_before M"
+  echo "Folder size after: $size_after M"
+  echo "Difference: $size_diff M"
+fi

@@ -28,7 +28,7 @@ Usage:
   --force: Run on all files, not just new files from the last 24hours
   --devsite-cleanup: Reduce images to max 300x300, which is highly destructive
                      and assumes you do not care about the images on this site.
-                     Assumes --force.
+                     Assumes --force, and does not optimize images.
   --yolo: Ignore the confirmation prompt from --devsite-cleanup
   --quiet: Reduce output, e.g. for crons (todo)
 
@@ -99,31 +99,32 @@ fi
 # Calculate size before running cleanup
 size_before=`du -s $image_folder | awk '{ printf "%d", $1/1024 }'`
 
-# Find files to optimize
-# @todo Replace this with plain find/exec?
-if [ "$force" == "yes" ]; then
-  log_message "Force optimization and compression of all images"
-  JPGFILES=`find $image_folder -type f -size +256k -iname '*.jp*g'`
-  PNGFILES=`find $image_folder -type f -size +256k -iname '*.png'`
+if [ "$devsite" == "no" ]; then
+  # Find files to optimize
+  # @todo Replace this with plain find/exec?
+  if [ "$force" == "yes" ]; then
+    log_message "Force optimization and compression of all images"
+    JPGFILES=`find $image_folder -type f -size +256k -iname '*.jp*g'`
+    PNGFILES=`find $image_folder -type f -size +256k -iname '*.png'`
+  else
+    log_message "Optimization and compression of new images"
+    JPGFILES=`find $image_folder -newermt "-24 hours" -size +256k -type f -iname '*.jp*g'`
+    PNGFILES=`find $image_folder -newermt "-24 hours" -size +100k -type f -iname '*.png'`
+  fi
 
-else
-  log_message "Optimization and compression of new images"
-  JPGFILES=`find $image_folder -newermt "-24 hours" -size +256k -type f -iname '*.jp*g'`
-  PNGFILES=`find $image_folder -newermt "-24 hours" -size +100k -type f -iname '*.png'`
+  # Safe optimizations
+  for i in $JPGFILES
+  do
+    echo "Optimizing $i"
+    jpegoptim $JPEGOPTIM_ARGS $i
+  done
+
+  for i in $PNGFILES
+  do
+    echo "Optimizing $i"
+    optipng $OPTIPNG_ARGS $i
+  done
 fi
-
-# Safe optimizations
-for i in $JPGFILES 
-do
-  echo "Optimizing $i"
-  jpegoptim $JPEGOPTIM_ARGS $i
-done
-
-for i in $PNGFILES 
-do
-  echo "Optimizing $i"
-  optipng $OPTIPNG_ARGS $i
-done
 
 # Brutal resizing for dev sites
 if [ "$devsite" == "yes" ]; then

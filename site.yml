@@ -107,12 +107,13 @@
   tags:
     - backupninja-rdiff
 
-- hosts: dokuwiki_instances
-  become: yes
-  roles:
-    - dokuwiki
-  tags:
-    - dokuwiki
+# We still use this wiki, but it is only used to document custom fonts
+# - hosts: dokuwiki_instances
+#   become: yes
+#   roles:
+#     - dokuwiki
+#   tags:
+#     - dokuwiki
 
 - hosts: ufw_managed
   become: yes

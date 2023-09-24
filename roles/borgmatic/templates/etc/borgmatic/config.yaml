@@ -256,6 +256,9 @@ retention:
 # and monitoring will catch any errors with the SQL dumps.
 hooks:
     before_backup:
+{% if mysqlbackup_backupdir %}
+        - rm {{ mysqlbackup_backupdir }}/*sql* || true
+{% endif %}
         - umount /mnt/restore 2>/dev/null || true
         - /usr/local/bin/mysqldump-secure --cron || true
 {% if borgmatic_before_backup is defined %}

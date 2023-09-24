@@ -130,7 +130,7 @@
   authorized_key:
     user: "backups-{{ inventory_hostname_short }}"
     key: "{{root_pub_key.stdout}}"
-    key_options: "command=\"borg serve --restrict-to-path /backup/{{ inventory_hostname }}/borg/\",no-pty,no-agent-forwarding,no-port-forwarding,no-X11-forwarding,no-user-rc"
+    key_options: "command=\"borg serve --restrict-to-path {{ borgmatic_server_basedir }}/{{ inventory_hostname }}/borg/\",no-pty,no-agent-forwarding,no-port-forwarding,no-X11-forwarding,no-user-rc"
   tags:
     - borgmatic
     - borgmatic-ssh

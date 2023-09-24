@@ -6,30 +6,15 @@
     - packages
     - borgmatic
 
-# zx-utils is required for installing .deb files manually (borgmatic)
 - name: borgmatic | Install python3 requirements and borgbackup
   apt:
     state: present
     name: [
-      'python3-colorama',
-      'python3-pkg-resources',
-      'python3-pykwalify',
-      'python3-requests',
-      'python3-ruamel.yaml',
       'borgbackup',
-      'xz-utils',
+      'borgmatic',
       # required for the monitoring scripts
       'jq',
     ]
-  when: ansible_distribution == "Debian" or ansible_distribution == "Ubuntu"
-  tags:
-    - borgmatic
-    - packages
-
-- name: borgmatic | Install the borgmatic deb package from Debian Bullseye
-  apt:
-    state: present
-    deb: "http://ftp.us.debian.org/debian/pool/main/b/borgmatic/borgmatic_1.5.12-2_all.deb"
   when: ansible_distribution == "Debian" or ansible_distribution == "Ubuntu"
   tags:
     - borgmatic

@@ -45,7 +45,7 @@ fi
 cd $site_path
 
 # Fix the main site directory
-chown aegir.www-data $site_path
+chown aegir:www-data $site_path
 chmod 0770 $site_path
 chmod g+s $site_path
 
@@ -57,7 +57,7 @@ fi
 
 # Relax permissions on wp-content, so that www-data can write in it
 # For example, WordFence requires this in order to create wp-content/wflogs
-chown aegir.www-data wp-content
+chown aegir:www-data wp-content
 chmod 0775 wp-content
 
 # drushrc.php must be readable by www-data (it's where we store salts)
@@ -75,20 +75,20 @@ mkdir -p ./wp-content/themes
 # - owner by aegir.www-data (so that Aegir can backup/delete files)
 # - www-data can write
 # - all directories are setgid to inherit group ownership
-chown -R aegir.www-data ./wp-content/{languages,plugins,upgrade,uploads,themes}
+chown -R aegir:www-data ./wp-content/{languages,plugins,upgrade,uploads,themes}
 chmod -R g+w ./wp-content/{languages,plugins,upgrade,uploads,themes}
 find ./wp-content/{languages,plugins,upgrade,uploads,themes}/ -type d -exec chmod g+s {} \;
 
 # Yootheme exception (ex: yootheme/cache, yootheme/css; yootheme is a mess..)
 if [ -d ./wp-content/themes/yootheme ]; then
-  chown -R aegir.www-data ./wp-content/themes/yootheme
+  chown -R aegir:www-data ./wp-content/themes/yootheme
   chmod -R g+w ./wp-content/themes/yootheme
   find ./wp-content/themes/yootheme -type d -exec chmod g+s {} \;
 fi
 
 # Legacy CiviCRM directory
 if [ -d ./wp-content/plugins/files/civicrm ]; then
-  chown -R aegir.www-data ./wp-content/plugins/files/civicrm/
+  chown -R aegir:www-data ./wp-content/plugins/files/civicrm/
   chmod -R g+s ./wp-content/plugins/files/civicrm/
   find ./wp-content/plugins/files/civicrm/ -type d -exec chmod g+s {} \;
 fi

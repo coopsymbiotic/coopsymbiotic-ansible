@@ -9,6 +9,8 @@
 # Ref.: http://docs.aegirproject.org/en/3.x/install/#41-install-drush
 - name: Install Drush
   include: git/drush.yml
+  tags:
+    - aegir-install-drush
 
 # Ref.: http://docs.aegirproject.org/en/3.x/install/#43-install-provision
 - name: Clone Provision

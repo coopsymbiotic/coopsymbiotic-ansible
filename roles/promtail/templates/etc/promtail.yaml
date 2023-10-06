@@ -51,3 +51,29 @@ scrape_configs:
       job: apache
       host: {{ inventory_hostname }}
       __path__: /var/log/apache2/*log
+- job_name: civicrm_log
+  static_configs:
+  - targets:
+      - localhost
+    labels:
+      job: civicrm_log
+      host: {{ inventory_hostname }}
+      __path__: /var/aegir/platforms/*/sites/*/files/civicrm/ConfigAndLog/CiviCRM.*.log
+  pipeline_stages:
+  - match:
+      selector: '{job="civicrm_log"}'
+      stages:
+      - multiline:
+          # Identify timestamps as first line of a multiline block. Enclose the string in single quotes.
+          # Ex: 2038-01-01 23:50:12 (not matching on the TZ, less important here)
+          firstline: '^\d{4}-\d{2}-\d{2}.\d{1,2}:\d{2}:\d{2}'
+          max_wait_time: 3s
+          # Backtraces can be insane sometimes
+          max_lines: 5000
+      - regex:
+          # Flag (?s:.*) needs to be set for regex stage to capture full traceback log in the extracted map.
+          # Ex: 2023-09-21 23:48:57-0500  [error] Error message..
+          expression: '^(?P<time>\d{4}-\d{2}-\d{2}.\d{1,2}:\d{2}:\d{2}.\d{4})  \[?P<level>(\w+)\] (?P<message>(?s:.*))$'
+      - timestamp:
+          source: time
+          format: '2006-01-02 15:04:05-0700'

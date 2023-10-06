@@ -14,6 +14,11 @@ Defaults env_keep += "CIVICRM_SETTINGS"
 {{ icinga2_user }} ALL=(aegir) NOPASSWD: /usr/local/bin/wp core version
 {{ icinga2_user }} ALL=(aegir) NOPASSWD: /usr/local/bin/drush * provision-verify
 {{ icinga2_user }} ALL=(aegir) NOPASSWD: /usr/local/lib/icinga2-plugins/check_file_content
+{{ icinga2_user }} ALL=(aegir) NOPASSWD: /usr/local/bin/cv --cwd=* api System.check
+{{ icinga2_user }} ALL=(aegir) NOPASSWD: /usr/local/bin/cv api System.check option.limit=0
+{{ icinga2_user }} ALL=(aegir) NOPASSWD: /usr/local/bin/cv --cwd=* api System.check option.limit=0
+{{ icinga2_user }} ALL=(aegir) NOPASSWD: /usr/local/bin/cv api System.check option.limit=0
+{{ icinga2_user }} ALL=(aegir) NOPASSWD: /usr/local/bin/aegir-helpers civicrm-system-check api System.check option.limit=0
 {{ icinga2_user }} ALL=(www-data) NOPASSWD: /usr/local/bin/cv --cwd=* api System.check
 {{ icinga2_user }} ALL=(www-data) NOPASSWD: /usr/local/bin/cv --cwd=* api System.check option.limit=0
 {{ icinga2_user }} ALL=(www-data) NOPASSWD: /usr/local/bin/cv --cwd=* api Domain.get

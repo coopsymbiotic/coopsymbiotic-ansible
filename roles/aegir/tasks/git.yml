@@ -19,6 +19,8 @@
 # Ref.: http://docs.aegirproject.org/en/3.x/install/#322-nginx-configuration
 - name: Setup Nginx.
   include: git/setup-nginx.yml
+  tags:
+    - aegir-nginx
 
 - name: Build hostmaster platform.
   include: git/platform.yml

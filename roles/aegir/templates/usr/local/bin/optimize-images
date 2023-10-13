@@ -9,8 +9,14 @@
 
 force="no"
 devsite="no"
+resize="yes"
 ignore_warning="no"
 quiet="no"
+
+# The resize operation will look for files more than 2MB and resize them to max 2000x2000 px
+# unless --devsite-cleanup is used, then we find for files more than 200k and resize them to max 300x300 px
+resize_max="2000x2000"
+resize_findsize="+2048k"
 
 # For the before/after calculations
 size_before=0
@@ -29,6 +35,7 @@ Usage:
   --devsite-cleanup: Reduce images to max 300x300, which is highly destructive
                      and assumes you do not care about the images on this site.
                      Assumes --force, and does not optimize images.
+  --noresize: Do NOT reduce images to max 2000x2000. Enabled by default.
   --yolo: Ignore the confirmation prompt from --devsite-cleanup
   --quiet: Reduce output, e.g. for crons (todo)
 
@@ -48,6 +55,7 @@ while [ "$#" -gt 0 ]; do
   case "$1" in
     --force) force="yes" ;;
     --devsite-cleanup) devsite="yes"; force="yes" ;;
+    --noresize) resize="no" ;;
     --yolo) ignore_warning="yes" ;;
     --quiet) quiet="yes" ;;
     --help) print_help;;
@@ -103,23 +111,33 @@ if [ "$devsite" == "no" ]; then
   # Find files to optimize
   if [ "$force" == "yes" ]; then
     log_message "Force optimization and compression of all images"
-    JPGFILES=`find $image_folder -type f -size +256k -iname '*.jp*g' -exec jpegoptim $JPEGOPTIM_ARGS {} \;`
-    PNGFILES=`find $image_folder -type f -size +256k -iname '*.png' -exec optipng $OPTIPNG_ARGS {} \;`
+    find $image_folder -type f -size +256k -iname '*.jp*g' -exec jpegoptim $JPEGOPTIM_ARGS {} \;
+    # This is very CPU intensive, not really worth it
+    # find $image_folder -type f -size +256k -iname '*.png' -exec optipng $OPTIPNG_ARGS {} \;
   else
     log_message "Optimization and compression of new images"
-    JPGFILES=`find $image_folder -newermt "-24 hours" -size +256k -type f -iname '*.jp*g' -exec jpegoptim $JPEGOPTIM_ARGS {} \;`
-    PNGFILES=`find $image_folder -newermt "-24 hours" -size +100k -type f -iname '*.png' -exec optipng $OPTIPNG_ARGS {} \;`
+    find $image_folder -newermt "-24 hours" -size +256k -type f -iname '*.jp*g' -exec jpegoptim $JPEGOPTIM_ARGS {} \;
+    # This is very CPU intensive, not really worth it
+    # find $image_folder -newermt "-24 hours" -size +100k -type f -iname '*.png' -exec optipng $OPTIPNG_ARGS {} \;
   fi
 fi
 
 # Brutal resizing for dev sites
 if [ "$devsite" == "yes" ]; then
-  log_message "Resizing large images to 300x300"
+  resize_max="300x300"
+  resize_findsize="+200k"
+  resize="yes"
+fi
+
+if [ "$resize" == "yes" ]; then
   print=""
   if [ "$quiet" == "no" ]; then
     print="-print"
   fi
-  find $image_folder -type f -size +200k \( -iname '*.png' -o -iname '*.jp*g' \) $print -exec mogrify -resize 300x300 {} \;
+  log_message "Resizing large images to $resize_max"
+  # Give a moment to let the admin ctrl-C in panic
+  sleep 2
+  find $image_folder -type f -size +200k \( -iname '*.png' -o -iname '*.jp*g' \) $print -exec mogrify -resize $resize_max {} \;
 fi
 
 # Check size after

@@ -107,14 +107,7 @@
   tags:
     - kvm-server-networkd
 
-- name: network | Disable Debian old networking
-  systemd:
-    name: networking
-    enabled: no
-  when: kvm_main_mac_address is defined
-  tags:
-    - kvm-server-networkd
-
+# This should be the default since Debian 12 bookworm
 - name: network | Enable systemd-networkd
   systemd:
     name: systemd-networkd

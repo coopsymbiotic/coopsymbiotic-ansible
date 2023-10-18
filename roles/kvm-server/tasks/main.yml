@@ -19,6 +19,7 @@
     - nvme-cli
     - parted
     - zfs-dkms
+    - systemd-timesyncd
   tags:
     - packages
 
@@ -64,6 +65,10 @@
 
 - service: name=openntpd state=started enabled=yes
 
+# OVH installs this by default on baremetal servers
+- name: Make sure netplan is not installed
+  apt: pkg=netplan.io state=absent
+
 - name: Ensure that OVH defaults are absent
   file: path="/etc/systemd/network/{{ item }}" state=absent
   with_items:
@@ -106,6 +111,19 @@
   when: kvm_main_mac_address is defined
   tags:
     - kvm-server-networkd
+
+- name: Enabling "systemd-timesyncd"
+  systemd:
+    name: systemd-timesyncd
+    state: started
+    enabled: true
+  tags:
+    - kvm-server-timesyncd
+
+- name: Enable set-ntp for timesyncd
+  command: /usr/bin/timedatectl set-ntp on
+  tags:
+    - kvm-server-timesyncd
 
 # This should be the default since Debian 12 bookworm
 - name: network | Enable systemd-networkd

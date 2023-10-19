@@ -12,6 +12,7 @@ aegir_makefile_path: /var/aegir/.drush/provision/aegir.make
 aegir_admin_email: 'root@localhost'
 aegir_http_service_type: nginx
 aegir_frontend_url: "{{ inventory_hostname }}"
+aegir_db_host: localhost
 
 # Max number of crons to run in parallel
 aegir_getlock_maxcrons: 3

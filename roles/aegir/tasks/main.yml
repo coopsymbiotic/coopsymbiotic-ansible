@@ -61,12 +61,39 @@
     - packages-php
     - aegir-php
 
-# Required for enabling locales, for CiviCRM native gettext
-- apt: name="locales" state=present install_recommends=no
+- apt:
+    name: [
+      locales, # required for enabling locales, for CiviCRM native gettext
+      patch, # required for drush make
+      pwgen,
+      curl,
+      gettext,
+      xauth,
+      xvfb,
+      libxrender1,
+      ttf-mscorefonts-installer,
+      fonts-dejavu-core,
+      imagemagick
+    ]
+    state: present
+    install_recommends: no
+  tags:
+    - packages
+
+# For when running the SQL server on another VM
+- apt:
+    name: [
+      pwgen
+    ]
+    state: present
+    install_recommends: no
+  delegate_to: "{{ aegir_db_host }}"
+  when: aegir_db_host != "localhost"
+  tags:
+    - packages
+
 
 # Create a aegir_root user for MariaDB (avoids issues with root's empty password)
-- apt: name="pwgen" state=present install_recommends=no
-
 - name: Check a password was created for the aegir_root MySQL user
   stat: path="/root/.mysql.root"
   register: aegir_root_sql_pass
@@ -92,9 +119,18 @@
   tags:
     - aegir-install
 
-- name: Create the aegir_root user in MySQL
+- name: Create the aegir_root user on the local MySQL
   shell: /usr/bin/mysql -e "GRANT ALL ON *.* TO 'aegir_root'@'localhost' IDENTIFIED BY '{{ aegir_root_password.stdout }}' WITH GRANT OPTION"
-  when: not aegir_root_sql_pass.stat.exists
+  when: not aegir_root_sql_pass.stat.exists and aegir_db_host == "localhost"
+  tags:
+    - aegir-install
+
+# We use the '%' wildcard instead of inventory_hostname because we should be specifying the IPv6 address
+# and it is a bit too much restrictive if we do changes later on, and there is the firewall already
+- name: Create the aegir_root user on the remote MySQL
+  shell: /usr/bin/mysql -e "GRANT ALL ON *.* TO 'aegir_root'@'%' IDENTIFIED BY '{{ aegir_root_password.stdout }}' WITH GRANT OPTION"
+  when: not aegir_root_sql_pass.stat.exists and aegir_db_host != "localhost"
+  delegate_to: "{{ aegir_db_host }}"
   tags:
     - aegir-install
 
@@ -178,24 +214,6 @@
     - packages
     - packages-php
     - aegir-php
-
-- apt:
-    name: [
-      patch, # required for drush make
-      pwgen,
-      curl,
-      gettext,
-      xauth,
-      xvfb,
-      libxrender1,
-      ttf-mscorefonts-installer,
-      fonts-dejavu-core,
-      imagemagick
-    ]
-    state: present
-    install_recommends: no
-  tags:
-    - packages
 
 # A bit off topic, but too often had the issue where mailname was misconfigured
 - copy: content="{{ inventory_hostname }}" dest=/etc/mailname

@@ -9,16 +9,8 @@
     - packages
     - packages-php
     - aegir-php
-    - aegir-install
     - aegir-goaccess
     - packages-php-gpg
-
-- include_vars: "{{ ansible_distribution }}_{{ ansible_distribution_major_version }}.yml"
-  when: phpversion is undefined
-  tags:
-    - packages
-    - packages-php
-    - aegir-php
 
 - name: Debian | Add Sury.org apt reporitory key
   apt_key:

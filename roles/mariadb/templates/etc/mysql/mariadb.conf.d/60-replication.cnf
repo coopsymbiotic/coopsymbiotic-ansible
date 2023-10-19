@@ -2,7 +2,7 @@
 #
 # {{ ansible_managed }}
 [mariadb]
-server_id = 102
+server_id = {{ mariadb_server_id }}
 log_bin = /data/mysql/mysql-bin.log
 binlog-format = mixed
 log_slave_updates = ON

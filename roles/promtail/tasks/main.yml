@@ -10,7 +10,9 @@
 
 - name: Deploy the promtail binary
   get_url:
-    url: "https://github.com/grafana/loki/releases/download/v{{ promtail_version }}/promtail-linux-amd64.zip"
+    # github annoyingly does not support ipv6, so we mirror the zip
+    # url: "https://github.com/grafana/loki/releases/download/v{{ promtail_version }}/promtail-linux-amd64.zip"
+    url: "https://www.symbiotic.coop/sites/www.symbiotic.coop/files/promtail-linux-amd64.zip"
     dest: /tmp/promtail.zip
     mode: '0640'
   when: p.stat.exists == False

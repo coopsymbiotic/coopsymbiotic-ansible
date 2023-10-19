@@ -13,6 +13,11 @@
   when: "'sql_servers' in group_names or 'sql_replication_servers' in group_names"
   notify: restart mysql
 
+- name: MySQL | Create the overrides directory
+  file: path="/etc/systemd/system/mariadb.service.d" state=directory mode=0755 owner=root group=root
+  tags:
+    - mariadb-settings-systemd
+
 - name: MySQL | Deploy our MySQL systemd overrides
   template:
     src=etc/systemd/system/mariadb.service.d/symbiotic.conf

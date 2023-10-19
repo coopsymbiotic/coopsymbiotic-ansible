@@ -9,28 +9,9 @@
     path: /usr/sbin/mysqld
   register: mysqld_exists
 
-- apt_key:
-    url: "https://mariadb.org/mariadb_release_signing_key.asc"
-    state: present
-    keyring: /etc/apt/trusted.gpg.d/mariadb.gpg
-  tags:
-    - packages
-    - aegir
-    - aegir-mariadb
-
-- apt_repository:
-    repo="deb http://ftp.osuosl.org/pub/mariadb/repo/{{ mariadb_version }}/debian {{ ansible_distribution_release }} main"
-    update_cache=yes
-    state=present
-  tags:
-    - packages
-    - aegir
-    - aegir-mariadb
-
 - apt:
     name: [
-      "mariadb-client-{{ mariadb_version }}",
-      "mariadb-server-{{ mariadb_version }}",
+      "mariadb-client",
       "mariadb-server",
       # For MySQL health monitoring
       "libdbd-mysql-perl"

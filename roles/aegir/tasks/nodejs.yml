@@ -1,21 +1,22 @@
 # Most of the time, the NodeJS version in Debian is too far behind
 - name: Get the nodejs repo key
-  apt_key: url=https://deb.nodesource.com/gpgkey/nodesource.gpg.key state=present
-  tags:
-    - nodejs
-    - packages
+  apt_key:
+    url: https://deb.nodesource.com/gpgkey/nodesource.gpg.key
+    state: present
 
-- apt_repository:
-    repo="deb https://deb.nodesource.com/node_12.x {{ ansible_distribution_release }} main"
-    state=present
-    update_cache=yes
-  tags:
-    - nodejs
-    - packages
+- name: Add the nodejs repo in source.list.d
+  apt_repository:
+    repo: "deb https://deb.nodesource.com/node_18.x {{ ansible_distribution_release }} main"
+    filename: nodejs
+    state: present
+    update_cache: yes
 
-- apt: name={{ item }} state=present install_recommends=no
-  with_items:
-    - nodejs
-  tags:
-    - nodejs
-    - packages
+- name: Install nodejs
+  apt:
+    name: nodejs
+    state: present
+    install_recommends: no
+
+# This isn't great, because it installs in /usr/bin/bower (not /usr/local/bin).
+- name: Install bower using npm
+  npm: name=bower global=yes

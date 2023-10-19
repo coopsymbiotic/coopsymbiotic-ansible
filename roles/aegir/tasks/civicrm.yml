@@ -46,9 +46,3 @@
   tags:
     - packages
     - aegir-civicrm-tools
-
-# This isn't great, because it installs in /usr/bin/bower (not local).
-- name: civicrm | Install bower using npm.
-  npm: name=bower global=yes
-  tags:
-    - packages

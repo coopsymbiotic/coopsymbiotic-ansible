@@ -10,6 +10,7 @@
     - packages-php
     - aegir-php
     - aegir-goaccess
+    - aegir-nodejs
     - packages-php-gpg
 
 - name: Debian | Add Sury.org apt reporitory key
@@ -741,6 +742,7 @@
 - include: nodejs.yml
   tags:
     - aegir-nodejs
+    - packages
 
 - include: aegir-helpers.yml
   tags:

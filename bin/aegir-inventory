@@ -26,7 +26,7 @@ set -e
 
 hostname=''
 
-if [ -n $AEGIR_HOSTMASTER_HOSTNAME ]; then
+if [ -n "$AEGIR_HOSTMASTER_HOSTNAME" ]; then
   hostname=$AEGIR_HOSTMASTER_HOSTNAME
 else
   hostname=$(hostname -f)
@@ -35,7 +35,7 @@ fi
 query_args="$AEGIR_INVENTORY_ARGS"
 
 # Get JSON from an Aegir server.
-if [ -n $AEGIR_INVENTORY_ARGS ] && [ "$AEGIR_INVENTORY_ARGS" != $hostname ]; then
+if [ -n "$AEGIR_INVENTORY_ARGS" ] && [ "$AEGIR_INVENTORY_ARGS" != $hostname ]; then
   # Running remotely, run via ssh because this page is restricted by IP
   # fixme: hardcoded ansible user
   ssh deploy@${hostname} curl --silent "https://${hostname}/inventory${query_args}"

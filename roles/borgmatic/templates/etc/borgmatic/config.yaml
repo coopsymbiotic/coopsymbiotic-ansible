@@ -98,6 +98,7 @@ location:
         - /var/aegir/.tmp
         - /var/aegir/.vimundo
         - /var/aegir/.vimbackup
+        - /var/aegir/.vscode-server
         - /var/aegir/backups
         - /var/aegir/l10n-civicrm
         - /var/aegir/platforms/*/.git

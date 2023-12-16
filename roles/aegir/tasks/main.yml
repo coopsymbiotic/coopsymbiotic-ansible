@@ -401,9 +401,9 @@
 - name: Deploy latest aegir_ansible from Git
   become: true
   become_user: aegir
-  git: repo=https://git.drupalcode.org/project/aegir_ansible
-       version=7.x-1.x
-       dest="{{ hostmaster_root.stdout }}/sites/{{ inventory_hostname }}/modules/aegir_ansible"
+  git: repo=https://github.com/coopsymbiotic/aegir_ansible.git
+       version=main
+       dest="{{ hostmaster_root.stdout }}/sites/{{ inventory_hostname }}/modules/aegir_ansible"
        update=yes
   ignore_errors: yes
   tags:

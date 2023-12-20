@@ -167,6 +167,11 @@
   tags:
     - kvm-server-sudoers
 
+- name: kvm sudo | Deployer sudoers who can restart VMs
+  template: src=etc/sudoers.d/symbiotic-virsh dest=/etc/sudoers.d/symbiotic-virsh owner=root group=root mode=0640
+  tags:
+    - kvm-server-sudoers
+
 - include: zxfer.yml
   when: zfs_zxfer_partitions is defined
   tags:

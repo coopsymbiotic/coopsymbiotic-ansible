@@ -1,0 +1,6 @@
+# {{ ansible_managed }}
+# Allow anyone with a shell account to start/stop/list VMs
+# (only a few people have access)
+ALL ALL=NOPASSWD: /usr/bin/virsh start *
+ALL ALL=NOPASSWD: /usr/bin/virsh destroy *
+ALL ALL=NOPASSWD: /usr/bin/virsh list

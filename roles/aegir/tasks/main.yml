@@ -313,6 +313,7 @@
     - aegir-hosting-https
     - aegir-hosting-usage
     - aegir-hosting-wordpress
+    - aegir-hosting-advanced-cron
     - aegir-ansible
     - aegir-fixownership
     - aegir-goaccess
@@ -475,6 +476,36 @@
     - aegir-goaccess
 
 ##
+## Deploy hosting_advanced_cron
+##
+- name: Deploy hosting_advanced_cron from Git
+  become: true
+  become_user: aegir
+  git: repo=https://github.com/coopsymbiotic/hosting_advanced_cron.git
+       version=7.x-3.x-stic
+       dest="{{ hostmaster_root.stdout }}/sites/{{ inventory_hostname }}/modules/hosting_advanced_cron"
+       update=yes
+  ignore_errors: yes
+  tags:
+    - aegir-hosting-advanced-cron
+
+- name: Enable hosting_advanced_cron
+  shell: "drush @hostmaster en hosting_advanced_cron -y"
+  async: 60
+  poll: 5
+  become: true
+  become_user: aegir
+  tags:
+    - aegir-hosting-advanced-cron
+
+# - name: Set default 24h interval for hostmaster
+#   shell: "echo 'insert into hosting_advanced_cron (nid, cron_interval) values (10, 86400)' | drush @hm sqlc"
+#   become: true
+#   become_user: aegir
+#   tags:
+#     - aegir-hosting-advanced-cron
+
+##
 ## Required so that our ansible scripts can access the server's site inventory
 # @todo Remove hardcoded IPs
 ##
@@ -497,7 +528,7 @@
 ##
 # This command sometimes freezes the ansible run, so we async to wait for 60 seconds, poll every 5 seconds
 - name: Aegir modules | Enable a few extra Aegir modules
-  shell: "drush @hostmaster en hosting_queued hosting_https hosting_letsencrypt hosting_alias hosting_clone hosting_tasks_extra hosting_remote_import hosting_civicrm aegir_ansible_inventory hosting_civicrm_ansible hosting_wpsite -y"
+  shell: "drush @hostmaster en hosting_queued hosting_https hosting_letsencrypt hosting_alias hosting_clone hosting_remote_import hosting_civicrm aegir_ansible_inventory hosting_civicrm_ansible hosting_wpsite hosting_advanced_cron -y"
   async: 60
   poll: 5
   become: true

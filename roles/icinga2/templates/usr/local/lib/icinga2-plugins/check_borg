@@ -1,7 +1,8 @@
 #!/bin/bash
 
 # Based on check_borg, modified by Symbiotic to use borgmatic
-# requires the 'jq' command
+# and support for multiple repositories
+# Requires the 'jq' command
 
 set -o nounset
 set -e
@@ -32,17 +33,20 @@ error(){ echo "BORG CRITICAL, $*"; exit "${STATE_CRITICAL}"; }
 
 crit='7 days ago'
 warn='3 days ago'
+repo=''
 verbose=0
 
 usage(){
 	cat >&2 <<-FIN
-	usage: ${PROGNAME} [-C CONF] [-w DATE] [-c DATE] [ -h -v ]
+	usage: ${PROGNAME} [-C CONF] [-R REPO] [-w DATE] [-c DATE] [ -h -v ]
 
 	DATE: Any valid date for the date-command.
 	      default for -w: "${warn}"
 	      default for -c: "${crit}"
 	CONF: A configuration file, which will get sourced. You
 	      can use this to set the necessary env variables.
+        REPO: Run the check against a specific repository, assuming
+              that multiple backup repositories have been configured.
 	FIN
 	exit "${STATE_UNKNOWN}"
 }
@@ -67,6 +71,9 @@ while getopts ":vhR:C:c:w:" opt; do
 			[ -e "${OPTARG}" ] || error "Configuration file '${OPTARG}' does not exist."
 			[ -r "${OPTARG}" ] || error "Could not read configuration file '${OPTARG}'."
 			. "${OPTARG}"      || error "Could not source configuration file '${OPTARG}'."
+			;;
+		R)
+			repo="--repository ${OPTARG}"
 			;;
 		c)
 			crit="${OPTARG}"
@@ -95,7 +102,7 @@ if check_range "${sec_crit}" 0:"${sec_warn}" ; then
 fi
 
 # get unixtime of last backup
-last="$(TERM=dumb ${BORG} list -nc --sort timestamp --last 1 --format '{time}' 2>&1 | grep -v 'Listing archives')"
+last="$(TERM=dumb ${BORG} list -nc --sort timestamp --last 1 --format '{time}' $repo 2>&1 | grep -v 'Listing archives')"
 
 # Check the error code of the piped command
 [ "${PIPESTATUS[0]}" = 0 ] || error "borgmatic list failed"

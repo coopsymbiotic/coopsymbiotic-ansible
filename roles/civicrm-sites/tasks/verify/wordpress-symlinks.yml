@@ -14,6 +14,7 @@
     src: "{{ symlink_options['root_dir'] }}/wp-content/{{ symlink_options['subdir'] }}/{{ dir.path | basename }}"
     dest: "{{ site_path }}/wp-content/{{ symlink_options['subdir'] }}/{{ dir.path | basename }}"
     state: link
+    force: true
   loop: "{{ find_dirs.files }}"
   loop_control:
     loop_var: dir

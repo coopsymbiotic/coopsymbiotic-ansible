@@ -21,6 +21,9 @@ fi
 # Avoid displaying skipped tasks, not useful except when debugging Ansible
 export ANSIBLE_DISPLAY_SKIPPED_HOSTS=false
 
+# Tell aegir-inventory that we are running locally from the Aegir server
+export AEGIR_INVENTORY_LOCAL=1
+
 # Validate that the tag looks valid
 if [ -n "$tag" ]; then
   echo $tag | grep -q -E "^[-a-zA-Z0-9]+$"

@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash -e
 
 # Command line script for Ansible Dynamic inventory.
 #
@@ -18,11 +18,9 @@
 #  An environment variable determines what Aegir Hostmaster to use as the inventory.
 #
 #      $ export AEGIR_HOSTMASTER_HOSTNAME=aegir.myserver.com
-#      $ ansible -i /path/to/aegir_ansible/aegir_ansible_inventory/ansible-inventory.php
+#      $ ansible -i /path/to/aegir_ansible/aegir_ansible_inventory/ansible-inventory
 #
 #  If the environment variable is not set, it will attempt to use localhost.
-
-set -e
 
 hostname=''
 
@@ -35,7 +33,7 @@ fi
 query_args="$AEGIR_INVENTORY_ARGS"
 
 # Get JSON from an Aegir server.
-if [ -n "$AEGIR_INVENTORY_ARGS" ] && [ "$AEGIR_INVENTORY_ARGS" != $hostname ]; then
+if [ "$AEGIR_INVENTORY_LOCAL" == "" ]; then
   # Running remotely, run via ssh because this page is restricted by IP
   # fixme: hardcoded ansible user
   ssh deploy@${hostname} curl --silent "https://${hostname}/inventory${query_args}"

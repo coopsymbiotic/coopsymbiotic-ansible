@@ -35,7 +35,7 @@
     chdir: "{{ site_path }}"
     cmd: drush cvapi Extension.upgrade
 
-- include: drupal-civicrm-cron.yml
+- include_tasks: drupal-civicrm-cron.yml
   when: "'civicrm_sites' in group_names"
   tags:
     - civicrm-sites-cron-drupal

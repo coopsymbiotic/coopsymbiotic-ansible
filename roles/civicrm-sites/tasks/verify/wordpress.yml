@@ -101,7 +101,7 @@
   ignore_errors: yes
 
 # @todo Remove the cron if the CiviCRM plugin is disabled
-- include: wordpress-civicrm-cron.yml
+- include_tasks: wordpress-civicrm-cron.yml
   when: "'civicrm_sites' in group_names"
   tags:
     - civicrm-sites-cron-wpcivicrm

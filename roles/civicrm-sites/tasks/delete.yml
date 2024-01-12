@@ -1,13 +1,13 @@
 ---
 
-- include: delete/wordpress.yml
+- include_tasks: delete/wordpress.yml
   when: cms == "wordpress"
 
-- include: delete/drupal.yml
+- include_tasks: delete/drupal.yml
   when: cms == "drupal"
 
 # @todo
-# - include: delete/sftp.yml
+# - include_tasks: delete/sftp.yml
 #   when: civicrm_ansible_sftpchroot_keys is defined and civicrm_ansible_sftpchroot_keys
 #   tags:
 #     - civicrm-sites-sftp

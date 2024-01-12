@@ -1,22 +1,22 @@
 ---
 
-- include: verify/wordpress.yml
+- include_tasks: verify/wordpress.yml
   when: cms == "wordpress"
   tags:
     - civicrm-sites-wordpress
     - civicrm-sites-cron-wpcivicrm
 
-- include: verify/drupal.yml
+- include_tasks: verify/drupal.yml
   when: cms == "drupal"
   tags:
     - civicrm-sites-drupal
     - civicrm-sites-cron-drupal
 
-- include: verify/cron-extra.yml
+- include_tasks: verify/cron-extra.yml
   tags:
     - civicrm-sites-cron-extra
 
-- include: verify/sftp.yml
+- include_tasks: verify/sftp.yml
   when: civicrm_ansible_sftpchroot_keys is defined and civicrm_ansible_sftpchroot_keys
   tags:
     - civicrm-sites-sftp

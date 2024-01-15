@@ -17,34 +17,15 @@ touch .nobackup
 
 ## Restoring files
 
-As root on the client server, find the backup server login and hostname by
-looking in `/etc/borgmatic/config.yaml`:
+Most hosts have a wrapper called `borg-mount` that can be called
+with sudo (from privileged users). It only mounts folders relevant
+to web users. For system files, the root user must mount manually
+without any filters.
 
-```
-# grep -E '^(host|user|dir)' /etc/backup.d/90.rdiff
-directory = /backup/foo.symbiotic.coop/rdiff-backup
-host = backups.example.org
-user = backups-foo
-```
+(see borgmatic docs, but having a quick reference here would be nice)
 
-See files changed in the past day:
-
-```
-# TODO (example command)
-(example output)
-```
-
-To restore the last version of a specific file:
-
-```
-# (example command)
-```
-
-To restore a file from 2 days (2D) ago:
-
-```
-# (example command)
-```
+- mounting using fuse
+- files changed in the past day?
 
 ## References
 

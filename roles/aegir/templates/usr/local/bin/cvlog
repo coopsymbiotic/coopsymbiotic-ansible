@@ -11,8 +11,6 @@
 VIEWER="${CVLOG_VIEWER:-less +G -SF}"
 MATCH="${CVLOG_MATCH:-CiviCRM.*.log*}"
 LOGPATH="${CVLOG_PATH:-$PWD}"
-SUBPATHS_WORDPRESS=( 'wp-content/uploads/civicrm/ConfigAndLog' 'wp-content/plugins/files/civicrm/ConfigAndLog' );
-SUBPATHS_DRUPAL=( 'files/civicrm/ConfigAndLog' );
 ROOT="/var/aegir/platforms"
 
 # Resolve arguments
@@ -43,18 +41,20 @@ fi
 # Resolve location of log files
 if [[ ! $LOGPATH =~ /ConfigAndLog$ ]]; then
   LOGPATH="$ROOT/$PLATFORM/sites/$SITENAME/"
+  if [ -d "$ROOT/$PLATFORM/web/sites/$SITENAME" ]; then
+    LOGPATH="$ROOT/$PLATFORM/web/sites/$SITENAME"
+  fi
   if [[ $PLATFORM =~ wordpress ]]; then
     # Wordpress site
-    subpaths=($SUBPATHS_WORDPRESS)
+    LOGPATH="$LOGPATH/wp-content/uploads/civicrm/ConfigAndLog"
   else
     # Drupal site
-    subpaths=($SUBPATHS_DRUPAL)
+    if [ -d "$LOGPATH/private/files/civicrm/ConfigAndLog" ]; then
+      LOGPATH="$LOGPATH/private/files/civicrm/ConfigAndLog"
+    else
+      LOGPATH="$LOGPATH/$subpaths"
+    fi
   fi
-  for SUBPATH in "${subpaths[@]}"
-  do
-    LOGPATH="$ROOT/$PLATFORM/sites/$SITENAME/$SUBPATH"
-  if [ -d "$LOGPATH" ]; then break; fi
-  done
 
   if [ ! -d "$LOGPATH" ]; then
     echo "Failed to find a ConfigAndLog folder somewhere under $LOGPATH"

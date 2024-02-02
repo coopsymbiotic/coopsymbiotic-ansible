@@ -39,5 +39,5 @@ if [ "$AEGIR_INVENTORY_LOCAL" == "" ]; then
   ssh deploy@${hostname} curl --silent "https://${hostname}/inventory${query_args}"
 else
   # Running locally on the Aegir server
-  curl --silent "https://${hostname}/inventory${query_args}"
+  curl --insecure --silent "https://${hostname}/inventory${query_args}"
 fi

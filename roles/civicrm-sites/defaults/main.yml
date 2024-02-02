@@ -1,0 +1,4 @@
+---
+
+# Default 15min CiviCRM cron
+civicrm_ansible_cron_interval: 900

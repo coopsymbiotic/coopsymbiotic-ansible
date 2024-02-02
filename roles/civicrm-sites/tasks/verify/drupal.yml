@@ -1,39 +1,29 @@
 ---
 
-- name: Drupal | Clear annoying drush cache to avoid errors
-  become_user: aegir
-  shell:
-    chdir: "{{ site_path }}"
-    cmd: drush cc drush
-
-# The BAO function was added in 2020, not sure to which version that correspond exactly
-# We could use a provision_symbiotic call instead, but more moving code
-- name: Drupal | Check if a CiviCRM database upgrade is required
-  become_user: aegir
-  shell:
-    chdir: "{{ site_path }}"
-    cmd: "drush @{{ inventory_hostname }} php-eval \"if (function_exists('civicrm_initialize')) { civicrm_initialize(); } else { \\Drupal::service('civicrm')->initialize(); } echo CRM_Core_BAO_Domain::isDBUpdateRequired() ? 'yes' : 'no';\""
-  register: civiupdb
+- name: Drupal | Check if CiviCRM is installed (i.e. has civicrm.settings.php)
+  stat:
+    path: "{{ site_path }}/civicrm.settings.php"
+  register: civicrm_is_active
 
 - name: Drupal | Run civicrm database upgrades
   become_user: aegir
   shell:
     chdir: "{{ site_path }}"
-    cmd: drush civicrm-upgrade-db
-  when: civiupdb.stdout == "yes"
+    cmd: cv --no-interaction --out=json-pretty upgrade:db
+  when: civicrm_is_active.stat.exists
 
 - name: Drupal | Update logging schema as a precaution after upgrades
   become_user: aegir
   shell:
     chdir: "{{ site_path }}"
-    cmd: drush cvapi symbiotic.fixschemalog
+    cmd: cv api symbiotic.fixschemalog
   ignore_errors: yes
 
 - name: Drupal | Run civicrm extension database upgrades
   become_user: aegir
   shell:
     chdir: "{{ site_path }}"
-    cmd: drush cvapi Extension.upgrade
+    cmd: cv api Extension.upgrade
 
 - include_tasks: drupal-civicrm-cron.yml
   when: "'civicrm_sites' in group_names"

@@ -175,13 +175,13 @@
     ]
     state: present
     install_recommends: no
-  when: phpversion != 8.0
+  when: phpversion != 8.0 and phpversion != 8.2
   tags:
     - packages
     - packages-php
     - aegir-php
 
-# PHP 8.0 does not have php8.0-json
+# PHP 8.x does not have php8.x-json
 - apt:
     name: [
       "php{{ phpversion }}",
@@ -202,7 +202,7 @@
     ]
     state: present
     install_recommends: no
-  when: phpversion == 8.0
+  when: phpversion != 8.0 and phpversion != 8.2
   tags:
     - packages
     - packages-php
@@ -248,6 +248,7 @@
     - aegir-ansible
     - aegir-install
     - aegir-goaccess
+    - aegir-php
 
 - name: Install composer
   include: composer.yml

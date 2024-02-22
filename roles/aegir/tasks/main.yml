@@ -153,35 +153,7 @@
     - packages-php
     - aegir-php
 
-# nb: imagick is required by Mosaico
-- apt:
-    name: [
-      "php{{ phpversion }}",
-      "php{{ phpversion }}-bcmath",
-      "php{{ phpversion }}-gd",
-      "php{{ phpversion }}-cli",
-      "php{{ phpversion }}-curl",
-      "php{{ phpversion }}-intl",
-      "php{{ phpversion }}-json",
-      "php{{ phpversion }}-ldap",
-      "php{{ phpversion }}-mysql",
-      "php{{ phpversion }}-soap",
-      "php{{ phpversion }}-ssh2",
-      "php{{ phpversion }}-zip",
-      "php{{ phpversion }}-xsl",
-      "php{{ phpversion }}-mbstring",
-      "php{{ phpversion }}-zip",
-      "php{{ phpversion }}-imagick"
-    ]
-    state: present
-    install_recommends: no
-  when: phpversion != 8.0 and phpversion != 8.2
-  tags:
-    - packages
-    - packages-php
-    - aegir-php
-
-# PHP 8.x does not have php8.x-json
+# Assumes PHP 8.0 or later
 - apt:
     name: [
       "php{{ phpversion }}",
@@ -202,7 +174,6 @@
     ]
     state: present
     install_recommends: no
-  when: phpversion != 8.0 and phpversion != 8.2
   tags:
     - packages
     - packages-php

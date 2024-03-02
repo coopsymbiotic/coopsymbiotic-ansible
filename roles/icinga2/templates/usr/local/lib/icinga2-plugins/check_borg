@@ -107,15 +107,16 @@ last="$(TERM=dumb ${BORG} list -nc --sort timestamp --last 1 --format '{time}' $
 # Check the error code of the piped command
 [ "${PIPESTATUS[0]}" = 0 ] || error "borgmatic list failed"
 
-# The above does not seem to work, so check for errors
-if [[ $last =~ "Failed" ]]; then
-	error $last
+# The above does not always work because of the pipe-grep, so check for errors
+if [[ $last =~ "not found" ]]; then
+        error $last
 fi
-
+if [[ $last =~ "Failed" ]]; then
+        error $last
+fi
 if [[ $last =~ "Error" ]]; then
 	error $last
 fi
-
 if [ -z "${last}" ]; then
 	error "no archive in repository"
 fi

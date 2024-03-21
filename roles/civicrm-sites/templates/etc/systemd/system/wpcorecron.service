@@ -8,4 +8,4 @@ Wants=wpcorecron_{{ site_shortname }}.timer
 [Service]
 User=www-data
 WorkingDirectory={{ site_path }}
-ExecStart=/usr/local/bin/aegir-getlock wp core cron event run --due-now
+ExecStart=/usr/local/bin/aegir-getlock wp cron event run --due-now

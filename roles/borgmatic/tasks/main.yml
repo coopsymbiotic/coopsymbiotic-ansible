@@ -42,16 +42,16 @@
     - borgmatic
     - borgmatic-confs
 
-# Configure cron path
-- name: Configure cron PATH for borgmatic.
-  cronvar:
-    name: "PATH"
-    value: "/usr/bin:/bin"
-    cron_file: "borgmatic"
-  tags:
-    - borgmatic
-    - borgmatic-confs
-    - borgmatic-cron
+# Configure cron path - now provided by the borgmatic Debian package
+# - name: Configure cron PATH for borgmatic.
+#   cronvar:
+#     name: "PATH"
+#     value: "/usr/bin:/bin"
+#     cron_file: "borgmatic"
+#   tags:
+#     - borgmatic
+#     - borgmatic-confs
+#     - borgmatic-cron
 
 # Run cron randomly between 23:00 AND 03:59
 - name: borgmatic | Configure cron

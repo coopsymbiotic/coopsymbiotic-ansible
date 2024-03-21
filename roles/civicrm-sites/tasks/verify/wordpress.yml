@@ -105,3 +105,7 @@
   when: "'civicrm_sites' in group_names"
   tags:
     - civicrm-sites-cron-wpcivicrm
+
+- include_tasks: wordpress-core-cron.yml
+  tags:
+    - civicrm-sites-cron-wpcore

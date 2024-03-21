@@ -5,7 +5,7 @@
 service=$1
 
 # Validate that the service looks like a cron
-echo $service | grep -q -E "^(d7|d8|d9|wp)(civi|drupal)cron"
+echo $service | grep -q -E "^(d7|d8|d9|wp)(civi|drupal|core)cron"
 
 if [ $? != 0 ]; then
   echo "Error: Invalid service format"

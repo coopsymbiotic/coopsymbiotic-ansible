@@ -109,6 +109,18 @@
     - common-all
     - common-all-sshd
 
+- name: common-all | Deploy our sshd_config.d
+  template:
+    src: "etc/ssh/sshd_config.d-{{ ansible_distribution_major_version }}-{{ ansible_distribution_release }}/symbiotic.conf"
+    dest: /etc/ssh/sshd_config.d/symbiotic.conf
+    owner: "root"
+    group: "root"
+    mode: 0644
+  notify: restart sshd
+  tags:
+    - common-all
+    - common-all-sshd
+
 # Requires: 'apt install figlet' on the Ansible host
 - name: common-all | Generate banner for motd
   command: "figlet {{ inventory_hostname_short }}"

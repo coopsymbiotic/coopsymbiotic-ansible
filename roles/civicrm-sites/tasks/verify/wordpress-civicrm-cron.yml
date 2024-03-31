@@ -24,10 +24,12 @@
 
 # My understanding is that this will make the service run once, then the timer will kick-in
 # (because we are using OnUnitInactiveSec=15m; maybe we should use OnCalendar?)
+# we also need daemon_reload:true at least once, to pickup changes
 - name: systemd | Start the service
   systemd:
     name: "wpcivicron_{{ site_shortname }}.service"
     state: started
+    daemon_reload: true
   when: civicrm_ansible_cron_interval is defined and civicrm_ansible_cron_interval != "-1"
 
 - name: systemd | Enable the WP CiviCRM Cron timer

@@ -29,4 +29,5 @@
 - systemd:
     name: "civicrm_{{ item.key }}_{{ inventory_hostname_short | replace('-', '_') }}.timer"
     enabled: yes
+    daemon_reload: true
   with_dict: "{{ civicrm_sites_extra_crons | default({}) }}"

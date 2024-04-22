@@ -2,6 +2,11 @@
 # Installs MariaDB using third-party packages for more version flexibility
 # Assumes Debian stable
 
+- name: Force gathering facts for partial ansible runs
+  setup:
+  tags:
+    - mariadb-settings
+
 # https://github.com/gaspaio/ansible-devbox/blob/master/roles/mysql/tasks/server.yml
 # Install server using a preseed file to set the root password
 - name: Check for previous MySQL installation
@@ -20,11 +25,7 @@
     install_recommends: no
   tags:
     - packages
-    - aegir
-    - aegir-mariadb
 
 - include: settings-mysql.yml
   tags:
-    - aegir
-    - aegir-mariadb
-    - aegir-mariadb-settings
+    - mariadb-settings

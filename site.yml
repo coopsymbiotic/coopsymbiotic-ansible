@@ -37,6 +37,13 @@
   tags:
     - mariadb
 
+- hosts: sql_primary_servers
+  become: yes
+  roles:
+    - mariadb
+  tags:
+    - mariadb
+
 - hosts: sql_replication_servers
   become: yes
   roles:

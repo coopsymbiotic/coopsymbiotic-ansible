@@ -514,7 +514,7 @@
 
 # ixiam/hosting#67
 - name: Aegir modules | Disable hosting_platform_composer_git because we do not need it and seems buggy
-  shell: "drush @hostmaster dis hosting_platform_composer_git -y"
+  shell: "drush @hostmaster dis hosting_platform_composer_git hosting_platform_git -y"
   async: 60
   poll: 5
   become: true

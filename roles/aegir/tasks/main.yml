@@ -14,19 +14,18 @@
     - packages-php-gpg
 
 - name: Debian | Add Sury.org apt reporitory key
-  apt_key:
-    url: "https://packages.sury.org/php/apt.gpg"
+  apt:
+    deb: https://packages.sury.org/debsuryorg-archive-keyring.deb
     state: present
-    keyring: /etc/apt/trusted.gpg.d/php.gpg
   tags:
     - packages
     - packages-php
     - packages-php-gpg
     - aegir-php
 
-- name: Debian | Add Sury.org repository
+- name: Debian | Add Sury.org repository on Debian
   apt_repository:
-    repo: deb https://packages.sury.org/php/ {{ ansible_distribution_release }} main
+    repo: deb [signed-by=/usr/share/keyrings/deb.sury.org-php.gpg] https://packages.sury.org/php/ {{ ansible_distribution_release }} main
     state: present
     update_cache: yes
   when: ansible_distribution == "Debian"
@@ -35,7 +34,7 @@
     - packages-php
     - aegir-php
 
-- name: Ubuntu | Add Sury.org repository
+- name: Ubuntu | Add Sury.org repository on Ubuntu
   apt_repository:
     repo: deb http://ppa.launchpad.net/ondrej/php/ubuntu {{ ansible_distribution_release }} main
     state: present

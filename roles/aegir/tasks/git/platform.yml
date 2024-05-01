@@ -5,3 +5,8 @@
     creates: "{{ aegir_root }}/hostmaster/"
   become: yes
   become_user: "{{ aegir_user }}"
+
+- name: Use latest git for the hosting module
+  shell: "cd /var/aegir/hostmaster/profiles/hostmaster/modules/aegir/hosting && git checkout 7.x-3.x"
+  become: yes
+  become_user: "{{ aegir_user }}"

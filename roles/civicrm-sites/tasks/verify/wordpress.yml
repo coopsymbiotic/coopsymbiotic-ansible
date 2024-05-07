@@ -84,7 +84,7 @@
   become_user: aegir
   shell:
     chdir: "{{ site_path }}"
-    cmd: wp civicrm api symbiotic.fixschemalog
+    cmd: cv php:script /var/aegir/hostmaster/profiles/hostmaster/modules/aegir/hosting_civicrm/cv/schemalog.php
   when: civicrm_is_active.stdout == "1"
   ignore_errors: yes
   tags:

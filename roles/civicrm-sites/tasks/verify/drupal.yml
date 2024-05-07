@@ -16,7 +16,7 @@
   become_user: aegir
   shell:
     chdir: "{{ site_path }}"
-    cmd: cv api symbiotic.fixschemalog
+    cmd: cv php:script /var/aegir/hostmaster/profiles/hostmaster/modules/aegir/hosting_civicrm/cv/schemalog.php
   ignore_errors: yes
 
 - name: Drupal | Run civicrm extension database upgrades

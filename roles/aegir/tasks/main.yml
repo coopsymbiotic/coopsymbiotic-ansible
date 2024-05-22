@@ -292,7 +292,7 @@
 # Unless we check if it's already a git repo, in most cases it's static
 # since it has been updated by the aegir3 debian packages.
 - name: Delete the old hosting_civicrm directory
-  file: path="{{ hostmaster_root.stdout }}/profiles/hostmaster/modules/aegir/hosting_civicrm" state=absent
+  file: path="{{ aegir_root }}/hostmaster/profiles/hostmaster/modules/aegir/hosting_civicrm" state=absent
   tags:
     - aegir-hosting-civicrm
     - aegir-ansible
@@ -302,7 +302,7 @@
   become_user: aegir
   git: repo=https://git.drupal.org/project/hosting_civicrm.git
        version=7.x-3.x
-       dest="{{ hostmaster_root.stdout }}/profiles/hostmaster/modules/aegir/hosting_civicrm"
+       dest="{{ aegir_root }}/hostmaster/profiles/hostmaster/modules/aegir/hosting_civicrm"
        update=yes
        force=yes
   ignore_errors: yes
@@ -325,7 +325,7 @@
   become_user: aegir
   git: repo=https://github.com/mlutfy/hosting_wordpress.git
        version=7.x-3.x
-       dest="{{ hostmaster_root.stdout }}/sites/{{ inventory_hostname }}/modules/hosting_wordpress"
+       dest="{{ aegir_root }}/hostmaster/sites/{{ inventory_hostname }}/modules/hosting_wordpress"
        update=yes
   ignore_errors: yes
   tags:
@@ -362,7 +362,7 @@
   become_user: aegir
   git: repo=https://github.com/coopsymbiotic/hosting_civicrm_ansible.git
        version=master
-       dest="{{ hostmaster_root.stdout }}/sites/{{ inventory_hostname }}/modules/hosting_civicrm_ansible"
+       dest="{{ aegir_root }}/hostmaster/sites/{{ inventory_hostname }}/modules/hosting_civicrm_ansible"
        update=yes
   ignore_errors: yes
   tags:
@@ -375,7 +375,7 @@
   become_user: aegir
   git: repo=https://github.com/coopsymbiotic/aegir_ansible.git
        version=main
-       dest="{{ hostmaster_root.stdout }}/sites/{{ inventory_hostname }}/modules/aegir_ansible"
+       dest="{{ aegir_root }}/hostmaster/sites/{{ inventory_hostname }}/modules/aegir_ansible"
        update=yes
   ignore_errors: yes
   tags:
@@ -439,7 +439,7 @@
   become_user: aegir
   git: repo=https://github.com/coopsymbiotic/hosting_usage.git
        version=master
-       dest="{{ hostmaster_root.stdout }}/sites/{{ inventory_hostname }}/modules/hosting_usage"
+       dest="{{ aegir_root }}/hostmaster/sites/{{ inventory_hostname }}/modules/hosting_usage"
        update=yes
   ignore_errors: yes
   tags:
@@ -454,11 +454,13 @@
   become_user: aegir
   git: repo=https://github.com/coopsymbiotic/hosting_advanced_cron.git
        version=7.x-3.x-stic
-       dest="{{ hostmaster_root.stdout }}/sites/{{ inventory_hostname }}/modules/hosting_advanced_cron"
+       dest="{{ aegir_root }}/hostmaster/sites/{{ inventory_hostname }}/modules/hosting_advanced_cron"
        update=yes
+       force=yes
   ignore_errors: yes
   tags:
     - aegir-hosting-advanced-cron
+    - aegir-hosting-advanced-cron-update
 
 - name: Enable hosting_advanced_cron
   shell: "drush @hostmaster en hosting_advanced_cron -y"

@@ -119,7 +119,6 @@ location:
         - /var/aegir/platforms/*/sites/*/wp-content/plugins/files/civicrm/ConfigAndLog
         - /var/aegir/platforms/civicrm-d8/core
         - /var/aegir/tmp
-        - /var/aegir/hostmaster-7.x-*
         - /usr/local/src/dehydrated
         - /usr/local/wkhtmltox
         - /usr/local/promtail*

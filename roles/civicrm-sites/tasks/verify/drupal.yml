@@ -18,12 +18,14 @@
     chdir: "{{ site_path }}"
     cmd: cv php:script /var/aegir/hostmaster/profiles/hostmaster/modules/aegir/hosting_civicrm/cv/schemalog.php
   ignore_errors: yes
+  when: civicrm_is_active.stat.exists
 
 - name: Drupal | Run civicrm extension database upgrades
   become_user: aegir
   shell:
     chdir: "{{ site_path }}"
     cmd: cv api Extension.upgrade
+  when: civicrm_is_active.stat.exists
 
 - include_tasks: drupal-civicrm-cron.yml
   when: "'civicrm_sites' in group_names"

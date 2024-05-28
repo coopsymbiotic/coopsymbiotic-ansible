@@ -6,13 +6,15 @@
 - apt:
     name: [
       "ufw",
-      "fail2ban"
+      "fail2ban",
+      "python3-systemd",
     ]
     state: present
     install_recommends: no
   tags:
     - ufw
     - ufw-packages
+    - ufw-fail2ban
 
 - name: Remove old ssh allow-all rule
   ufw: proto=tcp port=22 rule=allow delete=yes
@@ -93,6 +95,7 @@
     group: root
     mode: 0444
   with_items:
+    - fail2ban.d/symbiotic-ipv6.conf
     - jail.d/civicrm.conf
     - filter.d/nginx-civicrm.conf
     - filter.d/phperror-civicrm.conf
@@ -101,4 +104,14 @@
   notify: restart fail2ban
   tags:
     - ufw
+    - ufw-fail2ban
+
+# see https://github.com/fail2ban/fail2ban/issues/3292
+- name: Fix fail2ban sshd config for Debian
+  lineinfile:
+    path: /etc/fail2ban/paths-debian.conf
+    regexp: '^sshd_backend = systemd'
+    line: 'sshd_backend = systemd'
+  notify: restart fail2ban
+  tags:
     - ufw-fail2ban

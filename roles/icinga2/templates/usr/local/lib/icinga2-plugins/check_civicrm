@@ -14,25 +14,22 @@ function do_api_call($host, $cms, $entity, $action) {
   $tmp = null;
   $site_path = null;
 
-  if ($cms == 'drupal' || $cms == 'drupal8') {
-    exec('sudo -u aegir /usr/local/bin/drush @' . escapeshellarg($host) . ' cvapi ' . escapeshellarg($entity) . '.' . escapeshellarg($action) . ' option.limit=0 --out=json', $tmp);
-  }
-  elseif ($cms == 'wordpress') {
-    exec('sudo -u aegir /usr/local/bin/aegir-helpers site-property ' . escapeshellarg($host) . ' site_path', $site_path);
-    exec('env CIVICRM_SETTINGS=' . escapeshellarg("{$site_path[0]}/wp-content/uploads/civicrm/civicrm.settings.php") . ' sudo -u www-data /usr/local/bin/cv --cwd=' . escapeshellarg($site_path[0]) . ' api ' . escapeshellarg($entity) . '.' . escapeshellarg($action) . ' option.limit=0', $tmp);
+  if ($cms == 'drupal' || $cms == 'drupal8' || $cmd == 'wordpress') {
+    exec('sudo -u {{ icinga2_aegir_user }} /usr/local/bin/aegir-helpers site-property ' . escapeshellarg($host) . ' site_path', $site_path);
+    exec('cd ' . escapeshellarg($site_path[0]) . ' && sudo -u {{ icinga2_wwwdata_user }} /usr/local/bin/cv --cwd=' . escapeshellarg($site_path[0]) . ' api ' . escapeshellarg($entity) . '.' . escapeshellarg($action) . ' option.limit=0', $tmp);
   }
   elseif ($cms == 'joomla') {
-    // We do not support Joomla at the moment, so this code is un-maintained and might not work
+    // This code is un-maintained and might not work
     global $civicrm_root;
     global $civicrm_cli_ini; // required if TZ is not the same as the server
 
     require_once '/etc/civicrm/' . $host . '.php';
 
     if ($civicrm_cli_ini) {
-      exec('sudo -u www-data /usr/bin/env php -c ' . escapeshellarg($civicrm_cli_ini) . ' ' . escapeshellarg($civicrm_cli) . ' -s ' . escapeshellarg($host) . ' -u ' . escapeshellarg($civicrm_cron_user) . ' -p ' . escapeshellarg($civicrm_cron_pass) . ' -e ' . escapeshellarg($entity) . ' -a ' . escapeshellarg($action) . ' --json', $tmp);
+      exec('sudo -u {{ icinga2_aegir_user }} /usr/bin/env php -c ' . escapeshellarg($civicrm_cli_ini) . ' ' . escapeshellarg($civicrm_cli) . ' -s ' . escapeshellarg($host) . ' -u ' . escapeshellarg($civicrm_cron_user) . ' -p ' . escapeshellarg($civicrm_cron_pass) . ' -e ' . escapeshellarg($entity) . ' -a ' . escapeshellarg($action) . ' --json', $tmp);
     }
     else {
-      exec('sudo -u www-data /usr/local/bin/cv --cwd=' . escapeshellarg($civicrm_root) . ' api ' . escapeshellarg($entity . '.' . $action), $tmp);
+      exec('sudo -u {{ icinga2_aegir_user }} /usr/local/bin/cv --cwd=' . escapeshellarg($civicrm_root) . ' api ' . escapeshellarg($entity . '.' . $action), $tmp);
     }
   }
   else {
@@ -40,22 +37,10 @@ function do_api_call($host, $cms, $entity, $action) {
     exit(3);
   }
 
-  if ($cms == 'joomla' || $cms == 'wordpress') {
-    $civistatus = json_decode(implode(' ', $tmp));
-  }
-  else {
-    $civistatus = json_decode($tmp[0]);
-  }
+  $civistatus = json_decode(implode(' ', $tmp));
 
   if (empty($civistatus)) {
-    if ($cms == 'drupal' || $cms == 'drupal8') {
-      exec('sudo -u aegir /usr/local/bin/drush @' . escapeshellarg($host) . ' cc drush');
-      echo 'Failed to check status (2). Drush cache flushed for the next run.';
-    }
-    else {
-      echo 'Failed to check status (2).';
-    }
-
+    echo 'Failed to check status';
     exit(3);
   }
 

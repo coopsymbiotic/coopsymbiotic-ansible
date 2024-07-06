@@ -483,11 +483,12 @@
 # @todo Remove hardcoded IPs
 ##
 - name: Aegir | Add our IPs to system allowlist
-  shell: "drush @hm vset provision_symbiotic_system_whitelist '2606:6d00:100:2600::/56,51.161.62.208/32,2607:5300:203:7e04:1::/128'"
+  shell: "drush @hm vset provision_symbiotic_system_whitelist '{{ aegir_provision_symbiotic_system_whitelist }}'"
   become: true
   become_user: aegir
   tags:
     - aegir-ansible
+    - aegir-ansible-whitelist
 
 - name: Aegir | Trigger a hostmaster verify so that the vhost is updated
   shell: "drush @hm provision-verify"
@@ -495,6 +496,7 @@
   become_user: aegir
   tags:
     - aegir-ansible
+    - aegir-ansible-whitelist
 
 ##
 ## Configurations

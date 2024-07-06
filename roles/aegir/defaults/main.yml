@@ -50,3 +50,5 @@ aegir_mysql_users_rw: []
 aegir_mysql_replication_hosts: []
 
 aegir_helpers_version: 1.2.0
+
+aegir_provision_symbiotic_system_whitelist: 127.0.0.1

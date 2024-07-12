@@ -1,5 +1,8 @@
 ---
 
+# Maybe this .txt file is not necessary anymore now that we use the Debian package
+# although we should complete the switch and add it as an apt source:
+# https://grafana.com/docs/grafana/latest/setup-grafana/installation/debian/
 - name: Check if loki needs to be installed or upgraded
   stat: path="/usr/local/bin/.loki-{{ loki_version }}.txt"
   register: p
@@ -8,27 +11,19 @@
     - packages-loki
     - loki
 
-- name: Deploy the loki binary
-  get_url:
-    url: "https://github.com/grafana/loki/releases/download/v{{ loki_version }}/loki-linux-amd64.gz"
-    dest: /usr/local/bin/loki.gz
-    mode: '0640'
+- name: Install the loki Debian package
+  apt:
+    deb: "https://github.com/grafana/loki/releases/download/v{{ loki_version }}/loki_{{ loki_version }}_amd64.deb"
+    state: present
   when: p.stat.exists == False
   tags:
     - packages
     - packages-loki
     - loki
 
-- name: Unzip the loki binary
-  shell: "gunzip -f /usr/local/bin/loki.gz && touch /usr/local/bin/.loki-{{ loki_version }}.txt"
+- name: Touch the loki file
+  shell: "touch /usr/local/bin/.loki-{{ loki_version }}.txt"
   when: p.stat.exists == False
-  tags:
-    - packages
-    - packages-loki
-    - loki
-
-- name: Delete the loki gzip file
-  file: path="/usr/local/bin/loki.gz" state=absent
   tags:
     - packages
     - packages-loki
@@ -49,15 +44,11 @@
     - loki-ufw
     - ufw
 
-- name: Loki lib directory permissions
-  file: path="/var/lib/loki" state=directory owner=root group=root mode=0700
-  tags:
-    - loki
-
-- name: Loki systemd unit file
-  template: src=etc/systemd/system/loki.service dest=/etc/systemd/system/loki.service owner=root group=root mode=0644
-  tags:
-    - loki
+# Not required now that we use the Debian package?
+# - name: Loki lib directory permissions
+#   file: path="/var/lib/loki" state=directory owner=root group=root mode=0700
+#   tags:
+#     - loki
 
 - name: Loki configuration file
   template: src=etc/loki.yaml dest=/etc/loki.yaml owner=root group=root mode=0644

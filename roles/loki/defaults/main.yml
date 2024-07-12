@@ -1,4 +1,4 @@
-loki_version: 0.4.0
+loki_version: 2.9.9
 loki_server_name: log.example.org
 
 # Assumes ufw is installed and used to manage your firewall.

@@ -51,7 +51,7 @@
 #     - loki
 
 - name: Loki configuration file
-  template: src=etc/loki.yaml dest=/etc/loki.yaml owner=root group=root mode=0644
+  template: src=etc/loki/config.yaml dest=/etc/loki/config.yaml owner=root group=root mode=0644
   notify: restart loki
   tags:
     - loki

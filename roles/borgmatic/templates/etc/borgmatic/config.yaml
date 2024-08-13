@@ -112,12 +112,22 @@ location:
         - /var/aegir/platforms/*/sites/*/files/tmp
         - /var/aegir/platforms/*/sites/*/files/*.sql
         - /var/aegir/platforms/*/sites/*/files/*.sql.gz
+        - /var/aegir/platforms/*/sites/*/*.sql
+        - /var/aegir/platforms/*/sites/*/*.sql.gz
+        - /var/aegir/platforms/web/*/sites/*/files/civicrm/templates_c
+        - /var/aegir/platforms/web/*/sites/*/files/civicrm/ConfigAndLog
+        - /var/aegir/platforms/web/*/sites/*/files/civicrm/persist/contribute/dyn
+        - /var/aegir/platforms/web/*/sites/*/files/css
+        - /var/aegir/platforms/web/*/sites/*/files/imagecache
+        - /var/aegir/platforms/web/*/sites/*/files/js
+        - /var/aegir/platforms/web/*/sites/*/files/styles
+        - /var/aegir/platforms/web/*/sites/*/files/tmp
+        - /var/aegir/platforms/web/*/sites/*/files/*.sql
+        - /var/aegir/platforms/web/*/sites/*/files/*.sql.gz
         - /var/aegir/platforms/*/sites/*/wp-content/updraft
         - /var/aegir/platforms/*/sites/*/wp-content/uploads/civicrm/templates_c
         - /var/aegir/platforms/*/sites/*/wp-content/uploads/civicrm/ConfigAndLog
-        - /var/aegir/platforms/*/sites/*/wp-content/plugins/files/civicrm/templates_c
-        - /var/aegir/platforms/*/sites/*/wp-content/plugins/files/civicrm/ConfigAndLog
-        - /var/aegir/platforms/civicrm-d8/core
+        - /var/aegir/platforms/*/sites/*/wp-content/uploads/civicrm/persist/contribute/dyn
         - /var/aegir/tmp
         - /usr/local/src/dehydrated
         - /usr/local/wkhtmltox

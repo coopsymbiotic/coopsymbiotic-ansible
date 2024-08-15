@@ -18,3 +18,7 @@ Address={{ kvm_main_ipv6_address }}/{{ kvm_main_ipv6_netmask }}
 [Route]
 Destination={{ kvm_main_ipv6_gateway }}
 Scope=link
+
+[Route]
+Destination={{ kvm_main_ipv4_gateway }}
+Scope=link

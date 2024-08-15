@@ -11,7 +11,6 @@
 
 - apt: name={{ item }} state=present install_recommends=no
   with_items:
-    - openntpd
     - qemu-kvm
     - virtinst
     - bridge-utils
@@ -62,8 +61,6 @@
     creates: /etc/hostid
   tags:
     - kvm-server-zfs
-
-- service: name=openntpd state=started enabled=yes
 
 # OVH installs this by default on baremetal servers
 - name: Make sure netplan is not installed

@@ -10,3 +10,5 @@ User=www-data
 WorkingDirectory={{ site_path }}
 Environment="CIVICRM_SETTINGS={{ site_path }}/civicrm.settings.php"
 ExecStart=/usr/local/bin/aegir-getlock /usr/local/bin/cv api Job.execute --user={{ cron_user }}
+# Improves CiviMail performance, otherwise the default hard limit is 1024
+LimitNOFILE=5120

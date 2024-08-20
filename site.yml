@@ -93,6 +93,13 @@
   tags:
     - gitlab
 
+- hosts: gitlab_runners
+  become: yes
+  roles:
+    - gitlab-runner
+  tags:
+    - gitlab-runner
+
 - hosts: php_servers
   become: yes
   roles:
@@ -142,7 +149,6 @@
   become: yes
   roles:
     - docker
-    - gitlab-runner
   tags:
     - docker
 

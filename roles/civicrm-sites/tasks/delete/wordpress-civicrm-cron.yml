@@ -1,5 +1,10 @@
 ---
 
+- name: systemd | Stop the WordPress CiviCRM Cron timer
+  systemd_service:
+    name: "wpcivicron_{{ site_shortname }}.timer"
+    state: stopped
+
 - name: systemd | Remove the WordPress CiviCRM Cron service
   file: path="/etc/systemd/system/wpcivicron_{{ site_shortname }}.service" state=absent
   notify: reload systemd

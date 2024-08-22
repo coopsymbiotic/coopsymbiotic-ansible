@@ -4,6 +4,7 @@
   systemd_service:
     name: "wpcivicron_{{ site_shortname }}.timer"
     state: stopped
+  ignore_errors: True
 
 - name: systemd | Remove the WordPress CiviCRM Cron service
   file: path="/etc/systemd/system/wpcivicron_{{ site_shortname }}.service" state=absent

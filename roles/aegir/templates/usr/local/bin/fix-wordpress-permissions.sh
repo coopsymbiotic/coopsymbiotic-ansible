@@ -75,9 +75,9 @@ mkdir -p ./wp-content/themes
 # - owner by aegir.www-data (so that Aegir can backup/delete files)
 # - www-data can write
 # - all directories are setgid to inherit group ownership
-chown -R aegir:www-data ./wp-content/{languages,plugins,upgrade,uploads,themes}
-chmod -R g+w ./wp-content/{languages,plugins,upgrade,uploads,themes}
-find ./wp-content/{languages,plugins,upgrade,uploads,themes}/ -type d -exec chmod g+s {} \;
+chown -R aegir:www-data ./wp-content/*
+chmod -R g+w ./wp-content/*
+find ./wp-content/*/ -type d -exec chmod g+s {} \;
 
 # Yootheme exception (ex: yootheme/cache, yootheme/css; yootheme is a mess..)
 if [ -d ./wp-content/themes/yootheme ]; then

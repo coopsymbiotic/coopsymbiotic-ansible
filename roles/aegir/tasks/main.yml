@@ -589,16 +589,6 @@
   with_items:
     - update_notify_emails
 
-# Using lineinfile instead of a template so that we can still add other
-# settings in global.inc without ansible.
-- name: Aegir | Enable CiviCRM Native Gettext globally
-  lineinfile:
-    path: /var/aegir/config/includes/global.inc
-    regexp: 'CIVICRM_GETTEXT_NATIVE'
-    line: "define('CIVICRM_GETTEXT_NATIVE', 1);"
-  tags:
-    - aegir-globalinc
-
 - name: Aegir | Enable CiviCRM l10n basedir define
   lineinfile:
     path: /var/aegir/config/includes/global.inc

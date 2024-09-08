@@ -4,12 +4,12 @@
 #
 # coopsymbiotic/ops#163
 # Allow up to {{ aegir_getlock_maxcrons }} crons to run at the same time.
-# We might make this customizable in the future.
+# This can be adjusted using the aegir_getlock_maxcrons Ansible variable.
 
 {% if aegir_getlock_maxcrons|int == 1 %}
-flock --verbose /tmp/aegir-getlock-1.lock "$@"
+flock --verbose /tmp/aegir-getlock-$UID-1.lock "$@"
 {% elif aegir_getlock_maxcrons|int == 2 %}
-flock --verbose -w 2 /tmp/aegir-getlock-{{ n }}.lock "$@" || flock --verbose /tmp/test-3.lock "$@"
+flock --verbose -w 2 /tmp/aegir-getlock-$UID-1.lock "$@" || flock --verbose /tmp/aegir-getlock-$UID-2.lock "$@"
 {% else %}
-{% for n in range(1, aegir_getlock_maxcrons|int) %}flock --verbose -w 2 /tmp/aegir-getlock-{{ n }}.lock "$@" || {% endfor %} flock --verbose /tmp/test-{{ aegir_getlock_maxcrons }}.lock "$@"
+{% for n in range(1, aegir_getlock_maxcrons|int) %}flock --verbose -w 2 /tmp/aegir-getlock-$UID-{{ n }}.lock "$@" || {% endfor %} flock --verbose /tmp/aegir-getlock-$UID-{{ aegir_getlock_maxcrons }}.lock "$@"
 {% endif %}

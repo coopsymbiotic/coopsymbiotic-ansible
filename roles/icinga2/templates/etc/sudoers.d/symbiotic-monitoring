@@ -5,6 +5,7 @@
 Defaults:nagios runcwd=*
 Defaults env_keep += "CIVICRM_SETTINGS"
 {{ icinga2_user }} ALL=(aegir) NOPASSWD: /usr/local/bin/aegir-helpers site-property * site_path
+{{ icinga2_user }} ALL=(aegir) NOPASSWD: /usr/local/bin/drush * status version --format=json
 {{ icinga2_user }} ALL=(aegir) NOPASSWD: /usr/local/bin/wp core version
 {{ icinga2_user }} ALL=(aegir) NOPASSWD: /usr/local/bin/drush * provision-verify
 {{ icinga2_user }} ALL=(aegir) NOPASSWD: /usr/local/lib/icinga2-plugins/check_file_content

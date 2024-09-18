@@ -1,4 +1,12 @@
 ---
+- name: restart nginx
+  service: name=nginx state=restarted
+
+- name: reload nginx
+  service: name=nginx state=reloaded
+
+- name: restart apache2
+  service: name=apache2 state=restarted
 
 - name: restart php8.0-fpm
   service: name=php8.0-fpm state=restarted

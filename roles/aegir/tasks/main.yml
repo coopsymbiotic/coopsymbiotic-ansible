@@ -13,46 +13,6 @@
     - aegir-nodejs
     - packages-php-gpg
 
-- name: Debian | Add Sury.org apt reporitory key
-  apt:
-    deb: https://packages.sury.org/debsuryorg-archive-keyring.deb
-    state: present
-  tags:
-    - packages
-    - packages-php
-    - packages-php-gpg
-    - aegir-php
-
-- name: Debian | Add Sury.org repository on Debian
-  apt_repository:
-    repo: deb [signed-by=/usr/share/keyrings/deb.sury.org-php.gpg] https://packages.sury.org/php/ {{ ansible_distribution_release }} main
-    state: present
-    update_cache: yes
-  when: ansible_distribution == "Debian"
-  tags:
-    - packages
-    - packages-php
-    - aegir-php
-
-- name: Ubuntu | Add Sury.org repository on Ubuntu
-  apt_repository:
-    repo: deb http://ppa.launchpad.net/ondrej/php/ubuntu {{ ansible_distribution_release }} main
-    state: present
-    update_cache: yes
-  when: ansible_distribution == "Ubuntu"
-  tags:
-    - packages
-    - packages-php
-    - aegir-php
-
-- name: Debian | Pin Sury repositories
-  template: src=etc/apt/preferences.d/php-symbiotic dest=/etc/apt/preferences.d/php-symbiotic owner=root group=root mode=0444
-  when: ansible_distribution == "Debian" or ansible_distribution == "Ubuntu"
-  tags:
-    - packages
-    - packages-php
-    - aegir-php
-
 - apt:
     name: [
       locales, # required for enabling locales, for CiviCRM native gettext
@@ -142,43 +102,8 @@
     - packages
     - aegir-nginx
 
-- apt:
-    name: "php{{ phpversion }}-fpm"
-    state: present
-    install_recommends: no
-  when: "'aegir_apache' not in group_names"
-  tags:
-    - packages
-    - packages-php
-    - aegir-php
-
-# Assumes PHP 8.0 or later
-- apt:
-    name: [
-      "php{{ phpversion }}",
-      "php{{ phpversion }}-bcmath",
-      "php{{ phpversion }}-gd",
-      "php{{ phpversion }}-cli",
-      "php{{ phpversion }}-curl",
-      "php{{ phpversion }}-intl",
-      "php{{ phpversion }}-ldap",
-      "php{{ phpversion }}-mysql",
-      "php{{ phpversion }}-soap",
-      "php{{ phpversion }}-ssh2",
-      "php{{ phpversion }}-zip",
-      "php{{ phpversion }}-xsl",
-      "php{{ phpversion }}-mbstring",
-      "php{{ phpversion }}-zip",
-      "php{{ phpversion }}-imagick"
-    ]
-    state: present
-    install_recommends: no
-  tags:
-    - packages
-    - packages-php
-    - aegir-php
-
 # A bit off topic, but too often had the issue where mailname was misconfigured
+# @todo Move to common-all? Also in the php role
 - copy: content="{{ inventory_hostname }}" dest=/etc/mailname
 - file: path=/etc/mailname owner=root group=root mode=0644
 
@@ -219,12 +144,6 @@
     - aegir-install
     - aegir-goaccess
     - aegir-php
-
-- name: Install composer
-  include: composer.yml
-  tags:
-    - aegir-install
-    - aegir-composer
 
 - name: Install Aegir using git
   include: git.yml
@@ -726,10 +645,6 @@
     creates: /var/aegir/l10n-civicrm
   tags:
     - aegir-civicrm-translations
-
-- include: settings-php.yml
-  tags:
-    - aegir-php
 
 - include: civicrm.yml
   tags:

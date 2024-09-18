@@ -1,8 +1,6 @@
 ---
-# Assumes Debian/Ubuntu, with MariaDB, Nginx, php-7.x-fpm
-#
-# @todo Duplicates a lot of things from the 'aegir' role
-# and no longer a reason to duplicate
+# Assumes Debian/Ubuntu, with MariaDB, Nginx, php-fpm
+# has the aegir-php tag for transition (this role previously had duplication with the aegir role)
 
 - name: Force gathering facts for partial ansible runs
   setup:
@@ -11,35 +9,51 @@
     - packages-php
     - php-php
     - php-settings
+    - aegir-php
 
 - name: Debian | Add Sury.org apt reporitory key
-  apt_key:
-    url: "https://packages.sury.org/php/apt.gpg"
+  apt:
+    deb: https://packages.sury.org/debsuryorg-archive-keyring.deb
     state: present
-    keyring: /etc/apt/trusted.gpg.d/php.gpg
   when: ansible_distribution == "Debian" or ansible_distribution == "Ubuntu"
   tags:
     - packages
     - packages-php
     - php-php
+    - aegir-php
 
-- name: Debian | Add Sury.org repository
+- name: Debian | Add Sury.org repository on Debian
   apt_repository:
-    repo: deb https://packages.sury.org/php/ {{ ansible_distribution_release }} main
+    repo: deb [signed-by=/usr/share/keyrings/deb.sury.org-php.gpg] https://packages.sury.org/php/ {{ ansible_distribution_release }} main
     state: present
     update_cache: yes
-  when: ansible_distribution == "Debian" or ansible_distribution == "Ubuntu"
+  when: ansible_distribution == "Debian"
   tags:
     - packages
     - packages-php
     - php-php
+    - aegir-php
+
+- name: Ubuntu | Add Sury.org repository on Ubuntu
+  apt_repository:
+    repo: deb http://ppa.launchpad.net/ondrej/php/ubuntu {{ ansible_distribution_release }} main
+    state: present
+    update_cache: yes
+  when: ansible_distribution == "Ubuntu"
+  tags:
+    - packages
+    - packages-php
+    - php-php
+    - aegir-php
 
 - name: Debian | Pin Sury repositories
   template: src=etc/apt/preferences.d/php-symbiotic dest=/etc/apt/preferences.d/php-symbiotic owner=root group=root mode=0444
+  when: ansible_distribution == "Debian" or ansible_distribution == "Ubuntu"
   tags:
     - packages
     - packages-php
     - php-php
+    - aegir-php
 
 - apt: name={{ item }} state=present install_recommends=no
   with_items:
@@ -51,33 +65,17 @@
     - php-php
 
 - apt:
-    name: [
-      "php{{ phpversion }}",
-      "php{{ phpversion }}-bcmath",
-      "php{{ phpversion }}-gd",
-      "php{{ phpversion }}-cli",
-      "php{{ phpversion }}-curl",
-      "php{{ phpversion }}-intl",
-      "php{{ phpversion }}-json",
-      "php{{ phpversion }}-ldap",
-      "php{{ phpversion }}-mysql",
-      "php{{ phpversion }}-soap",
-      "php{{ phpversion }}-ssh2",
-      "php{{ phpversion }}-zip",
-      "php{{ phpversion }}-xsl",
-      "php{{ phpversion }}-mbstring",
-      "php{{ phpversion }}-zip",
-      "php{{ phpversion }}-imagick"
-    ]
+    name: "php{{ phpversion }}-fpm"
     state: present
     install_recommends: no
-  when: phpversion != 8.0
+  when: "'aegir_apache' not in group_names"
   tags:
     - packages
     - packages-php
     - php-php
+    - aegir-php
 
-# PHP 8.0 does not have php8.0-json
+# Assumes PHP 8.0 or later
 - apt:
     name: [
       "php{{ phpversion }}",
@@ -98,18 +96,27 @@
     ]
     state: present
     install_recommends: no
-  when: phpversion == 8.0
   tags:
     - packages
     - packages-php
     - php-php
+    - aegir-php
 
 # A bit off topic, but too often had the issue where mailname was misconfigured
 # @todo Is it relevant in this role? maybe common-all? (probably old copy-paste)
 - copy: content="{{ inventory_hostname }}" dest=/etc/mailname
 - file: path=/etc/mailname owner=root group=root mode=0644
 
+- name: Install composer
+  include: composer.yml
+  tags:
+    - aegir-install
+    - aegir-composer
+    - php-php
+    - php-composer
+
 - include: settings-php.yml
   tags:
     - php-php
     - php-settings
+    - aegir-php

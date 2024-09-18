@@ -15,14 +15,12 @@
   register: password_results
   tags:
     - sshuserkeys
-    - sshuserkeys-test
 
 - name: Format random password list
   set_fact:
     password_list: "{{ password_results.results | selectattr('skipped', 'undefined') | map(attribute='ansible_facts.password_item') | list }}"
   tags:
     - sshuserkeys
-    - sshuserkeys-test
 
 - name: Format random password dict
   set_fact:
@@ -30,7 +28,6 @@
   with_items: "{{ password_list }}"
   tags:
     - sshuserkeys
-    - sshuserkeys-test
 
 - name: Create system users
   user:

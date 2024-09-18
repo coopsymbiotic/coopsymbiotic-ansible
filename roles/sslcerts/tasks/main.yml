@@ -2,16 +2,16 @@
 - name: Add ssl-cert group on Ubuntu
   group: name=ssl-cert state=present
 
-- copy: src=/etc/ansible/files/etc/ssl/private/{{ item }}.crt dest=/etc/ssl/private/{{ item }}.crt owner=root group=ssl-cert mode=0640
+- copy: src={{ inventory_dir }}/files/etc/ssl/private/{{ item }}.crt dest=/etc/ssl/private/{{ item }}.crt owner=root group=ssl-cert mode=0640
   with_items: "{{ sslcertificates }}"
 
-- copy: src=/etc/ansible/files/etc/ssl/private/{{ item }}.bundled.crt dest=/etc/ssl/private/{{ item }}.bundled.crt owner=root group=ssl-cert mode=0640
+- copy: src={{ inventory_dir }}/files/etc/ssl/private/{{ item }}.bundled.crt dest=/etc/ssl/private/{{ item }}.bundled.crt owner=root group=ssl-cert mode=0640
   with_items: "{{ sslcertificates }}"
 
-- copy: src=/etc/ansible/files/etc/ssl/private/{{ item }}.cacert.crt dest=/etc/ssl/private/{{ item }}.cacert.crt owner=root group=ssl-cert mode=0640
+- copy: src={{ inventory_dir }}/files/etc/ssl/private/{{ item }}.cacert.crt dest=/etc/ssl/private/{{ item }}.cacert.crt owner=root group=ssl-cert mode=0640
   with_items: "{{ sslcertificates }}"
 
-- copy: src=/etc/ansible/files/etc/ssl/private/{{ item }}.key dest=/etc/ssl/private/{{ item }}.key owner=root group=ssl-cert mode=0640
+- copy: src={{ inventory_dir }}/files/etc/ssl/private/{{ item }}.key dest=/etc/ssl/private/{{ item }}.key owner=root group=ssl-cert mode=0640
   with_items: "{{ sslcertificates }}"
 
 # If using Aegir
@@ -24,28 +24,28 @@
   when: "'aegir_managed' in group_names"
 
 # Copy to the root space (files used as a reference for when a site is verified, sent to the server_master later on).
-- copy: src=/etc/ansible/files/etc/ssl/private/{{ item }}.key dest=/var/aegir/config/ssl.d/{{ item }}/openssl.key owner=root group=aegir mode=0640
+- copy: src={{ inventory_dir }}/files/etc/ssl/private/{{ item }}.key dest=/var/aegir/config/ssl.d/{{ item }}/openssl.key owner=root group=aegir mode=0640
   with_items: "{{ sslcertificates }}"
   when: "'aegir_managed' in group_names"
 
-- copy: src=/etc/ansible/files/etc/ssl/private/{{ item }}.crt dest=/var/aegir/config/ssl.d/{{ item }}/openssl.crt owner=root group=aegir mode=0640
+- copy: src={{ inventory_dir }}/files/etc/ssl/private/{{ item }}.crt dest=/var/aegir/config/ssl.d/{{ item }}/openssl.crt owner=root group=aegir mode=0640
   with_items: "{{ sslcertificates }}"
   when: "'aegir_managed' in group_names"
 
-- copy: src=/etc/ansible/files/etc/ssl/private/{{ item }}.cacert.crt dest=/var/aegir/config/ssl.d/{{ item }}/openssl_chain.crt owner=root group=aegir mode=0640
+- copy: src={{ inventory_dir }}/files/etc/ssl/private/{{ item }}.cacert.crt dest=/var/aegir/config/ssl.d/{{ item }}/openssl_chain.crt owner=root group=aegir mode=0640
   with_items: "{{ sslcertificates }}"
   when: "'aegir_managed' in group_names"
 
 # Copy to the "server_master" (the file referenced in the vhost declaration)
-- copy: src=/etc/ansible/files/etc/ssl/private/{{ item }}.key dest=/var/aegir/config/server_master/ssl.d/{{ item }}/openssl.key owner=root group=aegir mode=0640
+- copy: src={{ inventory_dir }}/files/etc/ssl/private/{{ item }}.key dest=/var/aegir/config/server_master/ssl.d/{{ item }}/openssl.key owner=root group=aegir mode=0640
   with_items: "{{ sslcertificates }}"
   when: "'aegir_managed' in group_names"
 
-- copy: src=/etc/ansible/files/etc/ssl/private/{{ item }}.crt dest=/var/aegir/config/server_master/ssl.d/{{ item }}/openssl.crt owner=root group=aegir mode=0640
+- copy: src={{ inventory_dir }}/files/etc/ssl/private/{{ item }}.crt dest=/var/aegir/config/server_master/ssl.d/{{ item }}/openssl.crt owner=root group=aegir mode=0640
   with_items: "{{ sslcertificates }}"
   when: "'aegir_managed' in group_names"
 
-- copy: src=/etc/ansible/files/etc/ssl/private/{{ item }}.cacert.crt dest=/var/aegir/config/server_master/ssl.d/{{ item }}/openssl_chain.crt owner=root group=aegir mode=0640
+- copy: src={{ inventory_dir }}/files/etc/ssl/private/{{ item }}.cacert.crt dest=/var/aegir/config/server_master/ssl.d/{{ item }}/openssl_chain.crt owner=root group=aegir mode=0640
   with_items: "{{ sslcertificates }}"
   when: "'aegir_managed' in group_names"
 
@@ -53,15 +53,15 @@
 # http://wiki.zimbra.com/wiki/Installing_a_RapidSSL_Commercial_Certificate
 # FIXME: zimbra requires bundling the Global CA as well as intermediate
 # ex: https://www.geotrust.com/resources/root_certificates/certificates/GeoTrust_Global_CA.pem
-- copy: src=/etc/ansible/files/etc/ssl/private/{{ item }}.key dest=/opt/zimbra/ssl/zimbra/commercial/commercial.key owner=zimbra group=zimbra mode=0640
+- copy: src={{ inventory_dir }}/files/etc/ssl/private/{{ item }}.key dest=/opt/zimbra/ssl/zimbra/commercial/commercial.key owner=zimbra group=zimbra mode=0640
   with_items: "{{ sslcertificates }}"
   when: host_zimbra_managed
 
-- copy: src=/etc/ansible/files/etc/ssl/private/{{ item }}.crt dest=/tmp/openssl.crt owner=zimbra group=zimbra mode=0640
+- copy: src={{ inventory_dir }}/files/etc/ssl/private/{{ item }}.crt dest=/tmp/openssl.crt owner=zimbra group=zimbra mode=0640
   with_items: "{{ sslcertificates }}"
   when: host_zimbra_managed
 
-- copy: src=/etc/ansible/files/etc/ssl/private/{{ item }}.cacert.crt dest=/tmp/openssl.cacert.crt owner=zimbra group=zimbra mode=0640
+- copy: src={{ inventory_dir }}/files/etc/ssl/private/{{ item }}.cacert.crt dest=/tmp/openssl.cacert.crt owner=zimbra group=zimbra mode=0640
   with_items: "{{ sslcertificates }}"
   when: host_zimbra_managed
 

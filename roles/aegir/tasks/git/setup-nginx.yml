@@ -13,7 +13,7 @@
 # Too slow to run on each server.
 - name: Copy the dhparam file for nginx https
   copy:
-    src: /etc/ansible/files/etc/nginx/params.4096
+    src: {{ inventory_dir }}/files/etc/nginx/params.4096
     dest: /etc/nginx/params.4096
     owner: root
     group: root

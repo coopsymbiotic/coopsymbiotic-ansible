@@ -7,13 +7,13 @@
     - aegir-civicrm-platform
 
 - name: ssh | Copy the ssh platform pub key
-  copy: src="/etc/ansible/files/sshkeys/aegir/id_rsa_platforms.pub" dest=/var/aegir/.ssh/id_rsa_platforms.pub owner="aegir" group="aegir" mode=0600
+  copy: src="{{ inventory_dir }}/files/sshkeys/aegir/id_rsa_platforms.pub" dest=/var/aegir/.ssh/id_rsa_platforms.pub owner="aegir" group="aegir" mode=0600
   tags:
     - aegir-ssh
     - aegir-civicrm-platform
 
 - name: ssh | Copy the ssh platform priv key
-  copy: src="/etc/ansible/files/sshkeys/aegir/id_rsa_platforms" dest=/var/aegir/.ssh/id_rsa_platforms owner="aegir" group="aegir" mode=0600
+  copy: src="{{ inventory_dir }}/files/sshkeys/aegir/id_rsa_platforms" dest=/var/aegir/.ssh/id_rsa_platforms owner="aegir" group="aegir" mode=0600
   tags:
     - aegir-ssh
     - aegir-civicrm-platform

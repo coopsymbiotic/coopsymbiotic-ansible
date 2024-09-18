@@ -15,7 +15,7 @@
 - name: User | authorized key upload
   authorized_key:
     user="{{ deploy_user }}"
-    key="{{ lookup('file', '/etc/ansible/files/sshkeys/deploy/{{ deploy_user }}.pub') }}"
+    key="{{ lookup('file', '{{ inventory_dir }}/files/sshkeys/deploy/{{ deploy_user }}.pub') }}"
 
 - name: User | Change deploy directory permissions
   file: path=/home/deploy mode=0750

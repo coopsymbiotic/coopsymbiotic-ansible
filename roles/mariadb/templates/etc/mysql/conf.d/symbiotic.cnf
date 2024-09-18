@@ -56,7 +56,7 @@ local-infile=1
 # Allows passwordless auth for the root user
 plugin-load-add = auth_socket.so
 
-{% if groups['sql_servers'] is defined or groups['sql_replication_servers'] is defined %}
+{% if (groups['sql_primary_servers'] is defined and ansible_fqdn in groups['sql_primary_servers']) or (groups['sql_replication_servers'] is defined and ansible_fqdn in groups['sql_replication_servers']) %}
 # Assumed to be a separate zfs volume (partition) for easier resync
 datadir = /data/mysql
 log_bin = /data/mysql/mysql-bin.log

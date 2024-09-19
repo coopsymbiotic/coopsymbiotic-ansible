@@ -7,6 +7,7 @@ default-character-set=utf8mb4
 table_cache            = 8192
 open_files_limit       = 25000
 
+max_allowed_packet = 128M
 tmp_table_size  = 512M
 max_heap_table_size = 512M
 

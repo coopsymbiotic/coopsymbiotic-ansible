@@ -19,7 +19,12 @@ innodb_buffer_pool_instances = 1
 # Limit the ibtmp file to 2GB
 innodb_temp_data_file_path = ibtmp1:12M:autoextend:max:2G
 
-join_buffer_size = 512K
+# Recommendations from ixiam/hosting#194
+key_buffer_size = 512M
+join_buffer_size = 8M
+read_buffer_size = 4M
+read_rnd_buffer_size = 4M
+sort_buffer_size = 1M
 
 # http://www.mysqlperformanceblog.com/2007/11/03/choosing-innodb_buffer_pool_size/
 innodb_flush_method=O_DIRECT

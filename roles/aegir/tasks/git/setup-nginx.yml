@@ -39,6 +39,15 @@
     - aegir-nginx
     - aegir-nginx-conf
 
+- name: Enable the mjw javascript mimetype
+  lineinfile:
+    path: /etc/nginx/mime.types
+    regexp: 'application/javascript\s+js;'
+    line: 'application/javascript                js mjw;'
+  tags:
+    - aegir-nginx
+    - aegir-nginx-conf
+
 # Notably to:
 # - disable server_tokens
 # - disable access.log, which gets set elsewhere in the aegir config

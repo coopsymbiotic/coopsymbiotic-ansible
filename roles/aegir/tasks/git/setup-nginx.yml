@@ -42,7 +42,7 @@
 - name: Enable the mjw javascript mimetype
   lineinfile:
     path: /etc/nginx/mime.types
-    regexp: 'application/javascript\s+js;'
+    regexp: 'application/javascript\s+js'
     line: 'application/javascript                js mjs;'
   tags:
     - aegir-nginx

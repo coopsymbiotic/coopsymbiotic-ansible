@@ -141,3 +141,10 @@
   tags:
     - common-all
     - common-all-motd
+
+- name: Set the timezone
+  timezone:
+    name: "{{ preseed_timezone }}"
+  tags:
+    - common-all
+    - common-all-timezone

@@ -22,3 +22,13 @@ Scope=link
 [Route]
 Destination={{ kvm_main_ipv4_gateway }}
 Scope=link
+
+{# Required for when routing the block instead of virtual MACs #}
+{% if kvm_additional_ipv4_blocks is defined %}
+{% for block in kvm_additional_ipv4_blocks %}
+[Route]
+Destination={{ block }}
+Scope=link
+Source={{ kvm_main_ipv4_address }}
+{% endfor %}
+{% endif %}

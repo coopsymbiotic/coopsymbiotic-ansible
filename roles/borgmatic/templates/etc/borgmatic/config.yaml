@@ -12,6 +12,7 @@ location:
         - /etc
         - /root
         - /home
+        - /opt
         - /usr/local
         - /var
 {% if mysqlbackup_backupdir != "/var/backups/mysql" %}

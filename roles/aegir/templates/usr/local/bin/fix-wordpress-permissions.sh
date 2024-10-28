@@ -52,7 +52,7 @@ chmod g+s $site_path
 # wp-config.php might not exist, ignore errors
 if [ -f wp-config.php ]; then
   chown aegir.www-data wp-config.php
-  chmod 0750 wp-config.php
+  chmod 0640 wp-config.php
 fi
 
 # Relax permissions on wp-content, so that www-data can write in it

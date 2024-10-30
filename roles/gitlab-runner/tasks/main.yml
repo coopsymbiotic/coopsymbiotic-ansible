@@ -86,3 +86,18 @@
   tags:
     - gitlab-runner
     - gitlab-runner-interval
+
+- name: Setup cron to clear the docker cache every week
+  cron:
+    name: "clear-docker-cache"
+    minute: "{{ 60 | random }}"
+    hour: "0"
+    day: "*"
+    month: "*"
+    weekday: "0"
+    job: "/usr/share/gitlab-runner/clear-docker-cache"
+    cron_file: "clear-docker-cache"
+    user: "root"
+    state: present
+  tags:
+    - gitlab-runner-cron

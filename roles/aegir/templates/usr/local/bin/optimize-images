@@ -129,15 +129,27 @@ if [ "$devsite" == "yes" ]; then
   resize="yes"
 fi
 
+width_max=${resize_max%x*}
+height_max=${resize_max#*x}
+
 if [ "$resize" == "yes" ]; then
-  print=""
-  if [ "$quiet" == "no" ]; then
-    print="-print"
-  fi
   log_message "Resizing large images to $resize_max"
   # Give a moment to let the admin ctrl-C in panic
   sleep 2
-  find $image_folder -type f -size +200k \( -iname '*.png' -o -iname '*.jp*g' \) $print -exec mogrify -resize $resize_max {} \;
+  find $image_folder -type f -size +200k \( -iname '*.png' -o -iname '*.jp*g' \) | while read -r IMAGE_PATH; do
+    # Get the dimensions of the image
+    dimensions=$(identify -format "%wx%h" "$IMAGE_PATH")
+    width=${dimensions%x*}
+    height=${dimensions#*x}
+
+    # Check if the image is larger than $resize_max
+    if [ "$width" -gt "$width_max" ] && [ "$height" -gt "$height_max" ]; then
+      mogrify -resize $resize_max "$IMAGE_PATH"
+      log_message "Resized: $IMAGE_PATH"
+    else
+      log_message "Skipped (not larger than $resize_max): $IMAGE_PATH"
+    fi
+  done
 fi
 
 # Check size after

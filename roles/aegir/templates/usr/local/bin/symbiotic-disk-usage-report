@@ -1,0 +1,35 @@
+#!/bin/bash
+#
+# {{ ansible_managed }}
+
+echo "* /tmp/ .."
+du -ba /tmp/ 2>/dev/null | sort -n -r | head -5 | numfmt --to=si --field 1
+echo ""
+
+echo "* Biggest databases.."
+du -b /var/lib/mysql/ 2>/dev/null | sort -n -r | head | numfmt --to=si --field 1
+
+echo ".. inspect with 'ncdu /var/lib/mysql' to find large tables."
+echo ".. TRUNCATE large log tables that are not particularly necessary"
+echo ".. enable the archivemailings CiviCRM extensions to cleanup old mailing data"
+echo ""
+
+echo "* System logs..."
+du -b /var/log/ 2>/dev/null | sort -n -r | head -5 | numfmt --to=si --field 1
+echo ".. clear logs with: journalctl --vacuum-time=2d"
+echo ".. consider disabling the syslog module in Drupal"
+echo ".. double-check nginx/error.log and try to reduce logs"
+echo ".. also check: 'journalctl --tail' for a sample of log output"
+echo ""
+
+echo "* Aegir backups..."
+du -ba /var/aegir/backups/ 2>/dev/null | sort -n -r | head -5 | numfmt --to=si --field 1
+echo ""
+
+echo "* Aegir sites..."
+du -ba /var/aegir/ 2>/dev/null | sort -n -r | head -10 | numfmt --to=si --field 1
+echo ".. inspect with 'ncdu /var/aegir' to find large files."
+echo ".. consider running /usr/local/bin/optimize-images [path]"
+echo ".. and also 'rdfind -hardlinks true [path]'"
+echo ""
+echo "done."

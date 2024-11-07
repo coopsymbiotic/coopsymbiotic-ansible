@@ -576,16 +576,27 @@
     - aegir-fixownership
     - aegir-fixpermission-override
 
-- name: Deploy other Aegir helper scripts
-  template: src="usr/local/bin/{{ item }}" dest="/usr/local/bin/{{ item }}" owner=root group=root mode=0755
+- name: Deploy Aegir helper scripts
+  template:
+    src: usr/local/bin/{{ item }}
+    dest: /usr/local/bin/{{ item }}
+    owner: root
+    group: root
+    mode: 0755
   with_items:
     - resync-drupal-db.sh
     - resync-wordpress-db.sh
     - aegir-db-filestats
     - aegir-getlock
     - optimize-images
+    - cvlog
+    - civicrm-pull-patch
+    - civicrm-update-translations
+    - symbiotic-disk-usage-report
   tags:
     - aegir-helper-scripts
+    - aegir-civicrm-scripts
+    - aegir-civicrm-translations
     - aegir-ansible
     - aegir-getlock
 
@@ -607,22 +618,6 @@
     state=present
   tags:
     - aegir-weekly
-
-- name: Aegir | Deploy civicrm-pull-patch
-  template: src=usr/local/bin/civicrm-pull-patch dest=/usr/local/bin/civicrm-pull-patch owner=root group=root mode=0755
-  tags:
-    - aegir-civicrm-scripts
-
-- name: Aegir | Deploy cvlog
-  template: src=usr/local/bin/cvlog dest=/usr/local/bin/cvlog owner=root group=root mode=0755
-  tags:
-    - aegir-civicrm-scripts
-
-- name: Aegir | Deploy civicrm-update-translations
-  template: src=usr/local/bin/civicrm-update-translations dest=/usr/local/bin/civicrm-update-translations owner=root group=root mode=0755
-  tags:
-    - aegir-civicrm-scripts
-    - aegir-civicrm-translations
 
 - name: Aegir | Download CiviCRM translations
   shell: "/usr/local/bin/civicrm-update-translations"

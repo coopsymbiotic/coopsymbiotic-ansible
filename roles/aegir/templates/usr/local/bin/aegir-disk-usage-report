@@ -2,6 +2,11 @@
 #
 # {{ ansible_managed }}
 
+if [ "$(id -u)" -ne 0 ]; then
+  echo "This script requires root privileges. Run with sudo."
+  exit 1
+fi
+
 echo "* /tmp/ .."
 du -ba /tmp/ 2>/dev/null | sort -n -r | head -5 | numfmt --to=si --field 1
 echo ""
@@ -26,8 +31,18 @@ echo "* Aegir backups..."
 du -ba /var/aegir/backups/ 2>/dev/null | sort -n -r | head -5 | numfmt --to=si --field 1
 echo ""
 
+# Exclude s3fs directories
+exclude_args=""
+s3fs_mounts=$(grep 's3fs' /etc/fstab | grep -v '^#' | awk '{print $2}')
+for mount_point in $s3fs_mounts; do
+  mount_point="${mount_point%/}"
+  relative_path="${mount_point#/var/aegir/}"
+  exclude_args="$exclude_args --exclude=$relative_path"
+done
+
 echo "* Aegir sites..."
-du -ba /var/aegir/ 2>/dev/null | sort -n -r | head -10 | numfmt --to=si --field 1
+set -x
+du $exclude_args -ba /var/aegir/ 2>/dev/null | sort -n -r | head -10 | numfmt --to=si --field 1
 echo ".. inspect with 'ncdu /var/aegir' to find large files."
 echo ".. consider running /usr/local/bin/optimize-images [path]"
 echo ".. and also 'rdfind -hardlinks true [path]'"

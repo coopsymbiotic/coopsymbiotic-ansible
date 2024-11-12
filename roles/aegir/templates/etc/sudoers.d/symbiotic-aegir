@@ -20,6 +20,7 @@ www-data ALL=NOPASSWD: /usr/local/bin/aegir-systemctl-status
 aegir ALL=NOPASSWD: /usr/local/bin/aegir-ansible
 aegir ALL=NOPASSWD: /usr/local/bin/fix-wordpress-permissions.sh
 aegir ALL=NOPASSWD: /usr/local/bin/aegir-db-filestats
+aegir ALL=NOPASSWD: /usr/local/bin/aegir-disk-usage-report
 www-data ALL=NOPASSWD: /usr/local/bin/aegir-db-filestats
 www-data ALL=NOPASSWD: /usr/local/bin/goaccess-aegir
 # Unban IPs blocked by fail2ban

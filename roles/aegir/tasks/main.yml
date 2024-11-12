@@ -587,12 +587,12 @@
     - resync-drupal-db.sh
     - resync-wordpress-db.sh
     - aegir-db-filestats
+    - aegir-disk-usage-report
     - aegir-getlock
     - optimize-images
     - cvlog
     - civicrm-pull-patch
     - civicrm-update-translations
-    - symbiotic-disk-usage-report
   tags:
     - aegir-helper-scripts
     - aegir-civicrm-scripts

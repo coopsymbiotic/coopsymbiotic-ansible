@@ -41,7 +41,6 @@ for mount_point in $s3fs_mounts; do
 done
 
 echo "* Aegir sites..."
-set -x
 du $exclude_args -ba /var/aegir/ 2>/dev/null | sort -n -r | head -10 | numfmt --to=si --field 1
 echo ".. inspect with 'ncdu /var/aegir' to find large files."
 echo ".. consider running /usr/local/bin/optimize-images [path]"

@@ -30,6 +30,12 @@ else
   hostname=$(hostname -f)
 fi
 
+# Workaround for when hostmaster is http only
+proto="https"
+if [ -f "/var/aegir/config/.flag-http-hostmaster" ]; then
+  proto="http"
+fi
+
 query_args="$AEGIR_INVENTORY_ARGS"
 
 # Get JSON from an Aegir server.
@@ -39,5 +45,5 @@ if [ "$AEGIR_INVENTORY_LOCAL" == "" ]; then
   ssh deploy@${hostname} curl --silent "https://${hostname}/inventory${query_args}"
 else
   # Running locally on the Aegir server
-  curl --insecure --silent "https://${hostname}/inventory${query_args}"
+  curl --insecure --silent "${proto}://${hostname}/inventory${query_args}"
 fi

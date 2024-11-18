@@ -1,0 +1,18 @@
+---
+
+- hosts: all
+  tasks:
+    - name: Run drupal fix platform ownership
+      shell:
+        chdir: "{{ publish_path }}"
+        cmd: "/usr/local/bin/fix-drupal-platform-ownership.sh --root={{ publish_path }} --script-user=aegir --web-group=www-data"
+
+    - name: Run drupal fix platform permissions
+      shell:
+        chdir: "{{ publish_path }}"
+        cmd: "/usr/local/bin/fix-drupal-platform-permissions.sh --root={{ publish_path }}"
+
+    - name: Update the platform status
+      shell:
+        chdir: "/var/aegir/admin/web"
+        cmd: "/usr/local/bin/bee ev 'db_query(\"UPDATE hosting_platform SET status = 1, verified = 1 WHERE nid = {{ nid }}\");'"

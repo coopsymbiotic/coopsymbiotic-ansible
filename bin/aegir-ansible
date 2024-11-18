@@ -26,13 +26,6 @@ export AEGIR_INVENTORY_LOCAL=1
 
 # Validate that the tag looks valid
 if [ -n "$tag" ]; then
-  echo $tag | grep -q -E "^[-a-zA-Z0-9]+$"
-
-  if [ $? != 0 ]; then
-    echo "Error: Invalid tag format"
-    exit 1
-  fi
-
   # If necessary, make sure the inventory lists deleted sites so that we can remove their crons
   query_args=""
   if [ "$tag" == "civicrm-sites-delete" ]; then
@@ -42,7 +35,12 @@ if [ -n "$tag" ]; then
   export AEGIR_INVENTORY_ARGS=$query_args
 
   # Limit to 2 tasks in parallel because running many DB upgrades can overload the system
-  ansible-playbook -f 2 --connection=local -i /usr/local/coopsymbiotic-ansible/bin/aegir-inventory -l $host --tags $tag /usr/local/coopsymbiotic-ansible/civicrm_site.yml
+  # Check for the new aegir-ansible syntax for aegir-on-backdrop
+  if [[ "$tag" == *.yml ]]; then
+    ansible-playbook -f 2 --connection=local -i /usr/local/coopsymbiotic-ansible/bin/aegir-inventory -l $host /usr/local/coopsymbiotic-ansible/aegir/$tag
+  else
+    ansible-playbook -f 2 --connection=local -i /usr/local/coopsymbiotic-ansible/bin/aegir-inventory -l $host --tags $tag /usr/local/coopsymbiotic-ansible/civicrm_site.yml
+  fi
 else
   ansible-playbook -f 2 --connection=local -i /usr/local/coopsymbiotic-ansible/bin/aegir-inventory -l $host /usr/local/coopsymbiotic-ansible/civicrm_site.yml
 fi

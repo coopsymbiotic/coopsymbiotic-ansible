@@ -27,8 +27,9 @@ export AEGIR_INVENTORY_LOCAL=1
 # Validate that the tag looks valid
 if [ -n "$tag" ]; then
   # If necessary, make sure the inventory lists deleted sites so that we can remove their crons
+  # also applies to verify because the site might not yet be enabled (import/migrate)
   query_args=""
-  if [ "$tag" == "civicrm-sites-delete" ]; then
+  if [ "$tag" == "civicrm-sites-delete" ] || [ "$tag" == "civicrm-sites-verify" ]; then
     query_args="?include_disabled=1"
   fi
 

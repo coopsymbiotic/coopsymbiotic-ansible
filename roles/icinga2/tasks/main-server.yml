@@ -29,6 +29,10 @@
       'php7.4-mysql',
       'icingaweb2',
       'icingaweb2-module-monitoring',
+      # graphite support in icinga
+      'icinga-graphite-web',
+      'icinga-graphite',
+      'icingaweb2-module-graphite',
       # for domain_expiration check'
       'whois',
     ]
@@ -146,6 +150,7 @@
   tags:
     - icinga2-icingaweb
 
+# @todo PHP8 or use the PHP role
 - name: Symlink PHP configuration to fpm
   file: src="/etc/php/7.4/mods-available/symbiotic-icinga.ini" dest="/etc/php/7.4/fpm/conf.d/90-symbiotic-icinga.ini" owner=root group=root state=link
   notify: restart php-fpm
@@ -156,13 +161,6 @@
   file: src="{{ item.path }}" dest="{{ item.dest }}" owner=root group=root state=link
   with_items:
     - { path: '/usr/share/icingaweb2/modules/monitoring', dest: '/etc/icingaweb2/modules/monitoring' }
-
-- name: Download the graphite module
-  git: repo=https://github.com/findmypast/icingaweb2-module-graphite.git
-       dest=/usr/share/icingaweb2/modules/graphite
-       update=yes
-  tags:
-    - icinga-graphite
 
 - name: Setup graphite icingaweb2 module configuration in /etc/icingaweb2/modules/graphite
   file: path=/etc/icingaweb2/modules/graphite state=directory owner=root group=root mode=0755

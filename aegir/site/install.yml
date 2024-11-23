@@ -1,0 +1,53 @@
+---
+
+- hosts: all
+  tasks:
+    # Ignore the directory permissions for now, we only change it when necessary
+    - name: Create the site directory
+      file:
+        path: "{{ site_path }}"
+        state: directory
+        owner: aegir
+        group: www-data
+
+    - name: Create the MySQL database
+      mysql_db:
+        name: "{{ db_name }}"
+        state: present
+        login_user: "{{ hostvars[db_host]['db']['db_user'] }}"  
+        login_password: "{{ hostvars[db_host]['db']['db_passwd'] }}"  
+
+    - name: Create the MySQL user
+      mysql_user:
+        name: "{{ db_name }}"
+        password: "{{ db_passwd }}"
+        priv:
+          '{{ db_name }}.*:ALL'
+        column_case_sensitive: true
+        state: present
+        login_user: "{{ hostvars[db_host]['db']['db_user'] }}"  
+        login_password: "{{ hostvars[db_host]['db']['db_passwd'] }}"  
+
+    - name: Install Drupal 10
+      shell: 
+        chdir: "{{ site_path }}"
+        cmd: "drush site-install {{ profile }} --db-url=mysql://{{ db_name }}:{{ db_passwd }}@{{ db_host }}:{{ db_port }}/{{ db_name}} --site-name={{ inventory_hostname }} --sites-subdir={{ inventory_hostname }} --site-mail=fixme@example.org --locale=en"
+        creates: "{{ site_path }}/settings.php"
+      when: software == "Drupal" and version is version('10.0.0', '>') 
+
+    - name: Install Drupal 7
+      shell: 
+        chdir: "{{ site_path }}"
+        cmd: "drush -y site-install {{ profile }} --db-url=mysql://{{ db_name }}:{{ db_passwd }}@{{ db_host }}:{{ db_port }}/{{ db_name}} --site-name={{ inventory_hostname }} --sites-subdir={{ inventory_hostname }} --site-mail=fixme@example.org --locale=en"
+        creates: "{{ site_path }}/settings.php"
+      when: software == "Drupal" and version is version('10.0.0', '<')
+
+    - name: Install Backdrop
+      shell: 
+        chdir: "{{ site_path }}"
+        cmd: "bee -y site-install {{ profile }} --db-name={{ db_name }} --db-user={{ db_name }} --db-pass={{ db_passwd }} --db-host={{ db_host }} --site-name={{ inventory_hostname }} --sites-subdir={{ inventory_hostname }} --site-mail=fixme@example.org --locale=en --auto"
+        creates: "{{ site_path }}/settings.php"
+      when: software == "Backdrop"
+
+    # generate the vhost
+    # run fix ownership/permission

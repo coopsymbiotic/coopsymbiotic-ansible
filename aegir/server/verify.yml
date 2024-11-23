@@ -1,0 +1,11 @@
+---
+
+- hosts: all
+  tasks:
+    - name: Todo not implemented yet
+      debug:
+        msg: "Not implemented yet. Server type: {{ type }}"
+
+# Ex:
+# - validate MySQL credentials
+# - update nginx configuration

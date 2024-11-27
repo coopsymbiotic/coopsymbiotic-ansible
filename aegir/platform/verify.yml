@@ -12,7 +12,12 @@
         chdir: "{{ publish_path }}"
         cmd: "/usr/local/bin/fix-drupal-platform-permissions.sh --root={{ publish_path }}"
 
+    - name: Detect platform packages
+      shell:
+        chdir: "/var/aegir/admin/web"
+        cmd: "/usr/local/bin/bee hosting-platform-detect-packages {{ nid }}"
+
     - name: Update the platform status
       shell:
         chdir: "/var/aegir/admin/web"
-        cmd: "/usr/local/bin/bee ev 'db_query(\"UPDATE hosting_platform SET status = 1, verified = 1 WHERE nid = {{ nid }}\");'"
+        cmd: "/usr/local/bin/bee hosting-platform-update-status --status=1 {{ nid }}"

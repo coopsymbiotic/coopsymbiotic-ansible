@@ -73,10 +73,9 @@ if [[ $warning -ge $critical ]]; then
 fi
 
 if [[ "$secure" = 1 ]]; then
-  status=$(wget --no-check-certificate -q -t 3 -T 3 \
-    "https://${host}:${port}/${status_page}" -O -)
+  status=$(curl --resolve $host:443:127.0.0.1 --insecure --silent "https://${host}:${port}/${status_page}")
 else
-  status=$(wget -q -t 3 -T 3 "http://${host}:${port}/${status_page}" -O -)
+  status=$(curl --resolve $host:80:127.0.0.1 --silent "http://${host}:${port}/${status_page}" -O -)
 fi
 
 if [[ $? -ne 0 ]] || [[ -z $status ]]; then

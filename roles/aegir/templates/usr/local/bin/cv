@@ -24,7 +24,7 @@ while [ "$#" -gt 0 ]; do
   shift
 done
 
-while [[ $path != "/" && ! -e "$path/drushrc.php" && ! -e "$path/wp-config.php" ]];
+while [[ $path != "/" && ! -e "$path/settings.php" && ! -e "$path/drushrc.php" && ! -e "$path/wp-config.php" ]];
 do
   path="$(readlink -f "$path"/..)"
 done

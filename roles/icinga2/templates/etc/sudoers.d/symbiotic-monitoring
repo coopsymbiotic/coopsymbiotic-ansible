@@ -37,10 +37,8 @@ Defaults env_keep += "CIVICRM_SETTINGS"
 {{ icinga2_user }} ALL=(root) NOPASSWD: /usr/bin/apt --yes upgrade
 
 # Restart services
-{{ icinga2_user }} ALL=(root) NOPASSWD: /bin/systemctl restart php7.0-fpm
-{{ icinga2_user }} ALL=(root) NOPASSWD: /bin/systemctl restart php7.1-fpm
-{{ icinga2_user }} ALL=(root) NOPASSWD: /bin/systemctl restart php7.2-fpm
-{{ icinga2_user }} ALL=(root) NOPASSWD: /bin/systemctl restart php7.3-fpm
+{{ icinga2_user }} ALL=(root) NOPASSWD: /usr/bin/systemctl restart php?.?-fpm
+{{ icinga2_user }} ALL=(root) NOPASSWD: /bin/systemctl restart php?.?-fpm
 {{ icinga2_user }} ALL=(root) NOPASSWD: /bin/systemctl restart hosting-queued
 
 # KVM servers

@@ -204,7 +204,6 @@
     - aegir-hosting-usage
     - aegir-hosting-wordpress
     - aegir-hosting-advanced-cron
-    - aegir-ansible
     - aegir-fixownership
     - aegir-goaccess
 
@@ -214,7 +213,6 @@
   file: path="{{ aegir_root }}/hostmaster/profiles/hostmaster/modules/aegir/hosting_civicrm" state=absent
   tags:
     - aegir-hosting-civicrm
-    - aegir-ansible
 
 - name: Deploy latest hosting_civicrm from Git
   become: true
@@ -227,7 +225,6 @@
   ignore_errors: yes
   tags:
     - aegir-hosting-civicrm
-    - aegir-ansible
 
 - name: Flush Hostmaster cache
   become: true
@@ -284,6 +281,7 @@
        dest="{{ aegir_root }}/hostmaster/sites/{{ inventory_hostname }}/modules/hosting_civicrm_ansible"
        update=yes
   ignore_errors: yes
+  when: "'aegir_backdrop' not in group_names"
   tags:
     - aegir-hosting-civicrm-ansible
     - aegir-hosting-civicrm
@@ -297,6 +295,7 @@
        dest="{{ aegir_root }}/hostmaster/sites/{{ inventory_hostname }}/modules/aegir_ansible"
        update=yes
   ignore_errors: yes
+  when: "'aegir_backdrop' not in group_names"
   tags:
     - aegir-hosting-civicrm-ansible
     - aegir-hosting-civicrm
@@ -361,6 +360,7 @@
        dest="{{ aegir_root }}/hostmaster/sites/{{ inventory_hostname }}/modules/hosting_usage"
        update=yes
   ignore_errors: yes
+  when: "'aegir_backdrop' not in group_names"
   tags:
     - aegir-hosting-usage
     - aegir-goaccess
@@ -377,6 +377,7 @@
        update=yes
        force=yes
   ignore_errors: yes
+  when: "'aegir_backdrop' not in group_names"
   tags:
     - aegir-hosting-advanced-cron
     - aegir-hosting-advanced-cron-update
@@ -387,6 +388,7 @@
   poll: 5
   become: true
   become_user: aegir
+  when: "'aegir_backdrop' not in group_names"
   tags:
     - aegir-hosting-advanced-cron
 

@@ -12,6 +12,11 @@
   tags:
     - aegir-install-drush
 
+- name: Install Bee for Backdrop
+  include: git/bee.yml
+  tags:
+    - aegir-install-bee
+
 # Ref.: http://docs.aegirproject.org/en/3.x/install/#43-install-provision
 - name: Clone Provision
   include: git/provision.yml
@@ -22,15 +27,17 @@
   tags:
     - aegir-nginx
 
-- name: Build hostmaster platform.
-  include: git/platform.yml
+# - name: Build hostmaster platform.
+#   include: git/platform.yml
 
 - name: Fix permissions and ownership before site install.
   include: git/fix_permissions_and_ownership.yml
+  tags:
+    - aegir-fix-permissions
 
 # Ref.: http://docs.aegirproject.org/en/3.x/install/#44-running-hostmaster-install
 - name: Install Aegir front-end.
   include: git/install.yml
 
-- name: Upgrade Aegir front-end.
-  include: git/upgrade.yml
+# - name: Upgrade Aegir front-end.
+#   include: git/upgrade.yml

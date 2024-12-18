@@ -1,12 +1,12 @@
 - name: Run the install script.
-  shell: "/bin/bash {{ aegir_root }}/hostmaster/profiles/hostmaster/modules/aegir/hosting_tasks_extra/fix_permissions/scripts/install.sh"
+  shell: "/bin/bash {{ aegir_root }}/admin/web/modules/hosting_tasks_extra/fix_permissions/scripts/install.sh"
   args:
     creates: /etc/sudoers.d/fix-drupal-platform-permissions
   become: yes
   become_user: root
 
 - name: Run the install script.
-  shell: "/bin/bash {{ aegir_root }}/hostmaster/profiles/hostmaster/modules/aegir/hosting_tasks_extra/fix_ownership/scripts/install.sh"
+  shell: "/bin/bash {{ aegir_root }}/admin/web/modules/hosting_tasks_extra/fix_ownership/scripts/install.sh"
   args:
     creates: /etc/sudoers.d/fix-drupal-platform-ownership
   become: yes

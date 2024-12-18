@@ -26,6 +26,8 @@ aegir_drush_source_update: true
 aegir_drush_source_force_update: false
 aegir_drush_source_clone_depth: 1
 
+aegir_bee_version: 1.x-1.1.0
+
 # We usually set this per-host or in group_vars/all
 aegir_phpversion: "{{ phpversion | default('8.0') }}"
 

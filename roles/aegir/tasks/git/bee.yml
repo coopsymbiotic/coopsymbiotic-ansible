@@ -1,0 +1,12 @@
+---
+
+- name: Check if bee needs to be installed or upgraded
+  stat: path="/usr/local/bin/.bee-{{ aegir_bee_version }}.txt"
+  register: p
+
+- name: Deploy bee.phar
+  get_url:
+    url: "https://github.com/backdrop-contrib/bee/releases/download/{{ aegir_bee_version }}/bee.phar"
+    dest: /usr/local/bin/bee
+    mode: '0755'
+  when: p.stat.exists == False

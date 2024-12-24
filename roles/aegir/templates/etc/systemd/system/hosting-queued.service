@@ -6,7 +6,8 @@ After=mariadb.service
 
 [Service]
 User=aegir
-ExecStart=/usr/local/bin/drush --quiet @hostmaster hosting-queued
+WorkingDirectory=/var/aegir/admin/web
+ExecStart=/usr/local/bin/bee --quiet hosting-queued
 Restart=always
 RestartSec=30
 LimitNICE=10

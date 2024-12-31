@@ -1,0 +1,31 @@
+---
+
+# To use it: $ ansible-playbook ./helpers/aegir_php.yml
+
+- hosts: all
+  tasks:
+    - shell:
+        chdir: "/var/aegir"
+        cmd: drush dl drupal-7
+      become: true
+      become_user: aegir
+    - shell:
+        chdir: "/var/aegir/hostmaster/"
+        cmd: rsync -Prav ../drupal-7.103/* .
+      become: true
+      become_user: aegir
+    - shell:
+        chdir: "/var/aegir/hostmaster"
+        cmd: drush @hm updb -y
+      become: true
+      become_user: aegir
+    - shell:
+        chdir: "/var/aegir/hostmaster"
+        cmd: drush @hm dis announcements_feed -y && drush @hm pmu announcements_feed -y
+      become: true
+      become_user: aegir
+    - shell:
+        chdir: "/var/aegir/"
+        cmd: rm -fr /var/aegir/drupal-7.103
+      become: true
+      become_user: aegir

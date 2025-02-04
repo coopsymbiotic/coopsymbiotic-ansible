@@ -68,7 +68,18 @@
     name: "php{{ phpversion }}-fpm"
     state: present
     install_recommends: no
-  when: "'aegir_apache' not in group_names"
+  when: "'php_apache' not in group_names"
+  tags:
+    - packages
+    - packages-php
+    - php-php
+    - aegir-php
+
+- apt:
+    name: "libapache2-mod-php{{ phpversion }}"
+    state: present
+    install_recommends: no
+  when: "'php_apache' in group_names"
   tags:
     - packages
     - packages-php

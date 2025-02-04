@@ -10,7 +10,7 @@
     dest="/etc/php/{{ phpversion }}/mods-available/90-symbiotic.ini"
     owner=root group=root mode=0644
   notify: restart apache2
-  when: "'aegir_apache' in group_names"
+  when: "'php_apache' in group_names"
   tags:
     - php-php
     - aegir-php
@@ -21,7 +21,7 @@
     dest="/etc/php/{{ phpversion }}/mods-available/90-symbiotic.ini"
     owner=root group=root mode=0644
   notify: "restart php{{ phpversion }}-fpm"
-  when: "'aegir_apache' not in group_names"
+  when: "'php_apache' not in group_names"
   tags:
     - php-php
     - aegir-php
@@ -32,7 +32,7 @@
     dest="/etc/php/{{ phpversion }}/apache2/conf.d/90-symbiotic.ini"
     owner=root group=root state=link
   notify: restart apache2
-  when: "'aegir_apache' in group_names"
+  when: "'php_apache' in group_names"
   tags:
     - php-php
     - aegir-php
@@ -43,7 +43,7 @@
     dest="/etc/php/{{ phpversion }}/fpm/conf.d/90-symbiotic.ini"
     owner=root group=root state=link
   notify: restart nginx
-  when: "'aegir_apache' not in group_names"
+  when: "'php_apache' not in group_names"
   tags:
     - php-php
     - aegir-php
@@ -66,7 +66,7 @@
     group: root
     mode: 0644
   notify: "restart php{{ phpversion }}-fpm"
-  when: "'aegir_apache' not in group_names"
+  when: "'php_apache' not in group_names"
   tags:
     - php-php
     - php-fpm

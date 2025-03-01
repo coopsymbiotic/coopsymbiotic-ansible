@@ -319,7 +319,7 @@
 - name: Install Ansible via Debian apt
   apt: name={{ item }} state=present install_recommends=no
   with_items:
-    - ansible
+    - ansible-core
   tags:
     - packages
     - aegir-ansible

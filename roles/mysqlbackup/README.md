@@ -11,6 +11,6 @@ Includes:
 Overview (assuming defaults):
 
 * MySQL dumps are stored in: /var/backups/mysql/
-* The cron runs daily, around 20:30 because rdiff-backup runs at 21:00 (UTC)
+* This script is called from our backup software (borgmatic) as a pre-hook
 * Runs using the Debian sys-maint (/etc/mysql/debian.cnf)
 * Logs in: /var/backups/mysqldump-secure.monitoring.log (monitored by Icinga)

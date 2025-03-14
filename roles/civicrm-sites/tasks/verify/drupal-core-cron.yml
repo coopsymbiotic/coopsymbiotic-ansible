@@ -1,0 +1,45 @@
+---
+
+# Setup the Drupal10 core cron
+
+- name: systemd | Setup the Drupal Core Cron service
+  template:
+    src="etc/systemd/system/d7corecron.service"
+    dest="/etc/systemd/system/d7corecron_{{ site_shortname }}.service"
+    owner=root
+    group=root
+    mode=0644
+  when: cms_cron_interval is defined and cms_cron_interval > 0
+  notify: reload systemd
+
+- name: systemd | Setup the Drupal Core Cron timer
+  template:
+    src="etc/systemd/system/d7corecron.timer"
+    dest="/etc/systemd/system/d7corecron_{{ site_shortname }}.timer"
+    owner=root
+    group=root
+    mode=0644
+  when: cms_cron_interval is defined and cms_cron_interval > 0
+  notify: reload systemd
+
+# My understanding is that this will make the service run once, then the timer will kick-in
+# (because we are using OnUnitInactiveSec=15m; maybe we should use OnCalendar?)
+# we also need daemon_reload:true at least once, to pickup changes
+- name: systemd | Start the Drupal Core Cron service
+  systemd:
+    name: "d7corecron_{{ site_shortname }}.service"
+    state: started
+    daemon_reload: true
+  when: cms_cron_interval is defined and cms_cron_interval > 0
+
+- name: systemd | Enable the Drupal Core Cron timer
+  systemd:
+    name: "d7corecron_{{ site_shortname }}.timer"
+    enabled: yes
+  when: cms_cron_interval is defined and cms_cron_interval > 0
+
+- name: systemd | Start the Drupal Core Core Cron timer
+  systemd:
+    name: "d7corecron_{{ site_shortname }}.timer"
+    state: started
+  when: cms_cron_interval is defined and cms_cron_interval > 0

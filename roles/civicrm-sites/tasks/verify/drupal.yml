@@ -31,3 +31,5 @@
   when: "'civicrm_sites' in group_names"
   tags:
     - civicrm-sites-cron-drupal
+
+- include_tasks: drupal-core-cron.yml

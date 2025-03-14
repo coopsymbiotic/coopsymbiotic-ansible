@@ -1,0 +1,10 @@
+# {{ ansible_managed }}
+[Unit]
+Description="D10-Core Cron for {{ inventory_hostname }}"
+Documentation="https://github.com/coopsymbiotic/aegir-ansible-playbooks.git"
+Wants=d7corecron_{{ site_shortname }}.timer
+
+[Service]
+User=www-data
+WorkingDirectory={{ site_path }}
+ExecStart=/usr/local/bin/aegir-getlock drush -l {{ inventory_hostname }} core-cron

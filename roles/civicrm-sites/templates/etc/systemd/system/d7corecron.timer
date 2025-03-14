@@ -1,0 +1,13 @@
+# {{ ansible_managed }}
+[Unit]
+Description="D10-Core Cron for {{ inventory_hostname }}"
+Requires=d7corecron_{{ site_shortname }}.service
+
+[Timer]
+Unit=d7corecron_{{ site_shortname }}.service
+OnUnitInactiveSec={{ cms_cron_interval }}sec
+OnBootSec=10min
+RandomizedDelaySec=30sec
+
+[Install]
+WantedBy=timers.target

@@ -19,6 +19,9 @@ virt-install --name {{ hostvars[item]['preseed_hostname'] }} \
 # Make sure it boots automatically
 # virsh autostart {{ hostvars[item]['preseed_hostname'] }}
 
+# For VM migrations between hosts
+# virt-install --name {{ hostvars[item]['preseed_hostname'] }} --ram {{ hostvars[item]['preseed_ram_mb'] }} --disk path=/dev/zvol/{{ kvm_zfs_pool }}/{{ hostvars[item]['preseed_hostname'] }} --cpu host-passthrough --vcpus {{ hostvars[item]['preseed_vcpus'] }} --os-variant debian11 {% if hostvars[item]['preseed_macaddr'] is defined %}--network bridge=br0,mac={{ hostvars[item]['preseed_macaddr'] }}{% else %}--network bridge=br0{% endif %} --graphics vnc,listen=127.0.0.1 --noautoconsole --boot hd --import --autostart
+
 # Based on:
 # https://serverfault.com/questions/385889/kvm-guest-auto-start-after-install
 

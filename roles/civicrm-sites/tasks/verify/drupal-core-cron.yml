@@ -9,7 +9,7 @@
     owner=root
     group=root
     mode=0644
-  when: cms_cron_interval is defined and cms_cron_interval > 0
+  when: cms_cron_interval is defined and cms_cron_interval != "0" and cms_cron_interval != "-1"
   notify: reload systemd
 
 - name: systemd | Setup the Drupal Core Cron timer
@@ -19,7 +19,7 @@
     owner=root
     group=root
     mode=0644
-  when: cms_cron_interval is defined and cms_cron_interval > 0
+  when: cms_cron_interval is defined and cms_cron_interval != "0" and cms_cron_interval != "-1"
   notify: reload systemd
 
 # My understanding is that this will make the service run once, then the timer will kick-in
@@ -30,16 +30,16 @@
     name: "d7corecron_{{ site_shortname }}.service"
     state: started
     daemon_reload: true
-  when: cms_cron_interval is defined and cms_cron_interval > 0
+  when: cms_cron_interval is defined and cms_cron_interval != "0" and cms_cron_interval != "-1"
 
 - name: systemd | Enable the Drupal Core Cron timer
   systemd:
     name: "d7corecron_{{ site_shortname }}.timer"
     enabled: yes
-  when: cms_cron_interval is defined and cms_cron_interval > 0
+  when: cms_cron_interval is defined and cms_cron_interval != "0" and cms_cron_interval != "-1"
 
 - name: systemd | Start the Drupal Core Core Cron timer
   systemd:
     name: "d7corecron_{{ site_shortname }}.timer"
     state: started
-  when: cms_cron_interval is defined and cms_cron_interval > 0
+  when: cms_cron_interval is defined and cms_cron_interval != "0" and cms_cron_interval != "-1"

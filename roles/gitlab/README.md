@@ -1,6 +1,6 @@
 # Gitlab
 
-Minimal Gitlab install.
+Minimal Gitlab install. This is most likely incomplete and outdated.
 
 * Uses the upstream packages.
 * Configures a daily backup job (excludes uploads).

@@ -99,11 +99,11 @@
       "php{{ phpversion }}-mysql",
       "php{{ phpversion }}-soap",
       "php{{ phpversion }}-ssh2",
-      "php{{ phpversion }}-sqlite3"
+      "php{{ phpversion }}-sqlite3",
       "php{{ phpversion }}-zip",
       "php{{ phpversion }}-xsl",
       "php{{ phpversion }}-mbstring",
-      "php{{ phpversion }}-yaml"
+      "php{{ phpversion }}-yaml",
       "php{{ phpversion }}-zip",
       "php{{ phpversion }}-imagick"
     ]

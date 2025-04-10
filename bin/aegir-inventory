@@ -42,7 +42,7 @@ query_args="$AEGIR_INVENTORY_ARGS"
 if [ "$AEGIR_INVENTORY_LOCAL" == "" ]; then
   # Running remotely, run via ssh because this page is restricted by IP
   # fixme: hardcoded ansible user
-  ssh deploy@${hostname} curl --silent "https://${hostname}/inventory${query_args}"
+  ssh deploy@${hostname} curl --resolve ${hostname}:443:127.0.0.1 --insecure --silent "https://${hostname}/inventory${query_args}"
 else
   # Running locally on the Aegir server
   curl --insecure --silent "${proto}://${hostname}/inventory${query_args}"

@@ -1,0 +1,14 @@
+#!/bin/bash
+
+host=$1
+
+# Validate that the hostname looks like a FQDN
+echo $host | grep -q -E "^[-\.a-zA-Z0-9]+$"
+
+if [ $? != 0 ]; then
+  echo "Error: Invalid host format"
+  echo "Syntax: $0 [host.example.org]"
+  exit 1
+fi
+
+env AEGIR_HOSTMASTER_HOSTNAME="$host" AEGIR_INVENTORY_ARGS="?remote=1" ansible-playbook -i ../coopsymbiotic-inventory/hosts -i ./bin/aegir-inventory -l "$host" -t icinga2-conf-host ./site.yml

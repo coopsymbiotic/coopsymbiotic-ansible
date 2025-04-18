@@ -1,7 +1,7 @@
 ---
 # Installs Aegir3 (http://www.aegirproject.org)
 # Assumes Debian, with MariaDB, Nginx, php-fpm
-# Depends on the mariadb role
+# Depends on the mariadb and php role (c.f. roles/aegir/meta/main.yml)
 
 - name: aegir | Force gathering facts for partial ansible runs
   setup:
@@ -92,15 +92,6 @@
 - apt: update_cache=yes
   tags:
     - packages
-
-- apt:
-    name: "nginx"
-    state: present
-    install_recommends: no
-  when: ("'aegir_apache' not in group_names")
-  tags:
-    - packages
-    - aegir-nginx
 
 # A bit off topic, but too often had the issue where mailname was misconfigured
 # @todo Move to common-all? Also in the php role

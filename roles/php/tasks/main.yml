@@ -11,6 +11,15 @@
     - php-settings
     - aegir-php
 
+- apt:
+    name: "nginx"
+    state: present
+    install_recommends: no
+  when: ("'aegir_apache' not in group_names")
+  tags:
+    - packages
+    - php-php
+
 - name: Debian | Add Sury.org apt reporitory key
   apt:
     deb: https://packages.sury.org/debsuryorg-archive-keyring.deb

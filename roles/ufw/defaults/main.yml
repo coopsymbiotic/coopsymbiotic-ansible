@@ -11,4 +11,4 @@ ufw_ipv4_allow_ssh: true
 ufw_ipv6_allow_ssh: true
 
 # How aggressively to ban
-fail2ban_civicrm_maxretry: 10
+fail2ban_civicrm_maxretry: 20

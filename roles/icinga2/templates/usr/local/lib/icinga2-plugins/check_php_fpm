@@ -1,115 +1,125 @@
-#!/usr/bin/env bash
-#
-# SOURCE:
-# https://github.com/bdossantos/nagios-plugins/blob/master/check_php_fpm.sh
-# With a small change to show metrics.
-#
-# Check php-fpm pool status
-#
-# Usage: check_php_fpm.sh.sh [-h host] [-p port] [-w warning] [-c critical] [-s status page] [-S secure]
-#   -h, --host                  php-fpm status page host
-#   -p, --port                  php-fpm status page port, eg: 80
-#   -w, --warning WARNING       Warning value (percent)
-#   -c, --critical CRITICAL     Critical value (percent)
-#   -S, --secure                Use HTTPS instead of HTTP
-#   -s, --status-page           Name of the php-fpm status page
-#   -H, --help                  Display this screen
-#
-# This plugin is based on this work :
-# https://github.com/mabitt/mab-nagios-plugins/blob/master/check_phpfpm.sh
-#
-# (c) 2014, Benjamin Dos Santos <benjamin.dossantos@gmail.com>
-# https://github.com/bdossantos/nagios-plugins
+#!/usr/bin/php
+<?php
 
-while [[ -n "$1" ]]; do
-  case $1 in
-    --host | -h)
-      host=$2
-      shift
-      ;;
-    --port | -p)
-      port=$2
-      shift
-      ;;
-    --warning | -w)
-      warning=$2
-      shift
-      ;;
-    --critical | -c)
-      critical=$2
-      shift
-      ;;
-    --status-page | -s)
-      status_page=$2
-      shift
-      ;;
-    --secure | -S)
-      secure=$2
-      shift
-      ;;
-    --help | -H)
-      sed -n '2,13p' "$0" | tr -d '#'
-      exit 3
-      ;;
-    *)
-      echo "Unknown argument: $1"
-      exec "$0" --help
-      exit 3
-      ;;
-  esac
-  shift
-done
+/**
+ * Based on https://github.com/robdevops/check_php-fpm/tree/master
+ *
+ * Returns php-fpm health and performance data on https://the-host/fpm-status
+ *
+ * Somewhat hardcoded to our default configuration, which is to expose
+ * fpm-status on https for localhost and some specific IPs only (long story,
+ * a bit of legacy, that is how we setup servers).
+ *
+ * vim: syntax=php
+ */
 
-host=${host:=127.0.0.1}
-port=${port:=80}
-secure=${secure:=0}
-status_page=${status_page:='status'}
-warning=${warning:=90}
-critical=${critical:=95}
+$return_text_extended = "";
+$perfdata = "";
 
-if [[ $warning -ge $critical ]]; then
-  echo "UNKNOWN - warning ($warning) can't be greater than critical ($critical)"
-  exit 3
-fi
+// args
+$connect = NULL;
+$shortopts = 'h:p:S:';
+$longopts = ['host:', 'port:', 'secure:', 'help'];
+$options = getopt($shortopts, $longopts);
 
-if [[ "$secure" = 1 ]]; then
-  status=$(curl --resolve $host:443:127.0.0.1 --insecure --silent "https://${host}:${port}/${status_page}")
-else
-  status=$(curl --resolve $host:80:127.0.0.1 --silent "http://${host}:${port}/${status_page}" -O -)
-fi
+if (isset($options['h']) || isset($options['host']) ) {
+  $connect = 'https://' . $options['h'] ?? $options['host'];
+}
 
-if [[ $? -ne 0 ]] || [[ -z $status ]]; then
-  echo "CRITICAL - could not fetch php-fpm pool status page \
-${host}:${port}/${status_page}"
-  exit 2
-fi
+if (empty($connect) || isset($options['help'])) {
+  $me = basename(__FILE__);
+  echo "Usage: $me [--host <address>]\n";
+  exit(3);
+}
 
-active_processes=$(echo "$status" \
-  | grep -w 'active processes:' \
-  | head -n 1 \
-  | awk '{ print $3 }'
-)
-total_processes=$(echo "$status" \
-  | grep 'total processes' \
-  | awk '{ print $3 }'
-)
+// Fetch fpm-status data as JSON
+$options = [
+  "http" => [
+    "header" => "Accept: application/json\r\n"
+  ]
+];
+$context = stream_context_create($options);
+$output = file_get_contents("$connect/fpm-status?json&full", false, $context);
 
-if [[ -z $active_processes ]] || [[ -z $total_processes ]]; then
-  echo "UNKNOWN - 'active_processes' or 'total_processes' are empty"
-  exit 3
-fi
+// Parse the JSON
+$decoded = json_decode($output, true);
+if (json_last_error() !== JSON_ERROR_NONE) {
+  echo "Could not parse JSON: $output";
+  exit(3);
+}
 
-used=$((active_processes * 100 / total_processes))
-status="${used}% of process pool is used (${active_processes} active processes \
-on ${total_processes})";
+// Index the values
+foreach($decoded as $key => $value) {
+  // Ex: ignore "processes"
+  if (is_array($value)) {
+    continue;
+  }
+  $newkey = str_replace(" ", "_", $key);
+  $index[$newkey] = $value;
+}
 
-if [[ $used -gt $critical ]]; then
-  echo "CRITICAL - ${status}"
-  exit 2
-elif [[ $used -gt $warning ]]; then
-  echo "WARNING - ${status}"
-  exit 1
-else
-  echo "OK - ${status};usage=${used}"
-  exit 0
-fi
+// calculate perfdata percentages
+if ($index['listen_queue'] != 0) {
+  $index["queue_capacity"] = intval($index['listen_queue']) * 100 / intval($index['listen_queue_len']) . "%";
+} else {
+  $index["queue_capacity"] = 0 . "%";
+}
+
+if ($index['active_processes'] != 0) {
+  $index["process_capacity"] = intval($index['active_processes']) * 100 / intval($index['total_processes']) . "%";
+} else {
+  $index["process_capacity"] = 0 . "%";
+}
+
+// Build performance data string
+foreach ($index as $key => $value) {
+  if (is_numeric(str_replace('%', '', "$value"))) {
+    $perfdata = $perfdata . "$key=$value; ";
+  }
+}
+
+// Snapshot request performance (not highly accurate, since we sample "processes" every 15 mins)
+$process_stats = [
+  'request duration',
+  'last request cpu',
+  'last request memory',
+];
+foreach ($process_stats as $stat) {
+  $durations = array_column($decoded['processes'], $stat);
+  $average = array_sum($durations) / count($durations);
+  // Ex: key becomes: "avg_request_duration"
+  $newkey = 'avg_' . str_replace(' ', '_', $stat);
+  $perfdata .= "$newkey=$average; ";
+}
+
+// output
+if($index['start_since'] > 0) {
+  $human_date = date('r', $index['start_time']);
+  if (str_replace('%', '', $index['queue_capacity']) >= 80) {
+    $return_status = 1;
+    $return_text = 'WARN: ';
+    $return_text_extended = "queue capacity at " . $index['queue_capacity'] . " (" . $index['listen_queue'] . "/" . $index['listen_queue_len'] . "). Peak since $human_date was " . $index['max_listen_queue'] . "/" . $index['listen_queue_len'] . " | " . $perfdata;
+
+  }
+  elseif (str_replace('%', '', $index['process_capacity']) >= 80) {
+    $return_status = 1;
+    $return_text = 'WARN: ';
+    $return_text_extended = "processes capacity at " . $index['process_capacity'] . " (" . $index['active_processes'] . "/" . $index['total_processes'] . "). Peak since $human_date was " . $index['max_active_processes'] . "/" . $index['total_processes'] . " | " . $perfdata;
+  }
+  else {
+    $return_status = 0;
+    $return_text = 'OK: ';
+    $return_text_extended = "served " . $index['accepted_conn'] . " connections with " . $index['slow_requests'] . " slow requests since $human_date. | " . $perfdata;
+  }
+}
+else {
+  $return_status = 2;
+  $outputhead = rtrim(strtok($output[0], "\n")); // first line of original output
+  $return_text = 'CRITICAL: ' ;
+  if( strlen($outputhead) ) {
+    $return_text_extended = "$outputhead";
+  }
+}
+
+fwrite(STDOUT, $return_text.$return_text_extended.PHP_EOL);
+exit($return_status);

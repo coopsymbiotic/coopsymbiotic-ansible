@@ -36,7 +36,12 @@ if (empty($connect) || isset($options['help'])) {
 $options = [
   "http" => [
     "header" => "Accept: application/json\r\n"
-  ]
+  ],
+  "ssl" => [
+    "allow_self_signed" => true,
+    "verify_peer" => false,
+    "verify_peer_name" => false,
+  ],
 ];
 $context = stream_context_create($options);
 $output = file_get_contents("$connect/fpm-status?json&full", false, $context);

@@ -56,7 +56,7 @@
     name="dehydrated"
     minute="35"
     hour="18"
-    job="/usr/local/bin/dehydrated -c -f /etc/dehydrated/config.txt -o /etc/dehydrated/keys/ >/dev/null"
+    job="dehydrated -c >/dev/null"
     cron_file="dehydrated"
     user="root"
     state=present

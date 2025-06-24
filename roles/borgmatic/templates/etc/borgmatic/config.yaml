@@ -265,6 +265,7 @@ retention:
 # prevent potential shell injection or privilege escalation.
 # NB: We use "|| true" because the actions might fail (the server may not have a MySQL server)
 # and monitoring will catch any errors with the SQL dumps.
+# NB: this changes in borgmatic 2.0: https://torsion.org/borgmatic/docs/how-to/add-preparation-and-cleanup-steps-to-backups/
 hooks:
     before_backup:
 {% if borgmatic_before_backup is defined %}
@@ -277,6 +278,9 @@ hooks:
 {% endif %}
         - umount /mnt/restore 2>/dev/null || true
         - /usr/local/bin/mysqldump-secure --cron || true
+
+    before_prune:
+        - umount /mnt/restore 2>/dev/null || true
 
 {% if borgmatic_after_backup is defined %}
     after_backup:

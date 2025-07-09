@@ -4,11 +4,7 @@ aegir_root: /var/aegir
 aegir_user: aegir
 aegir_web_group: www-data
 aegir_db_user: aegir_root
-aegir_provision_repo: https://github.com/mlutfy/provision.git
-aegir_provision_version: symbiotic
-aegir_provision_update: true
 aegir_platform_version: 7.x-3.x
-aegir_makefile_path: /var/aegir/.drush/provision/aegir.make
 aegir_admin_email: 'root@localhost'
 aegir_http_service_type: nginx
 aegir_frontend_url: "{{ inventory_hostname }}"

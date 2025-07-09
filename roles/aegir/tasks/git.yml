@@ -7,6 +7,7 @@
   include: git/user.yml
 
 # Ref.: http://docs.aegirproject.org/en/3.x/install/#41-install-drush
+# For Drupal7 sites, not Aegir
 - name: Install Drush
   include: git/drush.yml
   tags:
@@ -16,10 +17,6 @@
   include: git/bee.yml
   tags:
     - aegir-install-bee
-
-# Ref.: http://docs.aegirproject.org/en/3.x/install/#43-install-provision
-- name: Clone Provision
-  include: git/provision.yml
 
 # Ref.: http://docs.aegirproject.org/en/3.x/install/#322-nginx-configuration
 - name: Setup Nginx.

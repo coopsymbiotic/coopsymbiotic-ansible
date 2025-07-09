@@ -136,6 +136,15 @@
     - aegir-goaccess
     - aegir-php
 
+# Also used for the Aegir-on-Backdrop installation
+- name: Install Ansible via Debian apt
+  apt: name={{ item }} state=present install_recommends=no
+  with_items:
+    - ansible-core
+  tags:
+    - packages
+    - aegir-ansible
+
 - name: Install Aegir using git
   include: git.yml
   tags:
@@ -198,46 +207,6 @@
     - aegir-fixownership
     - aegir-goaccess
 
-# Unless we check if it's already a git repo, in most cases it's static
-# since it has been updated by the aegir3 debian packages.
-- name: Delete the old hosting_civicrm directory
-  file: path="{{ aegir_root }}/hostmaster/profiles/hostmaster/modules/aegir/hosting_civicrm" state=absent
-  tags:
-    - aegir-hosting-civicrm
-
-- name: Deploy latest hosting_civicrm from Git
-  become: true
-  become_user: aegir
-  git: repo=https://git.drupal.org/project/hosting_civicrm.git
-       version=7.x-3.x
-       dest="{{ aegir_root }}/hostmaster/profiles/hostmaster/modules/aegir/hosting_civicrm"
-       update=yes
-       force=yes
-  ignore_errors: yes
-  tags:
-    - aegir-hosting-civicrm
-
-- name: Flush Hostmaster cache
-  become: true
-  become_user: aegir
-  shell: "drush @hostmaster cc all"
-  tags:
-    - aegir-hosting-civicrm
-
-##
-## Deploy hosting_wordpress
-##
-- name: Deploy latest hosting_wordpress from Git
-  become: true
-  become_user: aegir
-  git: repo=https://github.com/mlutfy/hosting_wordpress.git
-       version=7.x-3.x
-       dest="{{ aegir_root }}/hostmaster/sites/{{ inventory_hostname }}/modules/hosting_wordpress"
-       update=yes
-  ignore_errors: yes
-  tags:
-    - aegir-hosting-wordpress
-
 - name: Install wp-cli
   get_url:
     url: "https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar"
@@ -247,244 +216,26 @@
     - aegir-hosting-wordpress
 
 # @todo replace by systemd timer?
-# @todo Avoid running if the config-wp file does not exist?
-- name: hosting_wordpress | Configure dehydrated cron
+- name: Configure dehydrated cron
   cron:
-    name="dehydrated-aegir-wp"
+    name="dehydrated"
     minute="35"
     hour="19"
-    job="/var/aegir/config/letsencrypt/script -c -f /var/aegir/config/letsencrypt/config-wp >/dev/null"
-    cron_file="dehydrated-aegir-wp"
-    user="aegir"
+    job="dehydrated -c >/dev/null"
+    cron_file="dehydrated"
+    user="root"
     state=present
   tags:
     - aegir-hosting-wordpress
     - aegir-hosting-wordpress-dehydrated
 
-##
-## Deploy hosting_civicrm_ansible and dependencies
-##
-- name: Deploy latest hosting_civicrm_ansible from Git
-  become: true
-  become_user: aegir
-  git: repo=https://github.com/coopsymbiotic/hosting_civicrm_ansible.git
-       version=master
-       dest="{{ aegir_root }}/hostmaster/sites/{{ inventory_hostname }}/modules/hosting_civicrm_ansible"
-       update=yes
-  ignore_errors: yes
-  when: "'aegir_backdrop' not in group_names"
-  tags:
-    - aegir-hosting-civicrm-ansible
-    - aegir-hosting-civicrm
-    - aegir-ansible
-
-- name: Deploy latest aegir_ansible from Git
-  become: true
-  become_user: aegir
-  git: repo=https://github.com/coopsymbiotic/aegir_ansible.git
-       version=main
-       dest="{{ aegir_root }}/hostmaster/sites/{{ inventory_hostname }}/modules/aegir_ansible"
-       update=yes
-  ignore_errors: yes
-  when: "'aegir_backdrop' not in group_names"
-  tags:
-    - aegir-hosting-civicrm-ansible
-    - aegir-hosting-civicrm
-    - aegir-ansible
-
-# This is perhaps a bit weird and overkill, but for now everything is in the
-# same Ansible repo. We should probably have a cron to auto-update?
-- name: Deploy latest coopsymbiotic Ansible playbooks from Git
-  git: repo=https://github.com/coopsymbiotic/coopsymbiotic-ansible.git
-       version=master
-       dest="/usr/local/coopsymbiotic-ansible"
-       update=yes
-       force=yes
-  ignore_errors: yes
-  tags:
-    - aegir-hosting-civicrm-ansible
-    - aegir-hosting-civicrm
-    - aegir-ansible
-    - aegir-ansible-symlink
-
-- name: Install Ansible via Debian apt
-  apt: name={{ item }} state=present install_recommends=no
-  with_items:
-    - ansible-core
-  tags:
-    - packages
-    - aegir-ansible
-
-- stat:
-    path: /usr/local/coopsymbiotic-ansible/bin/aegir-ansible
-  register: aegir_ansible_link
-  tags:
-    - aegir-ansible
-    - aegir-hosting-civicrm
-
-- name: Delete the old aegir-ansible script
-  file:
-    path: /usr/local/bin/aegir-ansible
-    state: absent
-  when: aegir_ansible_link.stat.isreg is defined and aegir_ansible_link.stat.isreg
-  tags:
-    - aegir-ansible
-    - aegir-hosting-civicrm
-
-- name: Symlink the aegir-ansible script
-  file:
-    src: /usr/local/coopsymbiotic-ansible/bin/aegir-ansible
-    dest: /usr/local/bin/aegir-ansible
-    state: link
-  tags:
-    - aegir-ansible
-    - aegir-hosting-civicrm
-
-##
-## Deploy hosting_usage
-##
-- name: Deploy latest hosting_usage from Git
-  become: true
-  become_user: aegir
-  git: repo=https://github.com/coopsymbiotic/hosting_usage.git
-       version=master
-       dest="{{ aegir_root }}/hostmaster/sites/{{ inventory_hostname }}/modules/hosting_usage"
-       update=yes
-  ignore_errors: yes
-  when: "'aegir_backdrop' not in group_names"
-  tags:
-    - aegir-hosting-usage
-    - aegir-goaccess
-
-##
-## Deploy hosting_advanced_cron
-##
-- name: Deploy hosting_advanced_cron from Git
-  become: true
-  become_user: aegir
-  git: repo=https://github.com/coopsymbiotic/hosting_advanced_cron.git
-       version=7.x-3.x-stic
-       dest="{{ aegir_root }}/hostmaster/sites/{{ inventory_hostname }}/modules/hosting_advanced_cron"
-       update=yes
-       force=yes
-  ignore_errors: yes
-  when: "'aegir_backdrop' not in group_names"
-  tags:
-    - aegir-hosting-advanced-cron
-    - aegir-hosting-advanced-cron-update
-
-- name: Enable hosting_advanced_cron
-  shell: "drush @hostmaster en hosting_advanced_cron -y"
-  async: 60
-  poll: 5
-  become: true
-  become_user: aegir
-  when: "'aegir_backdrop' not in group_names"
-  tags:
-    - aegir-hosting-advanced-cron
-
-# - name: Set default 24h interval for hostmaster
-#   shell: "echo 'insert into hosting_advanced_cron (nid, cron_interval) values (10, 86400)' | drush @hm sqlc"
+# @todo Port to Backdrop?
+# - name: Aegir settings | Set CiviCRM default cron interval to 15 mins
+#   shell: "drush @hostmaster vset hosting_civicrm_ansible_cron_default_interval 900"
 #   become: true
 #   become_user: aegir
 #   tags:
-#     - aegir-hosting-advanced-cron
-
-##
-## Required so that our ansible scripts can access the server's site inventory
-# @todo Remove hardcoded IPs
-##
-- name: Aegir | Add our IPs to system allowlist
-  shell: "drush @hm vset provision_symbiotic_system_whitelist '{{ aegir_provision_symbiotic_system_whitelist }}'"
-  become: true
-  become_user: aegir
-  tags:
-    - aegir-ansible
-    - aegir-ansible-whitelist
-
-- name: Aegir | Trigger a hostmaster verify so that the vhost is updated
-  shell: "drush @hm provision-verify"
-  become: true
-  become_user: aegir
-  tags:
-    - aegir-ansible
-    - aegir-ansible-whitelist
-
-##
-## Configurations
-##
-# This command sometimes freezes the ansible run, so we async to wait for 60 seconds, poll every 5 seconds
-- name: Aegir modules | Enable a few extra Aegir modules
-  shell: "drush @hostmaster en hosting_queued hosting_https hosting_letsencrypt hosting_alias hosting_clone hosting_remote_import hosting_civicrm aegir_ansible_inventory hosting_civicrm_ansible hosting_wpsite hosting_advanced_cron -y"
-  async: 60
-  poll: 5
-  become: true
-  become_user: aegir
-  tags:
-    - aegir-hosting-https
-    - aegir-hosting-civicrm
-    - aegir-hosting-civicrm-ansible
-    - aegir-hosting-wordpress
-    - aegir-ansible
-
-- name: Aegir modules | Enable hosting_nginx_https
-  shell: "drush @hostmaster en hosting_nginx_https -y"
-  async: 60
-  poll: 5
-  become: true
-  become_user: aegir
-  when: "'aegir_apache' not in group_names"
-  tags:
-    - aegir-hosting-https
-
-- name: Aegir modules | Enable hosting_apache_https
-  shell: "drush @hostmaster en hosting_apache_https -y"
-  async: 60
-  poll: 5
-  become: true
-  become_user: aegir
-  when: "'aegir_apache' in group_names"
-  tags:
-    - aegir-hosting-https
-
-- name: Aegir settings | Enable Aegir queue process
-  shell: "drush @hostmaster vset hosting_feature_queued 1"
-  become: true
-  become_user: aegir
-  tags:
-    - aegir-settings
-
-- name: Aegir settings | Set CiviCRM default cron interval to 15 mins
-  shell: "drush @hostmaster vset hosting_civicrm_ansible_cron_default_interval 900"
-  become: true
-  become_user: aegir
-  tags:
-    - aegir-settings
-
-- name: Aegir settings | Misc other settings
-  become: true
-  become_user: aegir
-  shell: "drush @hostmaster vset {{ item.name }} {{ item.value }}"
-  with_items:
-    - { name: 'hosting_feature_http_basic_auth', value: '1' }
-    - { name: 'hosting_feature_migrate', value: '1' }
-    - { name: 'hosting_feature_remote_import', value: '1' }
-    - { name: 'hosting_feature_fix_ownership', value: '1' }
-    - { name: 'hosting_feature_sync', value: '1' }
-    - { name: 'hosting_feature_tasks_extra', value: '1' }
-    - { name: 'hosting_feature_task_gc', value: '1' }
-    - { name: 'hosting_feature_fix_ownership', value: '1' }
-    - { name: 'hosting_feature_fix_permissions', value: '1' }
-  tags:
-    - aegir-settings
-    - aegir-fixownership
-
-- name: Aegir settings | Delete a few settings
-  become: true
-  become_user: aegir
-  shell: "drush @hostmaster vdel {{ item }} -y"
-  with_items:
-    - update_notify_emails
+#     - aegir-settings
 
 - name: Aegir | Enable CiviCRM l10n basedir define
   lineinfile:
@@ -554,9 +305,8 @@
     - aegir
     - aegir-wkhtmltopdf
 
-#
+# @todo A bit redundant with the new Aegir-on-Backdrop setup
 # c.f. https://www.drupal.org/project/hosting_civicrm/issues/2972031
-#
 - name: Deploy our version of fix-drupal-site-permissions.sh
   template: src=usr/local/bin/fix-drupal-site-permissions.sh dest=/usr/local/bin/fix-drupal-site-permissions.sh owner=root group=root mode=0755
   tags:

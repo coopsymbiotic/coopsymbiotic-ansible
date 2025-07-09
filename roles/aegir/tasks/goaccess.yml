@@ -26,18 +26,3 @@
 
 - name: Deploy our helper to generate goaccess stats
   template: src=usr/local/bin/goaccess-aegir dest=/usr/local/bin/goaccess-aegir owner=root group=root mode=0755
-
-# Use of async/poll is to avoid ansible sometimes getting stuck running shell commands
-- name: Make sure that hosting_usage is enabled
-  become: true
-  become_user: aegir
-  shell: "drush @hostmaster en hosting_usage -y"
-  async: 60
-  poll: 5
-
-- name: Flush Hostmaster cache in case hosting_usage was updated and partial ansible run
-  become: true
-  become_user: aegir
-  shell: "drush @hostmaster cc all"
-  async: 60
-  poll: 5

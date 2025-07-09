@@ -4,7 +4,6 @@ aegir_root: /var/aegir
 aegir_user: aegir
 aegir_web_group: www-data
 aegir_db_user: aegir_root
-aegir_platform_version: 7.x-3.x
 aegir_admin_email: 'root@localhost'
 aegir_http_service_type: nginx
 aegir_frontend_url: "{{ inventory_hostname }}"
@@ -37,7 +36,7 @@ aegir_ssh_dir_permission: 0700
 aegir_ssh_dir_group: aegir
 
 # Default Drupal platform to install
-aegir_platform_drupal_version: 8
+aegir_platform_drupal_version: 10
 
 # We can define an array of unix usernames that will be used to create
 # mysql users. This is to make it easier to connect using Workbench over ssh.

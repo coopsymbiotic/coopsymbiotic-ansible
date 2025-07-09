@@ -150,25 +150,6 @@
   tags:
     - aegir-install
 
-- name: Download provision_symbiotic from Github
-  become_user: aegir
-  git: repo=https://github.com/coopsymbiotic/provision_symbiotic.git
-       version=master
-       dest=/var/aegir/.drush/provision_symbiotic
-       update=yes
-  tags:
-    - aegir-provision-symbiotic
-    - aegir-weekly
-
-- name: Download provision_customhtaccess from Github
-  become_user: aegir
-  git: repo=https://github.com/mlutfy/provision_customhtaccess.git
-       version=master
-       dest=/var/aegir/.drush/provision_customhtaccess
-       update=yes
-  tags:
-    - aegir-provision-customhtaccess
-
 - name: Download drush utf8mb4_convert from Git
   become_user: aegir
   git:
@@ -188,24 +169,6 @@
     update: yes
   tags:
     - aegir-drush-extras
-
-##
-## Update hosting_civicrm from git
-##
-- name: Get Hostmaster root directory
-  become: true
-  become_user: aegir
-  shell: "drush @hostmaster status | grep 'Drupal root' | awk '{ print $4 }'"
-  register: hostmaster_root
-  tags:
-    - aegir-civicrm-platform
-    - aegir-hosting-civicrm
-    - aegir-hosting-https
-    - aegir-hosting-usage
-    - aegir-hosting-wordpress
-    - aegir-hosting-advanced-cron
-    - aegir-fixownership
-    - aegir-goaccess
 
 - name: Install wp-cli
   get_url:

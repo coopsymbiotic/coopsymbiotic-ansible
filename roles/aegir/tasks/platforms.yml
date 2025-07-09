@@ -59,22 +59,3 @@
        update=yes
   tags:
     - aegir-civicrm-platform
-
-- name: platform | Configure the CiviCRM Drupal SymbioTIC platform
-  shell: "drush provision-save @platform_CiviCRMd{{ aegir_platform_drupal_version }} --root=/var/aegir/platforms/civicrm-d{{ aegir_platform_drupal_version }} --context_type=platform --repo_url=git@lab-platform-key.symbiotic.coop:coopsymbiotic/symbiotic-platform-d{{ aegir_platform_drupal_version }}-civicrm.git --git_ref=master --deploy_from_git=1"
-  args:
-    creates: "/var/aegir/.drush/platform_CiviCRMd{{ aegir_platform_drupal_version }}.alias.drushrc.php"
-  become: true
-  become_user: aegir
-  tags:
-    - aegir-civicrm-platform
-
-- name: platform | Trigger installation of the CiviCRM Drupal SymbioTIC platform
-  shell: "drush @hostmaster hosting-import @platform_CiviCRMd{{ aegir_platform_drupal_version }}"
-  args:
-    creates: /var/aegir/platforms/civicrm-d{{ aegir_platform_drupal_version }}
-  become: true
-  become_user: aegir
-  tags:
-    - aegir-civicrm-platform
-

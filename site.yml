@@ -25,6 +25,7 @@
   roles:
     - postfix
     - mariadb
+    - php
     - aegir
     - dehydrated
   tags:

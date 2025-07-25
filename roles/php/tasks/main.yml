@@ -2,7 +2,7 @@
 # Assumes Debian/Ubuntu, with MariaDB, Nginx, php-fpm
 # has the aegir-php tag for transition (this role previously had duplication with the aegir role)
 
-- name: Force gathering facts for partial ansible runs
+- name: PHP | Force gathering facts for partial ansible runs
   setup:
   tags:
     - packages

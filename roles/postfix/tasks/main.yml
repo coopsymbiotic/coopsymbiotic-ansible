@@ -8,6 +8,7 @@
     - postfix
     - opendkim
     - opendkim-tools
+    - ssl-cert # for snakeoil cert
 
 - name: Set the postfix mailname (and chmod it to be public, required by Aegir).
   template:

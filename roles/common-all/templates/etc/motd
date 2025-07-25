@@ -1,5 +1,5 @@
 Welcome to
 {{ motd_banner_hostname.stdout }}{% if preseed_domain is defined %}.{{ preseed_domain }}{% endif %}
 
-This server is managed by https://www.symbiotic.coop/en
+This server is managed by {{ common_all_motd_managed_by }}
 

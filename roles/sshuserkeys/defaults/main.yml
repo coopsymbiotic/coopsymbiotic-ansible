@@ -7,3 +7,8 @@ root_sudoers: johndoe
 # Other example: "{{ inventory_dir }}/files" (ex: if you have a repo for
 # your inventory hosts, vars and files.
 sshuserkeys_files_path: "{{ inventory_dir }}/files/sshkeys/global"
+
+# Files that are deployed to $HOME/.config/git/config
+# Combined with: export XDG_CONFIG_HOME="${SUDO_HOME}/.config"
+# in the /var/aegir/.bash_profile, for example
+sshuserkeys_gitconfig_path: "{{ inventory_dir }}/files/gitconfig/global"

@@ -169,7 +169,7 @@
   tags:
     - kvm-server-sudoers
 
-- include: zxfer.yml
+- include_tasks: zxfer.yml
   when: zfs_zxfer_partitions is defined
   tags:
     - kvm-server-scripts

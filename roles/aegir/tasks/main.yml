@@ -146,7 +146,7 @@
     - aegir-ansible
 
 - name: Install Aegir using git
-  include: git.yml
+  include_tasks: git.yml
   tags:
     - aegir-install
 
@@ -332,16 +332,25 @@
   tags:
     - aegir-civicrm-translations
 
-- include: civicrm.yml
+- include_tasks:
+    file: civicrm.yml
+    apply:
+      tags: aegir-civicrm
   tags:
     - aegir-civicrm
 
-- include: nodejs.yml
+- include_tasks:
+    file: nodejs.yml
+    apply:
+      tags: aegir-nodejs
   tags:
     - aegir-nodejs
     - packages
 
-- include: aegir-helpers.yml
+- include_tasks:
+    file: aegir-helpers.yml
+    apply:
+      tags: aegir-helpers
   tags:
     - aegir-helpers
 
@@ -369,40 +378,52 @@
     - aegir-sudoers
     - aegir-ansible
 
-- include: platforms.yml
+- include_tasks:
+    file: platforms.yml
+    apply:
+      tags: aegir-civicrm-platforms
   tags:
     - aegir-civicrm-platforms
 
-- include: sshfs-keys.yml
+- include_tasks:
+    file: sshfs-keys.yml
+    apply:
+      tags: aegir-sshfs
   tags:
     - aegir-sshfs
 
-- include: mysql-users.yml mysql_users="{{ aegir_mysql_users_ro }}" mysql_privs="SELECT,SHOW VIEW,PROCESS"
+- include_tasks: mysql-users.yml
+  vars:
+    mysql_users: "{{ aegir_mysql_users_ro }}"
+    mysql_privs: "SELECT,SHOW VIEW,PROCESS"
   when: aegir_mysql_users_ro | length > 0
   tags:
     - aegir-mysql-users
     - aegir-mysql-users-ro
 
-- include: mysql-users.yml mysql_users="{{ aegir_mysql_users_rw }}" mysql_privs="SELECT,SHOW VIEW,PROCESS,INSERT,UPDATE,DELETE,CREATE VIEW,REPLICATION CLIENT"
+- include_tasks: mysql-users.yml
+  vars:
+    mysql_users: "{{ aegir_mysql_users_rw }}"
+    mysql_privs: "SELECT,SHOW VIEW,PROCESS,INSERT,UPDATE,DELETE,CREATE VIEW,REPLICATION CLIENT"
   when: aegir_mysql_users_rw | length > 0
   tags:
     - aegir-mysql-users
     - aegir-mysql-users-rw
 
 # @todo Needs fixing
-- include: mysql-replication.yml
+- include_tasks: mysql-replication.yml
   when: aegir_mysql_replication_hosts | length > 0
   tags:
     - aegir-mysql-replication
 
-- include: cleanuptmp.yml
+- include_tasks: cleanuptmp.yml
   tags:
     - aegir-cleanuptmp
 
-- include: cron-extra.yml
+- include_tasks: cron-extra.yml
   tags:
     - aegir-cron-extra
 
-- include: goaccess.yml
+- include_tasks: goaccess.yml
   tags:
     - aegir-goaccess

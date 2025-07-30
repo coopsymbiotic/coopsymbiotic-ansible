@@ -26,6 +26,6 @@
   tags:
     - packages
 
-- include: settings-mysql.yml
+- include_tasks: settings-mysql.yml
   tags:
     - mariadb-settings

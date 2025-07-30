@@ -27,28 +27,28 @@
 #     - packages
 #     - icinga2
 
-- include: main-server.yml
+- include_tasks: main-server.yml
   when: "'icinga_servers' in group_names"
   tags:
     - icinga2
 
-- include: main-node.yml
+- include_tasks: main-node.yml
   when: "'icinga_servers' not in group_names"
   tags:
     - icinga2
 
 # Always deploy custom checks (server and nodes) because the server
 # also needs most of those checks locally
-- include: custom-checks.yml
+- include_tasks: custom-checks.yml
   tags:
     - icinga2-custom-checks
 
-- include: main-conf-host.yml
+- include_tasks: main-conf-host.yml
   tags:
     - never
     - icinga2-conf-host
 
-- include: main-conf-host-local.yml
+- include_tasks: main-conf-host-local.yml
   tags:
     - never
     - icinga2-conf-host-local

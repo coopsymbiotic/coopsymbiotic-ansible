@@ -10,7 +10,6 @@
     - packages-php
     - aegir-php
     - aegir-goaccess
-    - aegir-nodejs
     - packages-php-gpg
 
 - apt:

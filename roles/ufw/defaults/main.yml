@@ -9,6 +9,9 @@ fail2ban_ignoreip: 127.0.0.1/8
 # or in some cases, we whitelist specific IPs
 ufw_ipv4_allow_ssh: true
 ufw_ipv6_allow_ssh: true
+# We usually open http/https, except on servers such as KVM servers, vpn servers, etc
+ufw_allow_http: true
+ufw_allow_https: true
 
 # How aggressively to ban
 fail2ban_civicrm_maxretry: 20

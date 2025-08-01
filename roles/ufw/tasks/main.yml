@@ -43,11 +43,25 @@
 
 - name: Allow http
   ufw: proto=tcp port=80 rule=allow
+  when: ufw_allow_http == true
   tags:
     - ufw
 
 - name: Allow https
   ufw: proto=tcp port=443 rule=allow
+  when: ufw_allow_https == true
+  tags:
+    - ufw
+
+- name: Remove http
+  ufw: proto=tcp port=80 rule=allow delete=yes
+  when: ufw_allow_http == false
+  tags:
+    - ufw
+
+- name: Remove https
+  ufw: proto=tcp port=443 rule=allow delete=yes
+  when: ufw_allow_https == false
   tags:
     - ufw
 

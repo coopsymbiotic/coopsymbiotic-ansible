@@ -16,6 +16,14 @@
     - ufw-packages
     - ufw-fail2ban
 
+- name: Set UFW default forward policy to ACCEPT for KVM servers
+  ufw:
+    default: allow
+    direction: routed
+  when: "'kvm_servers' in group_names"
+  tags:
+    - ufw
+
 - name: Remove old ssh allow-all rule
   ufw: proto=tcp port=22 rule=allow delete=yes
   tags:

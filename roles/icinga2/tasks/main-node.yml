@@ -15,6 +15,18 @@
     - packages
   when: ansible_distribution == "Debian"
 
+- apt:
+    state: present
+    install_recommends: no
+    name: [
+      'monitoring-plugins-systemd',
+    ]
+  tags:
+    - icinga2
+    - packages
+    - icinga2-systemd
+  when: ansible_distribution == "Debian"
+
 # as of Ubuntu 18.xx, it seems closer to Debian
 - apt:
     state: present

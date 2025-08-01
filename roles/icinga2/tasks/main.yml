@@ -5,50 +5,45 @@
   tags:
     - packages
     - icinga2
+    - icinga2-systemd
 
-# Now using standard Debian packages, not worth the hassle
-# Not accessible on ipv6-only hosts, so in those situations we use the standard Debian packages
-# - name: Get Icinga Apt Key
-#   apt_key:
-#     url="https://packages.icinga.com/icinga.key"
-#     state=present
-#   when: preseed_ipv4_address is defined
-#   tags:
-#     - packages
-#     - icinga2
-#
-# - name: Configure Icinga Apt Repo
-#   apt_repository:
-#     repo="deb https://packages.icinga.com/{{ ansible_distribution|lower }} icinga-{{ ansible_distribution_release }} main"
-#     update_cache=yes
-#     state=present
-#   when: preseed_ipv4_address is defined
-#   tags:
-#     - packages
-#     - icinga2
-
-- include_tasks: main-server.yml
+- include_tasks:
+    file: main-server.yml
+    apply:
+      tags: icinga2
   when: "'icinga_servers' in group_names"
   tags:
     - icinga2
 
-- include_tasks: main-node.yml
+- include_tasks:
+    file: main-node.yml
+    apply:
+      tags: icinga2
   when: "'icinga_servers' not in group_names"
   tags:
     - icinga2
 
 # Always deploy custom checks (server and nodes) because the server
 # also needs most of those checks locally
-- include_tasks: custom-checks.yml
+- include_tasks:
+    file: custom-checks.yml
+    apply:
+      tags: icinga2-custom-checks
   tags:
     - icinga2-custom-checks
 
-- include_tasks: main-conf-host.yml
+- include_tasks:
+    file: main-conf-host.yml
+    apply:
+      tags: icinga2-conf-host
   tags:
     - never
     - icinga2-conf-host
 
-- include_tasks: main-conf-host-local.yml
+- include_tasks:
+    file: main-conf-host-local.yml
+    apply:
+      tags: icinga2-conf-host-local
   tags:
     - never
     - icinga2-conf-host-local

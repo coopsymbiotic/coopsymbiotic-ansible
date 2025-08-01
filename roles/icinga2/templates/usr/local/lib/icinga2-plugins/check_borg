@@ -128,18 +128,19 @@ if [ -z "${sec_last}" ]; then
 fi
 
 # Check the size of the backup
-backup_size="$(borgmatic info --json --last 1 | jq '.[].cache.stats.unique_csize')"
+stats=$(${BORG} info --json --last 1 $repo | jq -r '[ .[].cache.stats.unique_csize,  .[].archives[0].duration ] | join(",")')
+IFS=',' read -r unique_csize duration <<< "$stats"
 
 # interpret the amount of fails
 if [ "${sec_crit}" -gt "${sec_last}" ]; then
 	state="${STATE_CRITICAL}"
-	msg="BORG CRITICAL, last backup made on ${last} | unique_csize=$backup_size;"
+	msg="BORG CRITICAL, last backup made on ${last} | unique_csize=$unique_csize; duration=$duration;"
 elif [ "${sec_warn}" -gt "${sec_last}" ]; then
 	state="${STATE_WARNING}"
-	msg="BORG WARN, last backup made on ${last} | unique_csize=$backup_size;"
+	msg="BORG WARN, last backup made on ${last} | unique_csize=$unique_csize; duration=$duration;"
 else
 	state="${STATE_OK}"
-	msg="BORG OK, last backup made on ${last} | unique_csize=$backup_size;"
+	msg="BORG OK, last backup made on ${last} | unique_csize=$unique_csize; duration=$duration;"
 fi
 
 echo "${msg}"

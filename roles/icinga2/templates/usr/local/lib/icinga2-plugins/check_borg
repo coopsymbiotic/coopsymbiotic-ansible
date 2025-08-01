@@ -128,7 +128,7 @@ if [ -z "${sec_last}" ]; then
 fi
 
 # Check the size of the backup
-backup_size="$(borgmatic info --json | jq '.[].cache.stats.unique_csize')"
+backup_size="$(borgmatic info --json --last 1 | jq '.[].cache.stats.unique_csize')"
 
 # interpret the amount of fails
 if [ "${sec_crit}" -gt "${sec_last}" ]; then

@@ -84,3 +84,6 @@
     file: user-config.yml
     apply:
       tags: sshuserkeys-config
+  tags:
+    - sshuserkeys-config
+    - sshuserkeys-git

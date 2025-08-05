@@ -80,51 +80,7 @@
     - sshuserkeys
     - sshuserkeys-sudoers
 
-- name: Create the config directory
-  file:
-    path: "/home/{{ item | basename | regex_replace('\\.txt$', '') }}/.config/"
-    mode: 0755
-    state: directory
-    owner: "{{ item | basename | regex_replace('\\.txt$', '') }}"
-    group: "{{ item | basename | regex_replace('\\.txt$', '') }}"
-  with_fileglob:
-    - "{{ sshuserkeys_gitconfig_path }}/*.txt"
-  tags:
-    - sshuserkeys
-    - sshuserkeys-git
-
-- name: Create the git config directory
-  file:
-    path: "/home/{{ item | basename | regex_replace('\\.txt$', '') }}/.config/git"
-    mode: 0755
-    state: directory
-    owner: "{{ item | basename | regex_replace('\\.txt$', '') }}"
-    group: "{{ item | basename | regex_replace('\\.txt$', '') }}"
-  with_fileglob:
-    - "{{ sshuserkeys_gitconfig_path }}/*.txt"
-  tags:
-    - sshuserkeys
-    - sshuserkeys-git
-
-- name: Deploy git config files for all users
-  template:
-    src: "{{ item }}"
-    dest: "/home/{{ item | basename | regex_replace('\\.txt$', '') }}/.config/git/config"
-    owner: "{{ item | basename | regex_replace('\\.txt$', '') }}"
-    group: "{{ item | basename | regex_replace('\\.txt$', '') }}"
-    mode: 0644
-  with_fileglob:
-    - "{{ sshuserkeys_gitconfig_path }}/*.txt"
-  tags:
-    - sshuserkeys
-    - sshuserkeys-git
-
-- name: chmod the user home directory so that configurations can be read
-  file:
-    path: "/home/{{ item | basename | regex_replace('\\.txt$', '') }}"
-    mode: 0755
-  with_fileglob:
-    - "{{ sshuserkeys_gitconfig_path }}/*.txt"
-  tags:
-    - sshuserkeys
-    - sshuserkeys-git
+- include_tasks:
+    file: user-config.yml
+    apply:
+      tags: sshuserkeys-config

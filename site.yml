@@ -115,13 +115,6 @@
   tags:
     - buildkit
 
-- hosts: rdiff_backups
-  become: yes
-  roles:
-    - backupninja-rdiff
-  tags:
-    - backupninja-rdiff
-
 # We still use this wiki, but it is only used to document custom fonts
 # - hosts: dokuwiki_instances
 #   become: yes

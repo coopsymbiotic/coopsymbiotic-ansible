@@ -73,9 +73,14 @@ fi
 # You may want to put all your additions into a separate file like
 # ~/.bash_aliases, instead of adding them here directly.
 # See /usr/share/doc/bash-doc/examples in the bash-doc package.
-
 if [ -f ~/.bash_aliases ]; then
     . ~/.bash_aliases
+fi
+
+# coopsymbiotic/ops#565 Use the sudo user's config directory, if any
+SUDO_HOME="/home/${SUDO_USER}"
+if [ -f "${SUDO_HOME}/.config/git/config" ]; then
+    export XDG_CONFIG_HOME="${SUDO_HOME}/.config"
 fi
 
 # [ML] 2017-02-08 Not sure this is a good idea

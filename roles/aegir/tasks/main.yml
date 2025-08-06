@@ -97,32 +97,6 @@
 - copy: content="{{ inventory_hostname }}" dest=/etc/mailname
 - file: path=/etc/mailname owner=root group=root mode=0644
 
-- name: Ensure that our locales are enabled
-  locale_gen:
-    name: "{{ item }}"
-    state: present
-  with_items:
-    - ca_ES.UTF-8
-    - de_DE.UTF-8
-    - en_US.UTF-8
-    - en_CA.UTF-8
-    - es_ES.UTF-8
-    - fr_BE.UTF-8
-    - fr_CA.UTF-8
-    - fr_FR.UTF-8
-    - he_IL.UTF-8
-    - hr_HR.UTF-8
-    - it_IT.UTF-8
-    - nl_NL.UTF-8
-    - pl_PL.UTF-8
-    - pt_BR.UTF-8
-    - pt_PT.UTF-8
-    - sk_SK.UTF-8
-    - sq_AL.UTF-8
-  tags:
-    - aegir
-    - aegir-locales
-
 # Has to happen early, used by the hostmaster installation
 - name: sudo | Deploy sudoers file for people who are allowed to sudo to aegir
   template: src=etc/sudoers.d/symbiotic-aegir dest=/etc/sudoers.d/symbiotic-aegir owner=root group=root mode=0440

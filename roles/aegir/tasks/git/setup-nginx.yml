@@ -9,6 +9,7 @@
     force: yes  # the target doesn't exist yet
   become: yes
 
+# @todo move this to an "nginx" role?
 # Generated with: openssl dhparam -check -5 4096 > /etc/nginx/params.4096
 # Too slow to run on each server.
 - name: Copy the dhparam file for nginx https
@@ -51,6 +52,7 @@
 # Notably to:
 # - disable server_tokens
 # - disable access.log, which gets set elsewhere in the aegir config
+# @todo move this to an "nginx" role? (including standardizing the log_format everywhere)
 - name: Deploy our nginx.conf
   template:
     src: etc/nginx/nginx.conf

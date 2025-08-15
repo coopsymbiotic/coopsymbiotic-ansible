@@ -316,6 +316,7 @@
     - civicrm-update-translations
   tags:
     - aegir-helper-scripts
+    - aegir-civicrm
     - aegir-civicrm-scripts
     - aegir-civicrm-translations
     - aegir-ansible

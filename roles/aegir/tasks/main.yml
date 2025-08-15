@@ -123,41 +123,46 @@
   tags:
     - aegir-install
 
-- name: Create 'aegir' user, group, home and Drush directories.
-  include_tasks: git/user.yml
-  apply:
-    tags: aegir-user
+- name: Create aegir user, group, home and Drush directories.
+  include_tasks:
+    file: git/user.yml
+    apply:
+      tags: aegir-user
   tags:
     - aegir-user
 
 # Ref.: http://docs.aegirproject.org/en/3.x/install/#41-install-drush
 - name: Install legacy Drush for Drupal7 sites
-  include_tasks: git/drush.yml
-  apply:
-    tags: aegir-install-drush
+  include_tasks:
+    file: git/drush.yml
+    apply:
+      tags: aegir-install-drush
   tags:
     - aegir-install-drush
 
 - name: Install Bee for Backdrop
-  include_tasks: git/bee.yml
-  apply:
-    tags: aegir-install-bee
+  include_tasks:
+    file: git/bee.yml
+    apply:
+      tags: aegir-install-bee
   tags:
     - aegir-install-bee
 
 # Ref.: http://docs.aegirproject.org/en/3.x/install/#322-nginx-configuration
 - name: Setup Nginx
-  include_tasks: git/setup-nginx.yml
-  apply:
-    tags: aegir-nginx
+  include_tasks:
+    file: git/setup-nginx.yml
+    apply:
+      tags: aegir-nginx
   tags:
     - aegir-nginx
 
 # Ref.: http://docs.aegirproject.org/en/3.x/install/#44-running-hostmaster-install
 - name: Install the Aegir front-end
-  include_tasks: git/install.yml
-  apply:
-    tags: aegir-frontend-install
+  include_tasks:
+    file: git/install.yml
+    apply:
+      tags: aegir-frontend-install
   tags:
     - aegir-frontend-install
 

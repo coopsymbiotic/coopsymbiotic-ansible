@@ -123,6 +123,48 @@
   tags:
     - aegir-install
 
+- name: Create 'aegir' user, group, home and Drush directories.
+  include_tasks: git/user.yml
+  apply:
+    tags: aegir-user
+  tags:
+    - aegir-user
+
+# Ref.: http://docs.aegirproject.org/en/3.x/install/#41-install-drush
+- name: Install legacy Drush for Drupal7 sites
+  include_tasks: git/drush.yml
+  apply:
+    tags: aegir-install-drush
+  tags:
+    - aegir-install-drush
+
+- name: Install Bee for Backdrop
+  include_tasks: git/bee.yml
+  apply:
+    tags: aegir-install-bee
+  tags:
+    - aegir-install-bee
+
+# Ref.: http://docs.aegirproject.org/en/3.x/install/#322-nginx-configuration
+- name: Setup Nginx
+  include_tasks: git/setup-nginx.yml
+  apply:
+    tags: aegir-nginx
+  tags:
+    - aegir-nginx
+
+# Ref.: http://docs.aegirproject.org/en/3.x/install/#44-running-hostmaster-install
+- name: Install the Aegir front-end
+  include_tasks: git/install.yml
+  apply:
+    tags: aegir-frontend-install
+  tags:
+    - aegir-frontend-install
+
+# FIXME? (how to handle Aegir-on-Backdrop upgrades?)
+# - name: Upgrade Aegir front-end.
+#   include_tasks: git/upgrade.yml
+
 - name: Download drush utf8mb4_convert from Git
   become_user: aegir
   git:

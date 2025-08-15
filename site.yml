@@ -25,6 +25,7 @@
   roles:
     - postfix
     - mariadb
+    - nginx
     - php
     - aegir
     - dehydrated
@@ -104,6 +105,7 @@
 - hosts: php_servers
   become: yes
   roles:
+    - nginx
     - php
   tags:
     - php

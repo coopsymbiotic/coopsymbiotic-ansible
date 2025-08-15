@@ -1,0 +1,26 @@
+---
+
+# @todo Eventually we will move more bits into this role (mostly from the aegir role)
+
+- apt:
+    name: [
+      nginx,
+      libnginx-mod-http-brotli-filter # coopsymbiotic/ops#265
+    ]
+    state: present
+    install_recommends: no
+  tags:
+    - packages
+    - nginx-packages
+    - nginx-brotli
+
+- name: Deploy the brotli conf.d
+  template:
+    src: "etc/nginx/conf.d/symbiotic-brotli.conf"
+    dest: "/etc/nginx/conf.d/symbiotic-brotli.conf"
+    owner: root
+    group: root
+    mode: 0644
+  notify: reload nginx
+  tags:
+    - nginx-brotli

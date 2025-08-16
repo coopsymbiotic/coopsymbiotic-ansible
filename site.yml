@@ -23,12 +23,10 @@
 - hosts: aegir_managed
   become: yes
   roles:
-    - postfix
     - mariadb
     - nginx
     - php
     - aegir
-    - dehydrated
   tags:
     - aegir
 

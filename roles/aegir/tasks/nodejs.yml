@@ -12,6 +12,13 @@
 - file: path=/etc/apt/sources.list.d/deb_nodesource_com_node_20_x.list state=absent
 - file: path=/etc/apt/sources.list.d/deb_nodesource_com_node_22_x.list state=absent
 
+# @todo This should be in the common-all, but we need it for upgrades too
+- name: Install python-debian
+  apt:
+    name: python3-debian
+    state: present
+    install_recommends: no
+
 - name: Download NodeSource's signing key.
   # NodeSource's web server discriminates the User-Agent used by the deb822_repository module.
   # https://github.com/nodesource/distributions/issues/1723

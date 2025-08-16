@@ -118,11 +118,6 @@
     - packages
     - aegir-ansible
 
-- name: Install Aegir using git
-  include_tasks: git.yml
-  tags:
-    - aegir-install
-
 - name: Create aegir user, group, home and Drush directories.
   include_tasks:
     file: git/user.yml

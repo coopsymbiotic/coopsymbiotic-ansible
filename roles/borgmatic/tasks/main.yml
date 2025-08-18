@@ -38,6 +38,19 @@
     owner: "root"
     group: "root"
     mode: 0600
+  when: ansible_distribution == 'Debian' and ansible_distribution_release == 'trixie'
+  tags:
+    - borgmatic
+    - borgmatic-confs
+
+- name: Deploy the main borgmatic configuration file (legacy).
+  template:
+    src: "etc/borgmatic/config-legacy.yaml"
+    dest: "/etc/borgmatic/config.yaml"
+    owner: "root"
+    group: "root"
+    mode: 0600
+  when: ansible_distribution_release != 'trixie'
   tags:
     - borgmatic
     - borgmatic-confs

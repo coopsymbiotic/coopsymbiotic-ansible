@@ -1,0 +1,294 @@
+# {{ ansible_managed }}
+#
+# Template based on borgmatic 1.2.11 (from Debian 10)
+# Some options were removed for brevity.
+#
+# Where to look for files to backup, and where to store those backups. See
+# https://borgbackup.readthedocs.io/en/stable/quickstart.html and
+# https://borgbackup.readthedocs.io/en/stable/usage.html#borg-create for details.
+location:
+    # List of source directories to backup (required). Globs and tildes are expanded.
+    source_directories:
+        - /etc
+        - /root
+        - /home
+        - /opt
+        - /usr/local
+        - /var
+{% if mysqlbackup_backupdir != "/var/backups/mysql" %}
+        - {{ mysqlbackup_backupdir }}
+{% endif %}
+{% if borgmatic_includes is defined %}
+        # Includes specific to this host
+{% for item in borgmatic_includes %}
+        - {{ item }}
+{% endfor %}
+{% endif %}
+{% if backupincludes is defined %}
+        # Extra includes specific to this host
+{% for item in backupincludes %}
+        - {{ item }}
+{% endfor %}
+{% endif %}
+
+    # Paths to local or remote repositories (required). Tildes are expanded. Multiple
+    # repositories are backed up to in sequence. See ssh_command for SSH options like
+    # identity file or port.
+    repositories:
+        - ssh://backups-{{ inventory_hostname_short }}@{{ borgmatic_backupserver }}{{ borgmatic_server_basedir }}/{{ inventory_hostname }}/borg
+
+    # Mode in which to operate the files cache. See
+    # https://borgbackup.readthedocs.io/en/stable/usage/create.html#description for
+    # details.
+    #files_cache: ctime,size,inode
+
+    # Any paths matching these patterns are included/excluded from backups. Globs are
+    # expanded. (Tildes are not.) Note that Borg considers this option experimental.
+    # See the output of "borg help patterns" for more details. Quote any value if it
+    # contains leading punctuation, so it parses correctly.
+    #patterns:
+    #    - R /
+    #    - '- /home/*/.cache'
+    #    - + /home/susan
+    #    - '- /home/*'
+
+    # Read include/exclude patterns from one or more separate named files, one pattern
+    # per line. Note that Borg considers this option experimental. See the output of
+    # "borg help patterns" for more details.
+    #patterns_from:
+    #    - /etc/borgmatic/patterns
+
+    # Any paths matching these patterns are excluded from backups. Globs and tildes
+    # are expanded. See the output of "borg help patterns" for more details.
+    exclude_patterns:
+        # Exclude Symbiotic team members. They should not contain production data.
+        - /home/mathieu
+        - /home/myriam
+        - /home/samuel
+        - /home/shane
+        - /home/stephane
+        # Exclude various temporary or redundant directories
+        - /home/*/.local/share/Trash
+        - /home/*/.thumbnails
+        - /home/*/.beagle
+        - /home/*/.cache
+        - /home/*/.npm
+        - /home/*/.Trash
+        - /home/gitlab-runner/builds
+        - /home/deploy/.ansible/tmp
+        - /var/cache
+        - /var/lib/apt
+        - /var/lib/aptitude
+        - /var/lib/dpkg
+        - /var/lib/docker
+        - /var/lib/fail2ban
+        - /var/lib/mlocate
+        - /var/lib/mysql
+        - /var/lib/nginx
+        - /var/lib/php/sessions
+        - /var/lib/puppet/clientbucket
+        - /var/lib/spamassassin/.spamassassin
+        - /var/log
+        - /var/tmp
+        # Aegir-specific excludes
+        - /var/aegir/.cache
+        - /var/aegir/.composer
+        - /var/aegir/.drush/cache
+        - /var/aegir/.npm
+        - /var/aegir/.nvm
+        - /var/aegir/.tmp
+        - /var/aegir/.vimundo
+        - /var/aegir/.vimbackup
+        - /var/aegir/.vscode-server
+        - /var/aegir/backups
+        - /var/aegir/l10n-civicrm
+        - /var/aegir/platforms/*/.git
+        - /var/aegir/platforms/*/sites/*/files/civicrm/templates_c
+        - /var/aegir/platforms/*/sites/*/files/civicrm/ConfigAndLog
+        - /var/aegir/platforms/*/sites/*/files/civicrm/persist/contribute/dyn
+        - /var/aegir/platforms/*/sites/*/files/css
+        - /var/aegir/platforms/*/sites/*/files/imagecache
+        - /var/aegir/platforms/*/sites/*/files/js
+        - /var/aegir/platforms/*/sites/*/files/styles
+        - /var/aegir/platforms/*/sites/*/files/tmp
+        - /var/aegir/platforms/*/sites/*/files/*.sql
+        - /var/aegir/platforms/*/sites/*/files/*.sql.gz
+        - /var/aegir/platforms/*/sites/*/*.sql
+        - /var/aegir/platforms/*/sites/*/*.sql.gz
+        - /var/aegir/platforms/web/*/sites/*/files/civicrm/templates_c
+        - /var/aegir/platforms/web/*/sites/*/files/civicrm/ConfigAndLog
+        - /var/aegir/platforms/web/*/sites/*/files/civicrm/persist/contribute/dyn
+        - /var/aegir/platforms/web/*/sites/*/files/css
+        - /var/aegir/platforms/web/*/sites/*/files/imagecache
+        - /var/aegir/platforms/web/*/sites/*/files/js
+        - /var/aegir/platforms/web/*/sites/*/files/styles
+        - /var/aegir/platforms/web/*/sites/*/files/tmp
+        - /var/aegir/platforms/web/*/sites/*/files/*.sql
+        - /var/aegir/platforms/web/*/sites/*/files/*.sql.gz
+        - /var/aegir/platforms/*/sites/*/wp-content/updraft
+        - /var/aegir/platforms/*/sites/*/wp-content/uploads/civicrm/templates_c
+        - /var/aegir/platforms/*/sites/*/wp-content/uploads/civicrm/ConfigAndLog
+        - /var/aegir/platforms/*/sites/*/wp-content/uploads/civicrm/persist/contribute/dyn
+        - /var/aegir/tmp
+        - /usr/local/src/dehydrated
+        - /usr/local/wkhtmltox
+        - /usr/local/promtail*
+{% if borgmatic_excludes is defined %}
+        # Excludes specific to this host
+{% for item in borgmatic_excludes %}
+        - {{ item }}
+{% endfor %}
+{% endif %}
+{% if backupexcludes is defined %}
+        # Extra excludes specific to this host
+{% for item in backupexcludes %}
+        - {{ item }}
+{% endfor %}
+{% endif %}
+
+    # Read exclude patterns from one or more separate named files, one pattern per
+    # line. See the output of "borg help patterns" for more details.
+    #exclude_from:
+    #    - /etc/borgmatic/excludes
+
+    # Exclude directories that contain a CACHEDIR.TAG file. See
+    # http://www.brynosaurus.com/cachedir/spec.html for details.
+    #exclude_caches: true
+
+    # Exclude directories that contain a file with the given filename.
+    exclude_if_present: .nobackup
+
+# Repository storage options. See
+# https://borgbackup.readthedocs.io/en/stable/usage.html#borg-create and
+# https://borgbackup.readthedocs.io/en/stable/usage/general.html#environment-variables for
+# details.
+storage:
+    # The standard output of this command is used to unlock the encryption key. Only
+    # use on repositories that were initialized with passcommand/repokey encryption.
+    # Note that if both encryption_passcommand and encryption_passphrase are set,
+    # then encryption_passphrase takes precedence.
+    #encryption_passcommand: secret-tool lookup borg-repository repo-name
+
+    # Passphrase to unlock the encryption key with. Only use on repositories that were
+    # initialized with passphrase/repokey encryption. Quote the value if it contains
+    # punctuation, so it parses correctly. And backslash any quote or backslash
+    # literals as well.
+    encryption_passphrase: "{{ borgmatic_passphrase }}"
+
+    # Number of seconds between each checkpoint during a long-running backup. See
+    # https://borgbackup.readthedocs.io/en/stable/faq.html#if-a-backup-stops-mid-way-does-the-already-backed-up-data-stay-there
+    # for details. Defaults to checkpoints every 1800 seconds (30 minutes).
+    #checkpoint_interval: 1800
+
+    # Specify the parameters passed to then chunker (CHUNK_MIN_EXP, CHUNK_MAX_EXP,
+    # HASH_MASK_BITS, HASH_WINDOW_SIZE). See https://borgbackup.readthedocs.io/en/stable/internals.html
+    # for details.
+    #chunker_params: 19,23,21,4095
+
+    # Type of compression to use when creating archives. See
+    # https://borgbackup.readthedocs.org/en/stable/usage.html#borg-create for details.
+    # Defaults to no compression.
+    compression: lz4
+
+    # Remote network upload rate limit in kiBytes/second.
+    #remote_rate_limit: 100
+
+    # Command to use instead of just "ssh". This can be used to specify ssh options.
+    #ssh_command: ssh -i /path/to/private/key
+
+    # Umask to be used for borg create.
+    #umask: 0077
+
+    # Maximum seconds to wait for acquiring a repository/cache lock.
+    #lock_wait: 5
+
+    # Name of the archive. Borg placeholders can be used. See the output of
+    # "borg help placeholders" for details. Default is
+    # "{hostname}-{now:%Y-%m-%dT%H:%M:%S.%f}". If you specify this option, you must
+    # also specify a prefix in the retention section to avoid accidental pruning of
+    # archives with a different archive name format. And you should also specify a
+    # prefix in the consistency section as well.
+    #archive_name_format: '{hostname}-documents-{now}'
+
+# Retention policy for how many backups to keep in each category. See
+# https://borgbackup.readthedocs.org/en/stable/usage.html#borg-prune for details.
+# At least one of the "keep" options is required for pruning to work.
+retention:
+    # Number of daily archives to keep.
+    keep_daily: {{ borgmatic_retention_daily }}
+
+    # Number of weekly archives to keep.
+    keep_weekly: {{ borgmatic_retention_weekly }}
+
+    # Number of monthly archives to keep.
+    keep_monthly: {{ borgmatic_retention_monthly }}
+
+    # Number of yearly archives to keep.
+    #keep_yearly: 1
+
+    # When pruning, only consider archive names starting with this prefix.
+    # Borg placeholders can be used. See the output of "borg help placeholders" for
+    # details. Default is "{hostname}-".
+    #prefix: sourcehostname
+
+# Consistency checks to run after backups. See
+# https://borgbackup.readthedocs.org/en/stable/usage.html#borg-check and
+# https://borgbackup.readthedocs.org/en/stable/usage.html#borg-extract for details.
+#consistency:
+    # List of one or more consistency checks to run: "repository", "archives", and/or
+    # "extract". Defaults to "repository" and "archives". Set to "disabled" to disable
+    # all consistency checks. "repository" checks the consistency of the repository,
+    # "archive" checks all of the archives, and "extract" does an extraction dry-run
+    # of just the most recent archive.
+    #checks:
+    #    - repository
+    #    - archives
+
+    # Paths to a subset of the repositories in the location section on which to run
+    # consistency checks. Handy in case some of your repositories are very large, and
+    # so running consistency checks on them would take too long. Defaults to running
+    # consistency checks on all repositories configured in the location section.
+    #check_repositories:
+    #    - user@backupserver:sourcehostname.borg
+
+    # Restrict the number of checked archives to the last n. Applies only to the "archives" check.
+    #check_last: 3
+
+    # When performing the "archives" check, only consider archive names starting with
+    # this prefix. Borg placeholders can be used. See the output of
+    # "borg help placeholders" for details. Default is "{hostname}-".
+    #prefix: sourcehostname
+
+# Shell commands or scripts to execute before and after a backup or if an error has occurred.
+# IMPORTANT: All provided commands and scripts are executed with user permissions of borgmatic.
+# Do not forget to set secure permissions on this file as well as on any script listed (chmod 0700) to
+# prevent potential shell injection or privilege escalation.
+# NB: We use "|| true" because the actions might fail (the server may not have a MySQL server)
+# and monitoring will catch any errors with the SQL dumps.
+# NB: this changes in borgmatic 2.0: https://torsion.org/borgmatic/docs/how-to/add-preparation-and-cleanup-steps-to-backups/
+hooks:
+    before_backup:
+{% if borgmatic_before_backup is defined %}
+{% for item in borgmatic_before_backup %}
+        - {{ item }}
+{% endfor %}
+{% endif %}
+{% if mysqlbackup_backupdir %}
+        - rm {{ mysqlbackup_backupdir }}/*sql* || true
+{% endif %}
+        - umount /mnt/restore 2>/dev/null || true
+        - /usr/local/bin/mysqldump-secure --cron || true
+
+    before_prune:
+        - umount /mnt/restore 2>/dev/null || true
+
+{% if borgmatic_after_backup is defined %}
+    after_backup:
+{% for item in borgmatic_after_backup %}
+        - {{ item }}
+{% endfor %}
+{% endif %}
+
+    # List of one or more shell commands or scripts to execute in case an exception has occurred.
+    #on_error:
+    #    - echo "`date` - Error while creating a backup."

@@ -12,7 +12,7 @@ virt-install --name {{ hostvars[item]['preseed_hostname'] }} \
   --network bridge=br0 \
 {% endif %}
   --graphics vnc,listen=127.0.0.1 \
-  --noautoconsole --location 'http://ftp.ca.debian.org/debian/dists/bookworm/main/installer-amd64/' \
+  --noautoconsole --location 'http://ftp.ca.debian.org/debian/dists/trixie/main/installer-amd64/' \
   --autostart \
   --initrd-inject=/etc/preseeds/{{ hostvars[item]['preseed_hostname'] }}.{{ hostvars[item]['preseed_domain'] }}/preseed.cfg
 

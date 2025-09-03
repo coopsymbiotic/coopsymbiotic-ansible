@@ -31,6 +31,16 @@
   tags:
     - aegir
 
+- hosts: moodle_servers
+  become: yes
+  roles:
+    - mariadb
+    - nginx
+    - php
+    - dehydrated
+  tags:
+    - moodle
+
 - hosts: sql_servers
   become: yes
   roles:

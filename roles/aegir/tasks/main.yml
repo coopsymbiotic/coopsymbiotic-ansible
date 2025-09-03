@@ -436,10 +436,6 @@
   tags:
     - aegir-cleanuptmp
 
-- include_tasks: cron-extra.yml
-  tags:
-    - aegir-cron-extra
-
 - include_tasks: goaccess.yml
   tags:
     - aegir-goaccess

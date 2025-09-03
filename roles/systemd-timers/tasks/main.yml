@@ -1,0 +1,34 @@
+---
+
+- name: Deploy the service
+  ansible.builtin.template:
+    src: "etc/systemd/system/extra.service"
+    dest: "/etc/systemd/system/{{ item.key }}.service"
+    owner: "root"
+    group: "root"
+    mode: "0644"
+  with_dict: "{{ systemd_timers_extra | default({}) }}"
+  notify: Reload systemd
+  tags:
+    - systemd-timers
+
+- name: Deploy the timer
+  ansible.builtin.template:
+    src: "etc/systemd/system/extra.timer"
+    dest: "/etc/systemd/system/{{ item.key }}.timer"
+    owner: "root"
+    group: "root"
+    mode: "0644"
+  with_dict: "{{ systemd_timers_extra | default({}) }}"
+  notify: Reload systemd
+  tags:
+    - systemd-timers
+
+- name: Reload systemd
+  ansible.builtin.systemd:
+    name: "{{ item.key }}.timer"
+    enabled: true
+    daemon_reload: true
+  with_dict: "{{ systemd_timers_extra | default({}) }}"
+  tags:
+    - systemd-timers

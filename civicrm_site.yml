@@ -1,6 +1,0 @@
----
-
-- hosts: civicrm_sites
-  become: yes
-  roles:
-    - civicrm-sites

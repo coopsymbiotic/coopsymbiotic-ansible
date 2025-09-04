@@ -15,7 +15,12 @@
     - dehydrated
 
 - name: Deploy dehydrated config file.
-  ansible.builtin.template: src=etc/dehydrated/config.txt dest=/etc/dehydrated/config.txt owner=root group=root mode=0444
+  ansible.builtin.template:
+    src: "etc/dehydrated/config"
+    dest: "/etc/dehydrated/config"
+    owner: "root"
+    group: "root"
+    mode: "0444"
   tags:
     - dehydrated
 

@@ -1,21 +1,21 @@
 ---
 
 - name: Install the dehydrated Debian package
-  apt:
+  ansible.builtin.apt:
     name: "dehydrated"
     state: present
-    install_recommends: no
+    install_recommends: false
   tags:
     - dehydrated
     - packages
 
 - name: Create dehydrated etc keys directory.
-  file: path="/etc/dehydrated/keys" state=directory mode=0700 owner=root group=root
+  ansible.builtin.file: path="/etc/dehydrated/keys" state=directory mode=0700 owner=root group=root
   tags:
     - dehydrated
 
 - name: Deploy dehydrated config file.
-  template: src=etc/dehydrated/config.txt dest=/etc/dehydrated/config.txt owner=root group=root mode=0444
+  ansible.builtin.template: src=etc/dehydrated/config.txt dest=/etc/dehydrated/config.txt owner=root group=root mode=0444
   tags:
     - dehydrated
 
@@ -23,7 +23,7 @@
 # when creating new certificates.
 # @todo Move to a systemd service for better logs?
 - name: Configure dehydrated cron
-  cron:
+  ansible.builtin.cron:
     name="dehydrated"
     minute="35"
     hour="18"
@@ -35,21 +35,21 @@
     - dehydrated
 
 - name: Deploy dehydrated hooks.sh script.
-  template: src=etc/dehydrated/hooks.sh dest=/etc/dehydrated/hooks.sh owner=root group=root mode=0755
+  ansible.builtin.template: src=etc/dehydrated/hooks.sh dest=/etc/dehydrated/hooks.sh owner=root group=root mode=0755
   tags:
     - dehydrated
 
 # TODO nginx? deploy a file we can include?
 
 - name: Test this is Apache 2.4 on Debian
-  stat:
-    path: /etc/apache2/apache2.conf
+  ansible.builtin.stat:
+    path: "/etc/apache2/apache2.conf"
   register: apache24debian
   tags:
     - dehydrated
 
 - name: Run Apache tasks
-  include_tasks:
+  ansible.builtin.include_tasks:
     file: apache.yml
     apply:
       tags: dehydrated
@@ -58,14 +58,14 @@
     - dehydrated
 
 - name: Test this is nginx on Debian
-  stat:
-    path: /etc/nginx/nginx.conf
+  ansible.builtin.stat:
+    path: "/etc/nginx/nginx.conf"
   register: nginxdebian
   tags:
     - dehydrated
 
 - name: Run nginx tasks
-  include_tasks:
+  ansible.builtin.include_tasks:
     file: nginx.yml
     apply:
       tags: dehydrated

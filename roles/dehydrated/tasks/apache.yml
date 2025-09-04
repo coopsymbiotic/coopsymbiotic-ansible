@@ -1,11 +1,15 @@
 ---
 
 - name: Deploy dehydrated Apache 2.4 config file.
-  template: src=etc/apache2/conf-available/dehydrated.conf dest=/etc/apache2/conf-available/dehydrated.conf owner=root group=root mode=0444
+  ansible.builtin.template:
+    src: "etc/apache2/conf-available/dehydrated.conf"
+    dest: "/etc/apache2/conf-available/dehydrated.conf"
+    owner: "root"
+    group: "root"
+    mode: "0444"
 
 - name: Enable Apache dehydrated configuration
-  command: a2enconf dehydrated
-  notify: reload apache2
+  ansible.builtin.command: a2enconf dehydrated
+  notify: Reload apache2
   tags:
     - dehydrated
-

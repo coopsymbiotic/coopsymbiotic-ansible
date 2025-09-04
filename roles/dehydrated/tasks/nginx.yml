@@ -6,7 +6,7 @@
     state: directory
     owner: root
     group: root
-    mode: 0755
+    mode: "0755"
 
 - name: Deploy dehydrated nginx snippet
   template:
@@ -14,4 +14,4 @@
     dest: /etc/nginx/snippets/dehydrated.conf
     owner: root
     group: root
-    mode: 0444
+    mode: "0444"

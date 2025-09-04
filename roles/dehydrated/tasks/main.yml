@@ -16,8 +16,8 @@
 
 - name: Deploy dehydrated config file.
   ansible.builtin.template:
-    src: "etc/dehydrated/config"
-    dest: "/etc/dehydrated/config"
+    src: "etc/dehydrated/conf.d/symbiotic.conf"
+    dest: "/etc/dehydrated/conf.d/symbiotic.conf"
     owner: "root"
     group: "root"
     mode: "0444"

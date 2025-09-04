@@ -1,0 +1,17 @@
+---
+
+- name: Make sure the snippets directory exists
+  file:
+    path: "/etc/nginx/snippets/"
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Deploy dehydrated nginx snippet
+  template:
+    src: etc/nginx/snippets/dehydrated.conf
+    dest: /etc/nginx/snippets/dehydrated.conf
+    owner: root
+    group: root
+    mode: 0444

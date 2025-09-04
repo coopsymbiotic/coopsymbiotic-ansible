@@ -11,6 +11,7 @@
     install_recommends: no
   tags:
     - packages
+    - nginx
     - nginx-packages
     - nginx-brotli
 
@@ -23,4 +24,27 @@
     mode: 0644
   notify: reload nginx
   tags:
+    - nginx
     - nginx-brotli
+
+- name: Make sure the snippets directory exists
+  file:
+    path: "/etc/nginx/snippets/"
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+  tags:
+    - nginx
+    - nginx-ciphers
+
+- name: Deploy nginx ciphers snippet
+  template:
+    src: etc/nginx/snippets/ciphers.conf
+    dest: /etc/nginx/snippets/ciphers.conf
+    owner: root
+    group: root
+    mode: 0444
+  tags:
+    - nginx
+    - nginx-ciphers

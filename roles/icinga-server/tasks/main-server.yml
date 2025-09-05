@@ -68,8 +68,8 @@
 ###
 
 - name: ufw | Open the Icinga2 port for our machines only
-  ufw: proto=tcp port=5665 rule=allow src="{{ item }}"
-  with_items: "{{ icinga2_allow_ips }}"
+  community.general.ufw: proto=tcp port=5665 rule=allow src="{{ item }}"
+  loop: "{{ icinga2_allow_ips }}"
   tags:
     - icinga2-ufw
     - ufw

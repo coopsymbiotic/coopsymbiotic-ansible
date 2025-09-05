@@ -15,13 +15,13 @@
   tags:
     - icinga2
 
-- include_tasks:
-    file: main-node.yml
-    apply:
-      tags: icinga2
-  when: "'icinga_servers' not in group_names"
-  tags:
-    - icinga2
+# - include_tasks:
+#     file: main-node.yml
+#     apply:
+#       tags: icinga2
+#   when: "'icinga_servers' not in group_names"
+#   tags:
+#     - icinga2
 
 # Always deploy custom checks (server and nodes) because the server
 # also needs most of those checks locally

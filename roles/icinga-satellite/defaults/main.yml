@@ -1,0 +1,39 @@
+---
+icinga2_main_node: icinga.example.org
+
+# generate a long random string and store it in
+# host_vars/[icinga-server]
+# we don't want nodes to have the salt, only the server.
+icinga2_secret_ticketsalt: ""
+
+icinga2_allow_ips:
+    - 192.168.1.0/24
+
+icinga2_rdiffbackup_root: "/backup"
+
+# On Debian it's nagios, but on CentOS it might be icinga
+icinga2_user: nagios
+
+icinga2_cert_dir: "/var/lib/icinga2/certs"
+icinga2_plugin_dir: "/usr/lib/nagios/plugins"
+
+# Based import for the Host object
+icinga2_conf_host_import: "aegir-host"
+
+# If templates/etc/icinga2/conf.d/hosts/host-template.conf is used to generate
+# a node host configuration file, this option makes it possible to ignore IPv6
+# monitoring. Usually required when the host is using a DNS record set by the
+# client, and they did not bother creating a AAAA record.
+icinga2_host_ignore_ipv6: false
+
+# Can be used to ignore that the frontpage returns an HTTP 200
+icinga2_disable_all_http200_checks: 0
+
+# For when we run CiviCRM monitoring on non-aegir systems
+icinga2_aegir_user: aegir
+icinga2_wwwdata_user: www-data
+
+# To avoid duplicating configurations, use the preseed info by default
+# but not all hosts have that variable, if not hosted on our infra
+icinga2_node_ipv4_address: "{{ preseed_ipv4_address }}"
+icinga2_node_ipv6_address: "{{ preseed_ipv6_address | default(false) }}"

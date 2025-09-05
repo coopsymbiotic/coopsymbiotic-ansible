@@ -1,0 +1,118 @@
+#!/usr/bin/php
+<?php
+
+$host = trim($argv[1]);
+$cms = trim($argv[2]);
+
+if (empty($host)) {
+  echo 'Missing host argument.';
+  exit(3);
+}
+
+function do_system_check($host, $cms) {
+  $civistatus = null;
+  $tmp = null;
+  $site_path = null;
+
+  if ($cms == 'drupal' || $cms == 'drupal8' || $cms == 'wordpress') {
+    exec('sudo -u aegir /usr/local/bin/aegir-helpers site-property ' . escapeshellarg($host) . ' site_path', $site_path);
+    exec('sudo -D ' . escapeshellarg($site_path[0]) . ' -u www-data /usr/local/bin/cv --cwd=' . escapeshellarg($site_path[0]) . ' api System.check option.limit=0', $tmp);
+  }
+  elseif ($cms == 'joomla') {
+    // This code is un-maintained and might not work
+    global $civicrm_root;
+    global $civicrm_cli_ini; // required if TZ is not the same as the server
+
+    require_once '/etc/civicrm/' . $host . '.php';
+
+    if ($civicrm_cli_ini) {
+      exec('sudo -u aegir /usr/bin/env php -c ' . escapeshellarg($civicrm_cli_ini) . ' ' . escapeshellarg($civicrm_cli) . ' -s ' . escapeshellarg($host) . ' -u ' . escapeshellarg($civicrm_cron_user) . ' -p ' . escapeshellarg($civicrm_cron_pass) . ' -e system -a check --json', $tmp);
+    }
+    else {
+      exec('sudo -u aegir /usr/local/bin/cv --cwd=' . escapeshellarg($civicrm_root) . ' api system.check option.limit=0', $tmp);
+    }
+  }
+  else {
+    echo 'Unsupported CMS: ' . $cms;
+    exit(3);
+  }
+
+  $civistatus = json_decode(implode(' ', $tmp));
+
+  if (empty($civistatus)) {
+    echo 'Failed to check status';
+    exit(3);
+  }
+
+  if ($civistatus->is_error) {
+    echo 'API call failed: ' . $civistatus->error_message;
+    exit(3);
+  }
+
+  return $civistatus;
+}
+
+$civistatus = do_system_check($host, $cms);
+
+$metrics = '';
+$check_status = 0;
+$check_descriptions = [];
+$upgrade_status = 1;
+
+$upgrade_status_options = [
+  'info' => 1,
+  'notice' => 1,
+  'warning' => 2,
+  'alert' => 3,
+  'critical' => 3,
+];
+
+foreach ($civistatus->values as $key => $val) {
+  if ($val->name == 'checkVersion_upgrade') {
+    $upgrade_status = $upgrade_status_options[$val->severity];
+  }
+
+  if ($val->name == 'symbiotic_metrics') {
+    $metrics = $val->message;
+  }
+
+  // Issue was acknowledged (hidden from the Status Check UI).
+  if (!$val->is_visible) {
+    continue;
+  }
+
+  // Ignore extension updates
+  if ($val->title == 'Extension Update Available') {
+    continue;
+  }
+  elseif ($val->title == 'Actualização de Extensão Disponível') {
+    continue;
+  }
+  elseif ($val->title == 'actualización de extensión disponible') {
+    continue;
+  }
+
+  if (in_array($val->severity, ['warning', 'error', 'alert', 'critical'])) {
+    // We don't want to downgrade an 'error' status to 'warning'.
+    if ($check_status == 0) {
+      $check_status = 1;
+    }
+
+    $check_descriptions[] = $val->title;
+  }
+
+  if (in_array($val->severity, ['error', 'critical', 'alert'])) {
+    $check_status = 2;
+  }
+}
+
+$metrics = "upgrade=$upgrade_status; $metrics";
+
+if ($check_status == 0) {
+  echo "OK | $metrics";
+  exit(0);
+}
+else {
+  echo implode(' ', $check_descriptions) . " | $metrics";
+  exit($check_status);
+}

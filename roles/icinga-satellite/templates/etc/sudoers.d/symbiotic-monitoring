@@ -1,0 +1,50 @@
+# {{ ansible_managed }}
+
+# Hosting (Aegir or not)
+# We use runcwd because check_civicrm uses the sudo -D option to chdir
+Defaults:nagios runcwd=*
+Defaults env_keep += "CIVICRM_SETTINGS"
+{{ icinga2_user }} ALL=(aegir) NOPASSWD: /usr/local/bin/aegir-helpers site-property * site_path
+{{ icinga2_user }} ALL=(aegir) NOPASSWD: /usr/local/bin/drush * status version --format=json
+{{ icinga2_user }} ALL=(aegir) NOPASSWD: /usr/local/bin/wp core version
+{{ icinga2_user }} ALL=(aegir) NOPASSWD: /usr/local/bin/drush * provision-verify
+{{ icinga2_user }} ALL=(aegir) NOPASSWD: /usr/local/lib/icinga2-plugins/check_file_content
+{{ icinga2_user }} ALL=(aegir) NOPASSWD: /usr/local/bin/cv --cwd=* api System.check option.limit=0
+{{ icinga2_user }} ALL=(www-data) NOPASSWD: /usr/local/bin/cv --cwd=* api System.check option.limit=0
+# Not used?
+{{ icinga2_user }} ALL=(aegir) NOPASSWD: /usr/local/bin/cv api System.check option.limit=0
+{{ icinga2_user }} ALL=(aegir) NOPASSWD: /usr/local/bin/drush * wp core version
+
+# MySQL
+{{ icinga2_user }} ALL=(root) NOPASSWD: /usr/lib/nagios/plugins/pmp-check-mysql-status *
+{{ icinga2_user }} ALL=(root) NOPASSWD: /usr/lib/nagios/plugins/check_mysql_health *
+
+# Backups
+{{ icinga2_user }} ALL=(root) NOPASSWD: /usr/local/lib/icinga2-plugins/check_backup -s *
+{{ icinga2_user }} ALL=(root) NOPASSWD: /usr/local/lib/icinga2-plugins/check_mysqldump-secure *
+{{ icinga2_user }} ALL=(root) NOPASSWD: /usr/local/lib/icinga2-plugins/check_borg *
+
+# Baremetal disk health
+{{ icinga2_user }} ALL=(root) NOPASSWD: /usr/local/lib/icinga2-plugins/check_md_raid
+{{ icinga2_user }} ALL=(root) NOPASSWD: /usr/local/lib/icinga2-plugins/check_zpool
+{{ icinga2_user }} ALL=(root) NOPASSWD: /usr/local/lib/icinga2-plugins/check_zfs
+{{ icinga2_user }} ALL=(root) NOPASSWD: /usr/local/lib/icinga2-plugins/check_smart_attributes -dbj /usr/local/lib/icinga2-plugins/check_smart_attributes_smartdb.json -r *
+
+# Firewall
+{{ icinga2_user }} ALL=(root) NOPASSWD: /usr/local/lib/icinga2-plugins/check_ufw
+
+# Run OS upgrades
+{{ icinga2_user }} ALL=(root) NOPASSWD: /usr/bin/apt --yes upgrade
+
+# Restart services
+{{ icinga2_user }} ALL=(root) NOPASSWD: /usr/bin/systemctl restart php?.?-fpm
+{{ icinga2_user }} ALL=(root) NOPASSWD: /bin/systemctl restart php?.?-fpm
+{{ icinga2_user }} ALL=(root) NOPASSWD: /bin/systemctl restart hosting-queued
+
+# KVM servers
+nagios ALL=(root) NOPASSWD: /usr/bin/virsh start *
+nagios ALL=(root) NOPASSWD: /usr/bin/virsh domstats
+
+# This is an Ansible pipeline running on x10 as the aegir user
+# (it's only called 'aegir' because it updates monitoring for aegir hosts)
+aegir ALL=(root) NOPASSWD: /bin/systemctl reload icinga2

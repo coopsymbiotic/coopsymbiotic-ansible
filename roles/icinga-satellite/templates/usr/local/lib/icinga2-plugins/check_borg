@@ -1,0 +1,147 @@
+#!/bin/bash
+
+# Based on check_borg, modified by Symbiotic to use borgmatic
+# and support for multiple repositories
+# Requires the 'jq' command
+
+set -o nounset
+set -e
+
+PROGNAME=$(basename "$0")
+PROGPATH=$(echo "$0" | sed -e 's,[\\/][^\\/][^\\/]*$,,')
+
+# source a utils.sh from nagios-plugins
+# if the check is not executed in the normal check-directory,
+# we'll search on common places. This gives us the ability to
+# avoid problems with the package-manager
+if [ -r "${PROGPATH}/utils.sh" ] && [ -f "${PROGPATH}/utils.sh" ]; then
+	. "${PROGPATH}/utils.sh"
+elif [ -r /usr/lib/nagios/plugins/utils.sh ] && [ -f /usr/lib/nagios/plugins/utils.sh ]; then
+	. /usr/lib/nagios/plugins/utils.sh
+elif [ -r /usr/lib/monitoring-plugins/utils.sh ] && [ -f /usr/lib/monitoring-plugins/utils.sh ]; then
+	. /usr/lib/monitoring-plugins/utils.sh
+elif [ -r /usr/lib64/nagios/plugins/utils.sh ] && [ -f /usr/lib64/nagios/plugins/utils.sh ]; then
+        . /usr/lib64/nagios/plugins/utils.sh
+else
+	echo "Cannot source utils.sh from monitoring-plugins!" >&2
+	exit 128
+fi
+
+debug(){ ([ "${verbose}" -gt 1 ] && echo "$*") || return 0; }
+verbose(){ ([ "${verbose}" -gt 0 ] && echo "$*") || return 0; }
+error(){ echo "BORG CRITICAL, $*"; exit "${STATE_CRITICAL}"; }
+
+crit='7 days ago'
+warn='3 days ago'
+repo=''
+verbose=0
+
+usage(){
+	cat >&2 <<-FIN
+	usage: ${PROGNAME} [-C CONF] [-R REPO] [-w DATE] [-c DATE] [ -h -v ]
+
+	DATE: Any valid date for the date-command.
+	      default for -w: "${warn}"
+	      default for -c: "${crit}"
+	CONF: A configuration file, which will get sourced. You
+	      can use this to set the necessary env variables.
+        REPO: Run the check against a specific repository, assuming
+              that multiple backup repositories have been configured.
+	FIN
+	exit "${STATE_UNKNOWN}"
+}
+
+: "${BORG:=borgmatic}"
+command -v "${BORG}" >/dev/null 2>/dev/null \
+	|| error "No command '${BORG}' available."
+
+: "${DATE:=date}"
+command -v "${DATE}" >/dev/null 2>/dev/null \
+	|| error "No command '${DATE}' available."
+
+while getopts ":vhR:C:c:w:" opt; do
+	case "${opt}" in
+		v)
+			verbose=$((verbose + 1))
+			;;
+		h)
+			usage
+			;;
+		C)
+			[ -e "${OPTARG}" ] || error "Configuration file '${OPTARG}' does not exist."
+			[ -r "${OPTARG}" ] || error "Could not read configuration file '${OPTARG}'."
+			. "${OPTARG}"      || error "Could not source configuration file '${OPTARG}'."
+			;;
+		R)
+			repo="--repository ${OPTARG}"
+			;;
+		c)
+			crit="${OPTARG}"
+			;;
+		w)
+			warn="${OPTARG}"
+			;;
+		\?)
+			error "Invalid option: -${OPTARG}"
+			usage
+			;;
+		:)
+			error "Option -${OPTARG} requires an argument."
+			usage
+			;;
+	esac
+done
+
+# convert values to seconds to enable comparison
+sec_warn="$(${DATE} --date="${warn}" '+%s')"
+sec_crit="$(${DATE} --date="${crit}" '+%s')"
+
+# check warning and critical values
+if check_range "${sec_crit}" 0:"${sec_warn}" ; then
+	error "Warning value has to be a more recent timepoint than critical."
+fi
+
+# get unixtime of last backup
+last="$(TERM=dumb ${BORG} list -nc --sort timestamp --last 1 --format '{time}' $repo 2>&1 | grep -v 'Listing archives')"
+
+# Check the error code of the piped command
+[ "${PIPESTATUS[0]}" = 0 ] || error "borgmatic list failed"
+
+# The above does not always work because of the pipe-grep, so check for errors
+if [[ $last =~ "not found" ]]; then
+        error $last
+fi
+if [[ $last =~ "Failed" ]]; then
+        error $last
+fi
+if [[ $last =~ "Error" ]]; then
+	error $last
+fi
+if [ -z "${last}" ]; then
+	error "no archive in repository"
+fi
+
+sec_last="$(${DATE} --date="${last}" '+%s')"
+
+if [ -z "${sec_last}" ]; then
+	error "unknown error"
+fi
+
+# Check the size of the backup
+stats=$(${BORG} info --json --last 1 $repo | jq -r '[ .[].cache.stats.unique_csize,  .[].archives[0].duration ] | join(",")')
+IFS=',' read -r unique_csize duration <<< "$stats"
+
+# interpret the amount of fails
+if [ "${sec_crit}" -gt "${sec_last}" ]; then
+	state="${STATE_CRITICAL}"
+	msg="BORG CRITICAL, last backup made on ${last} | unique_csize=$unique_csize; duration=$duration;"
+elif [ "${sec_warn}" -gt "${sec_last}" ]; then
+	state="${STATE_WARNING}"
+	msg="BORG WARN, last backup made on ${last} | unique_csize=$unique_csize; duration=$duration;"
+else
+	state="${STATE_OK}"
+	msg="BORG OK, last backup made on ${last} | unique_csize=$unique_csize; duration=$duration;"
+fi
+
+echo "${msg}"
+exit "${state}"

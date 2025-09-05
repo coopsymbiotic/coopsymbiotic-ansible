@@ -3,7 +3,7 @@
   become: yes
   roles:
     - common-all
-    - icinga2
+    - icinga-satellite
     - promtail
     - borgmatic
     - mysqlbackup
@@ -89,6 +89,7 @@
 - hosts: icinga_servers
   become: yes
   roles:
+    - icinga-server
     - grafana
     - gitlab-runner
     - loki

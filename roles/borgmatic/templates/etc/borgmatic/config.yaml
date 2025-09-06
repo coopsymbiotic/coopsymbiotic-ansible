@@ -34,7 +34,12 @@ source_directories:
 # repositories are backed up to in sequence. See ssh_command for SSH options like
 # identity file or port.
 repositories:
-    - ssh://backups-{{ inventory_hostname_short }}@{{ borgmatic_backupserver }}{{ borgmatic_server_basedir }}/{{ inventory_hostname }}/borg
+    - path: ssh://{{ borgmatic_user }}@{{ borgmatic_backupserver }}{{ borgmatic_server_basedir }}/{{ inventory_hostname }}/borg
+      label: {{ inventory_hostname_short }}
+
+{% if borgmatic_remote_path %}
+remote_path: {{ borgmatic_remote_path }}
+{% endif %}
 
 # Mode in which to operate the files cache. See
 # https://borgbackup.readthedocs.io/en/stable/usage/create.html#description for
@@ -155,7 +160,8 @@ exclude_patterns:
 #exclude_caches: true
 
 # Exclude directories that contain a file with the given filename.
-exclude_if_present: .nobackup
+exclude_if_present:
+    - .nobackup
 
 # Repository storage options. See
 # https://borgbackup.readthedocs.io/en/stable/usage.html#borg-create and

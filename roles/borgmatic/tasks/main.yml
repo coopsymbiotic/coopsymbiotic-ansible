@@ -5,6 +5,7 @@
   tags:
     - packages
     - borgmatic
+    - borgmatic-confs
 
 - name: borgmatic | Install python3 requirements and borgbackup
   apt:

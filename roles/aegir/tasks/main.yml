@@ -172,6 +172,7 @@
     version: 7.x-1.x
     dest: /var/aegir/.drush/utf8mb4_convert
     update: yes
+    force: yes
   tags:
     - aegir-drush-extras
     - aegir-install-drush
@@ -183,6 +184,7 @@
     version: 7.x-2.x
     dest: /var/aegir/.drush/registry_rebuild
     update: yes
+    force: yes
   tags:
     - aegir-drush-extras
     - aegir-install-drush

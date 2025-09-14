@@ -71,25 +71,23 @@ foreach ($ipCounts as $ip => $count) {
 
   echo "$blocked$ip - $count hits - {$info['org']} ({$info['country']}) {$info['timezone']} {$reverse_dns}\n";
 
-  if ($count < 600) {
-    continue;
-  }
-
-  // Block countries with high badbot-rates
-  if (!$blocked && in_array($info['country'], ['BR', 'VN', 'UZ', 'IQ', 'CN'])) {
-    // Check if it is an IPv4 address
-    $parts = explode('.', $ip);
-    if (count($parts) == 4) {
-      echo "Blocking: $ip/24 (because of country)\n";
-      `iptables -I INPUT -s $ip/24 -j DROP`;
+  if ($count > 600) {
+    // Block countries with high badbot-rates
+    if (!$blocked && in_array($info['country'], ['BR', 'VN', 'UZ', 'IQ', 'CN'])) {
+      // Check if it is an IPv4 address
+      $parts = explode('.', $ip);
+      if (count($parts) == 4) {
+        echo "Blocking: $ip/24 (because of country)\n";
+        `iptables -I INPUT -s $ip/24 -j DROP`;
+      }
     }
-  }
 
-  // Check if it's a bot on Google cloud, but not the Google Crawler
-  if (!$blocked) {
-    if (strpos($reverse_dns, 'googleusercontent.com') !== FALSE) {
-      echo "Blocking: $ip/24 (because of rDNS)\n";
-      `iptables -I INPUT -s $ip/24 -j DROP`;
+    // Check if it's a bot on Google cloud, but not the Google Crawler
+    if (!$blocked) {
+      if (strpos($reverse_dns, 'googleusercontent.com') !== FALSE) {
+        echo "Blocking: $ip/24 (because of rDNS)\n";
+        `iptables -I INPUT -s $ip/24 -j DROP`;
+      }
     }
   }
 

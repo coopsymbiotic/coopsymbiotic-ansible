@@ -71,7 +71,7 @@ foreach ($ipCounts as $ip => $count) {
 
   echo "$blocked$ip - $count hits - {$info['org']} ({$info['country']}) {$info['timezone']} {$reverse_dns}\n";
 
-  if ($count > 600) {
+  if ($count < 600) {
     continue;
   }
 
@@ -87,7 +87,7 @@ foreach ($ipCounts as $ip => $count) {
 
   // Check if it's a bot on Google cloud, but not the Google Crawler
   if (!$blocked) {
-    if (strpos($reverse_dns, 'googleusercontent.com')) {
+    if (strpos($reverse_dns, 'googleusercontent.com') !== FALSE) {
       echo "Blocking: $ip/24 (because of rDNS)\n";
       `iptables -I INPUT -s $ip/24 -j DROP`;
     }

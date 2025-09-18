@@ -15,3 +15,7 @@ ufw_allow_https: true
 
 # How aggressively to ban
 fail2ban_civicrm_maxretry: 20
+
+# Add extra expressions to ban
+# ufw_fail2ban_nginxcivicrm_failregex_extra:
+#   - regexp

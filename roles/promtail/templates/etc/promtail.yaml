@@ -35,6 +35,16 @@ scrape_configs:
       selector: '{job="varlogs"} |~ ".* promtail\\[.*"'
       action: drop
       drop_counter_reason: promtail_noisy_error
+- job_name: journal
+  journal:
+    max_age: 12h
+    path: /var/log/journal
+    labels:
+      job: systemd-journal
+      host: {{ inventory_hostname }}
+  relabel_configs:
+    - source_labels: ['__journal_systemd_unit']
+      target_label: 'unit'
 - job_name: nginx
   static_configs:
   - targets:

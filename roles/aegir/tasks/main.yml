@@ -9,7 +9,6 @@
     - packages
     - packages-php
     - aegir-php
-    - aegir-goaccess
     - packages-php-gpg
 
 - apt:
@@ -106,7 +105,6 @@
     - aegir-helper-scripts
     - aegir-ansible
     - aegir-install
-    - aegir-goaccess
     - aegir-php
 
 # Also used for the Aegir-on-Backdrop installation
@@ -439,7 +437,3 @@
 - include_tasks: cleanuptmp.yml
   tags:
     - aegir-cleanuptmp
-
-- include_tasks: goaccess.yml
-  tags:
-    - aegir-goaccess

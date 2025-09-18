@@ -21,7 +21,6 @@ aegir ALL=NOPASSWD: /usr/local/bin/aegir-db-filestats
 aegir ALL=NOPASSWD: /usr/local/bin/aegir-disk-usage-report
 aegir ALL=NOPASSWD: /usr/local/aegir-ansible-playbooks/bin/fix-drupal-permissions.sh
 www-data ALL=NOPASSWD: /usr/local/bin/aegir-db-filestats
-www-data ALL=NOPASSWD: /usr/local/bin/goaccess-aegir
 # Unban IPs blocked by fail2ban
 aegir ALL=NOPASSWD: /usr/sbin/ufw status
 aegir ALL=NOPASSWD: /usr/bin/fail2ban-client set *

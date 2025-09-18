@@ -145,3 +145,12 @@
   when: "'icinga_servers' not in group_names"
   tags:
     - icinga2
+
+# Always deploy custom checks (server and nodes) because the server
+# also needs most of those checks locally
+- include_tasks:
+    file: custom-checks.yml
+    apply:
+      tags: icinga2-custom-checks
+  tags:
+    - icinga2-custom-checks

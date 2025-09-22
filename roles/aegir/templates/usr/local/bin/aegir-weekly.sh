@@ -54,7 +54,7 @@ count() {
         | sed "s/[\,']//g" 2>&1)
 
       if [ -e "${Dir}/drushrc.php" ] && [ ! -e "${Plr}/profiles/hostmaster" ]; then
-        sudo -i -u aegir drush @${Dom} provision-symbiotic-cleanup 1>/dev/null 2>/dev/null
+        sudo -i -u aegir aegir-helpers site:cleanup $Dom 2>/dev/null
 
         Dat=$(cat ${Dir}/drushrc.php \
           | grep "options\['db_name'\] = " \
@@ -99,7 +99,7 @@ count() {
         fi
 
         if [ "${_DEV_URL}" = "NO" ]; then
-          sudo -i -u aegir drush @${Dom} provision-symbiotic-civicrm-stats-aegir 2>/dev/null
+          sudo -i -u aegir aegir-helpers site:stats $Dom 2>/dev/null
         fi
       fi
     fi

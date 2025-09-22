@@ -323,6 +323,7 @@
     - aegir-civicrm-translations
     - aegir-ansible
     - aegir-getlock
+    - aegir-weekly
 
 - name: Deploy our version of BOA's weekly.sh
   template: src=usr/local/bin/aegir-weekly.sh dest=/usr/local/bin/aegir-weekly.sh owner=root group=root mode=0755

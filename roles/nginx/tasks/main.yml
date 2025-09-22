@@ -48,3 +48,15 @@
   tags:
     - nginx
     - nginx-ciphers
+
+- name: Deploy our top-ips script
+  template:
+    src: "usr/local/bin/top-ips"
+    dest: "/usr/local/bin/top-ips"
+    owner: "root"
+    group: "root"
+    mode: "0755"
+  tags:
+    - nginx
+    - nginx-topips
+    - nginx-top-ips

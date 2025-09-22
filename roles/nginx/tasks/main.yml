@@ -15,17 +15,20 @@
     - nginx-packages
     - nginx-brotli
 
-- name: Deploy the brotli conf.d
+- name: Deploy our conf.d overrides such as brotli.conf and logformat.conf
   template:
-    src: "etc/nginx/conf.d/symbiotic-brotli.conf"
-    dest: "/etc/nginx/conf.d/symbiotic-brotli.conf"
+    src: "etc/nginx/conf.d/{{ item }}"
+    dest: "/etc/nginx/conf.d/{{ item }}"
     owner: root
     group: root
     mode: 0644
+  with_items:
+    - symbiotic-brotli.conf
+    - symbiotic-logformat.conf
   notify: reload nginx
   tags:
     - nginx
-    - nginx-brotli
+    - nginx-conf
 
 - name: Make sure the snippets directory exists
   file:
@@ -37,17 +40,19 @@
   tags:
     - nginx
     - nginx-ciphers
+    - nginx-conf
 
 - name: Deploy nginx ciphers snippet
   template:
-    src: etc/nginx/snippets/ciphers.conf
-    dest: /etc/nginx/snippets/ciphers.conf
-    owner: root
-    group: root
-    mode: 0444
+    src: "etc/nginx/snippets/ciphers.conf"
+    dest: "/etc/nginx/snippets/ciphers.conf"
+    owner: "root"
+    group: "root"
+    mode: "0444"
   tags:
     - nginx
     - nginx-ciphers
+    - nginx-conf
 
 - name: Deploy our top-ips script
   template:

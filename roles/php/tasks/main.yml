@@ -105,7 +105,8 @@
       "php{{ phpversion }}-mbstring",
       "php{{ phpversion }}-yaml",
       "php{{ phpversion }}-zip",
-      "php{{ phpversion }}-imagick"
+      "php{{ phpversion }}-imagick",
+      "php{{ phpversion }}-maxminddb"
     ]
     state: present
     install_recommends: no

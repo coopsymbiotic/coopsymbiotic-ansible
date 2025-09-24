@@ -3,7 +3,10 @@
 
 # Detect and block suspicious activity.
 #
-# {{ ansible_managed }}
+# Ansible managed karak usr/local/bin/top-ips
+
+# Requires php-maxminddb
+use MaxMind\Db\Reader;
 
 $short_options = "vq";
 $long_options = [
@@ -35,6 +38,46 @@ $limit = $options['limit'] ?? $options['l'] ?? 600;
 $verbose = isset($options['v']) || isset($options['verbose']);
 $quiet = isset($options['q']) || isset($options['quiet']);
 
+// @todo FIXME move to a setting
+$ignore = [
+  '65.21.193.10',
+  '2a01:4f9:3b:1aaf::2',
+  '5.22.218.0',
+  '2a04:3542:8000:1000:74ba:beff:fe28:e9e',
+];
+
+function block_ip($ip, $reason, $quiet) {
+  // Check if IPv4
+  $parts = explode('.', $ip);
+  $is_ipv4 = (count($parts) == 4);
+
+  if (!$is_ipv4) {
+    echo "IPv6 not yet supported (reason: $reason)\n";
+    return;
+  }
+
+  if (!$quiet) {
+    echo "Blocking: $ip (reason: $country)\n";
+  }
+  `iptables -I INPUT -s $ip/24 -j DROP`;
+}
+
+// Create the Reader object. This should be reused across lookups.
+$databaseFile = '/usr/local/share/ipinfo_lite.mmdb';
+$reader = null;
+
+if (is_readable($databaseFile)) {
+  try {
+    $reader = new Reader($databaseFile);
+  }
+  catch (\Exception $e) {
+    echo 'Error reading the ipinfo mmdb file: ' . $e->getMessage() . "\n";
+  }
+}
+else {
+  echo "$databaseFile not found, will do curl lookups\n";
+}
+
 // Read all lines from the log file
 $lines = file($logFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 
@@ -52,11 +95,15 @@ foreach ($lines as $line) {
     // Remove quotes
     $ip = str_replace('"', '', $ip);
 
-    // If IPv4, remove the last part of the IP
-    $parts = explode('.', $ip);
-    if (count($parts) == 4) {
-      $parts[3] = '0';
-      $ip = implode('.', $parts);
+    // For ignored hosts, do not aggregate to their /24
+    // We do not remove them from the output because it is still relevant info
+    if (empty($ignore[$ip])) {
+      // If IPv4, remove the last part of the IP
+      $parts = explode('.', $ip);
+      if (count($parts) == 4) {
+        $parts[3] = '0';
+        $ip = implode('.', $parts);
+      }
     }
 
     // Increment the count for the IP address
@@ -80,10 +127,22 @@ arsort($ipCounts);
 $stop = 50;
 
 foreach ($ipCounts as $ip => $count) {
+  $info = [];
+
   // Lookup country/org information
-  $apiUrl = "http://ipinfo.io/{$ip}/json";
-  $response = file_get_contents($apiUrl);
-  $info = json_decode($response, true);
+  if ($reader) {
+    $record = $reader->get($ip);
+    // Use the same format as for ipinfo.io
+    $info = [
+      'org' => $record['as_name'] ?? 'UNKNOWN',
+      'country' => $record['country_code'] ?? 'UNKNOWN',
+    ];
+  }
+  else {
+    $apiUrl = "http://ipinfo.io/{$ip}/json";
+    $response = file_get_contents($apiUrl);
+    $info = json_decode($response, true);
+  }
 
   // Lookup the reverse DNS
   $reverse_dns = `host $ip | awk '{ print $5 }'`;
@@ -93,31 +152,29 @@ foreach ($ipCounts as $ip => $count) {
   $output = `iptables -n -L INPUT | grep $ip`;
   $blocked = empty($output) ? '' : '(BLOCKED) ';
 
+  // Check if ignored
+  $ignored = !empty($ignore[$ip]) ? '(ignore) ' : '';
+
   if (!$quiet) {
-    echo "$blocked$ip - $count hits - {$info['org']} ({$info['country']}) {$info['timezone']} {$reverse_dns}\n";
+    echo "$blocked$ignored$ip - $count hits - {$info['org']} ({$info['country']}) {$reverse_dns}\n";
   }
 
-  if ($count > $limit) {
-    // Block countries with high badbot-rates
-    if (!$blocked && in_array($info['country'], ['BR', 'VN', 'UZ', 'IQ', 'CN', 'BH', 'MY'])) {
-      // Check if it is an IPv4 address
-      $parts = explode('.', $ip);
-      if (count($parts) == 4) {
-        if (!$quiet) {
-          echo "Blocking: $ip/24 (because of country)\n";
-        }
-        `iptables -I INPUT -s $ip/24 -j DROP`;
-      }
-    }
+  if ($ignored) {
+    continue;
+  }
 
+  if (!$blocked && $count > $limit) {
+    // Block countries with high badbot-rates
+    if (in_array($info['country'], ['BR', 'VN', 'UZ', 'IQ', 'CN', 'BH', 'MY'])) {
+      block_ip($ip, 'country');
+    }
     // Check if it's a bot on Google cloud, but not the Google Crawler
-    if (!$blocked) {
-      if (strpos($reverse_dns, 'googleusercontent.com') !== FALSE) {
-        if (!$quiet) {
-          echo "Blocking: $ip/24 (because of rDNS)\n";
-        }
-        `iptables -I INPUT -s $ip/24 -j DROP`;
-      }
+    elseif (strpos($reverse_dns, 'googleusercontent.com') !== FALSE) {
+      block_ip($ip, 'rDNS');
+    }
+    // Check bot-friendly hosts
+    elseif (preg_match('/(Alibaba|Hetzner)/i', $info['org'])) {
+      block_ip($ip, 'bot-friendly hosting');
     }
   }
 

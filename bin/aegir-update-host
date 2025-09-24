@@ -11,4 +11,10 @@ if [ $? != 0 ]; then
   exit 1
 fi
 
-env AEGIR_HOSTMASTER_HOSTNAME="$host" AEGIR_INVENTORY_ARGS="?remote=1&site_status=1" ansible-playbook -i ../coopsymbiotic-inventory/hosts -i ./bin/aegir-inventory -l "$host" -t icinga2-conf-host ./site.yml
+INVENTORY_FILE="../coopsymbiotic-inventory/hosts"
+
+if [[ "$host" =~ "civicrm.org" ]]; then
+  INVENTORY_FILE="../civicrm-infra/ansible/hosts"
+fi
+
+env AEGIR_HOSTMASTER_HOSTNAME="$host" AEGIR_INVENTORY_ARGS="?site_status=1\&remote=1" ansible-playbook -i $INVENTORY_FILE -i ./bin/aegir-inventory -l "$host" -t icinga2-conf-host ./site.yml

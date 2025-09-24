@@ -146,6 +146,22 @@
   tags:
     - icinga2
 
+- include_tasks:
+    file: main-conf-host.yml
+    apply:
+      tags: icinga2-conf-host
+  tags:
+    - never
+    - icinga2-conf-host
+
+- include_tasks:
+    file: main-conf-host-local.yml
+    apply:
+      tags: icinga2-conf-host-local
+  tags:
+    - never
+    - icinga2-conf-host-local
+
 # Always deploy custom checks (server and nodes) because the server
 # also needs most of those checks locally
 - include_tasks:

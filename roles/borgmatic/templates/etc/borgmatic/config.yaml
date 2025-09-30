@@ -92,7 +92,7 @@ exclude_patterns:
     - /var/lib/php/sessions
     - /var/lib/puppet/clientbucket
     - /var/lib/spamassassin/.spamassassin
-    - /var/log
+    - /var/log/journal
     - /var/tmp
     # Aegir-specific excludes
     - /var/aegir/.cache

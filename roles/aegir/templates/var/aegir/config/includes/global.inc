@@ -1,0 +1,2 @@
+<?php # global settings.php
+

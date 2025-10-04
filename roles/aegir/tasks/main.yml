@@ -217,6 +217,36 @@
 #   tags:
 #     - aegir-settings
 
+# This should be in aegir-ansible-playbooks
+- name: Make sure that the global includes directory exists
+  file:
+    path: "/var/aegir/config/includes"
+    state: "directory"
+    owner: "aegir"
+    group: "aegir"
+    mode: "0755"
+  tags:
+    - aegir-globalinc
+
+- name: Check if the global.inc file exists
+  stat:
+    path: "/var/aegir/config/includes/global.inc"
+  register: aegir_global_inc
+  tags:
+    - aegir-globalinc
+
+- name: Deploy a blank global.inc file
+  template:
+    src: "var/aegir/config/includes/global.inc"
+    dest: "/var/aegir/config/includes/global.inc"
+    owner: "aegir"
+    group: "aegir"
+    mode: "0644"
+
+  when: not aegir_global_inc.stat.exists
+  tags:
+    - aegir-globalinc
+
 - name: Aegir | Enable CiviCRM l10n basedir define
   lineinfile:
     path: /var/aegir/config/includes/global.inc

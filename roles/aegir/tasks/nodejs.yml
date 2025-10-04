@@ -41,6 +41,10 @@
     state: present
   register: node_repo
 
+- name: Run apt update
+  ansible.builtin.apt:
+    update_cache: yes
+
 - name: Install nodejs
   apt:
     name: nodejs

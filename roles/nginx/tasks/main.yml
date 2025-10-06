@@ -5,7 +5,8 @@
 - apt:
     name: [
       nginx,
-      libnginx-mod-http-brotli-filter # coopsymbiotic/ops#265
+      libnginx-mod-http-brotli-filter, # coopsymbiotic/ops#265
+      ssl-cert # required for the snakeoil cert on the default https vhost
     ]
     state: present
     install_recommends: no

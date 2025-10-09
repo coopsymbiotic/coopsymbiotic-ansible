@@ -166,15 +166,15 @@ foreach ($ipCounts as $ip => $count) {
   if (!$blocked && $count > $limit) {
     // Block countries with high badbot-rates
     if (in_array($info['country'], ['BR', 'VN', 'UZ', 'IQ', 'CN', 'BH', 'MY'])) {
-      block_ip($ip, 'country');
+      block_ip($ip, 'country', $quiet);
     }
     // Check if it's a bot on Google cloud, but not the Google Crawler
     elseif (strpos($reverse_dns, 'googleusercontent.com') !== FALSE) {
-      block_ip($ip, 'rDNS');
+      block_ip($ip, 'rDNS', $quiet);
     }
     // Check bot-friendly hosts
-    elseif (preg_match('/(Alibaba|Hetzner)/i', $info['org'])) {
-      block_ip($ip, 'bot-friendly hosting');
+    elseif (preg_match('/(Alibaba|Hetzner|HUAWEI)/i', $info['org'])) {
+      block_ip($ip, 'bot-friendly hosting', $quiet);
     }
   }
 

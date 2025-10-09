@@ -57,7 +57,7 @@ function block_ip($ip, $reason, $quiet) {
   }
 
   if (!$quiet) {
-    echo "Blocking: $ip (reason: $country)\n";
+    echo "Blocking: $ip (reason: $reason)\n";
   }
   `iptables -I INPUT -s $ip/24 -j DROP`;
 }

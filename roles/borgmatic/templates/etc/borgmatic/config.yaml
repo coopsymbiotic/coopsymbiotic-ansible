@@ -105,7 +105,6 @@ exclude_patterns:
     - /var/aegir/.vimbackup
     - /var/aegir/.vscode-server
     - /var/aegir/backups
-    - /var/aegir/l10n-civicrm
     - /var/aegir/platforms/*/.git
     - /var/aegir/platforms/*/sites/*/files/civicrm/templates_c
     - /var/aegir/platforms/*/sites/*/files/civicrm/ConfigAndLog

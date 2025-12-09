@@ -81,6 +81,13 @@ fi
 command -v jpegoptim >/dev/null 2>&1 || { echo >&2 "Package jpegoptim is required but not installed. Aborting."; exit 1; }
 command -v optipng >/dev/null 2>&1 || { echo >&2 "Package optipng is required but not installed. Aborting."; exit 1; }
 
+# Check server space (at least 200 MB)
+# Discovered a strange issue whereby empty files are created when no disk space is available
+if [ $(df --output=avail / | tail -1) -lt 200000 ]; then
+  echo "Not enough space to perform compression so quitting"
+  exit 1
+fi
+
 if [ "$devsite" == "yes" ]; then
   command -v mogrify >/dev/null 2>&1 || { echo >&2 "Package imagemagick is required for mogrify. Aborting."; exit 1; }
 fi

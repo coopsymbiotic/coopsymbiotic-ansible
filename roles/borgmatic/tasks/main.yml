@@ -1,5 +1,8 @@
 ---
 
+# Note: if borgmatic_remote_path is not empty, we assume it is rsync.net
+# and therefore not creating a remote user.
+
 - name: Force gathering facts for partial ansible runs
   setup:
   tags:
@@ -114,6 +117,7 @@
   tags:
     - borgmatic
     - borgmatic-ssh
+  when: borgmatic_remote_path == ""
 
 - name: borgmatic | Create the backup user on backup server
   delegate_to: "{{ borgmatic_backupserver }}"
@@ -121,6 +125,7 @@
   tags:
     - borgmatic
     - borgmatic-ssh
+  when: borgmatic_remote_path == ""
 
 - name: borgmatic | Update backup server home directory permissions
   delegate_to: "{{ borgmatic_backupserver }}"
@@ -133,6 +138,7 @@
   tags:
     - borgmatic
     - borgmatic-ssh
+  when: borgmatic_remote_path == ""
 
 - name: borgmatic | Create the backup directory on backup server
   delegate_to: "{{ borgmatic_backupserver }}"
@@ -145,6 +151,7 @@
   tags:
     - borgmatic
     - borgmatic-ssh
+  when: borgmatic_remote_path == ""
 
 - name: borgmatic | Add the public ssh key to backup account on the backup server
   delegate_to: "{{ borgmatic_backupserver }}"
@@ -155,6 +162,7 @@
   tags:
     - borgmatic
     - borgmatic-ssh
+  when: borgmatic_remote_path == ""
 
 - name: borgmatic | Add extra ssh keys to the backup server if defined
   delegate_to: "{{ borgmatic_backupserver }}"

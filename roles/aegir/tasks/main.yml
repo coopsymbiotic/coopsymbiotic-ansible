@@ -343,7 +343,6 @@
     - aegir-disk-usage-report
     - aegir-getlock
     - optimize-images
-    - cvlog
     - civicrm-pull-patch
     - civicrm-update-translations
   tags:

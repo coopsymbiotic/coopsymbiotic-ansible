@@ -25,9 +25,9 @@ if (( $# > 0 )); then
 fi
 
 {% if ansible_distribution_release == 'bookworm' %}
-borgmatic mount --options allow_other,ignore_permissions --mount-point /mnt/restore --path var/backups/mysql --path var/aegir
-{% else %}
 borgmatic mount --options allow_other,ignore_permissions --mount-point /mnt/restore --path var/backups/mysql var/aegir
+{% else %}
+borgmatic mount --options allow_other,ignore_permissions --mount-point /mnt/restore --path var/backups/mysql --path var/aegir
 {% endif %}
 
 echo "Backups mounted to /mnt/restore"

@@ -11,7 +11,8 @@ set -e
 path=`pwd`
 
 # Save the args for later
-orig_args="$@"
+# weird syntax is to correctly support whitespace, ex: "cv eval '...'"
+orig_args=("$@")
 
 # Parse Command Line Arguments
 while [ "$#" -gt 0 ]; do
@@ -42,4 +43,4 @@ if [[ "$host" != "/" ]]; then
   fi
 fi
 
-/usr/local/bin/cv.real $orig_args
+/var/aegir/cv/bin/cv "${orig_args[@]}"

@@ -108,6 +108,15 @@ foreach ($lines as $line) {
         $parts[3] = '0';
         $ip = implode('.', $parts);
       }
+      else {
+        // If IPv6, remove the last part, ex: "::1", "::a1" or just "::"
+	$ip = preg_replace('/::.*$/', '', $ip);
+        $parts = explode(':', $ip);
+        $num_parts = count($parts);
+        // Keep only the first 4 parts (or less), or /64 and add ::
+	array_splice($parts, ($num_parts >= 4 ? 4 : $num_parts));
+        $ip = implode(':', $parts) . '::';
+      }
     }
 
     // Increment the count for the IP address

@@ -69,8 +69,10 @@ if [ -x /usr/bin/dircolors ]; then
     alias ls='ls --color=auto'
 fi
 
-# Alias definitions.
-# You may want to put all your additions into a separate file like
+# Alias definitions
+alias aegir="aegir-helpers"
+
+# You may want to put extra alias additions into a separate file like
 # ~/.bash_aliases, instead of adding them here directly.
 # See /usr/share/doc/bash-doc/examples in the bash-doc package.
 if [ -f ~/.bash_aliases ]; then

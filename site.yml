@@ -135,13 +135,6 @@
 #   tags:
 #     - dokuwiki
 
-- hosts: ufw_managed
-  become: yes
-  roles:
-    - ufw
-  tags:
-    - ufw
-
 # For hosts not running Aegir
 # or with more custom setups
 - hosts: dehydrated_manually

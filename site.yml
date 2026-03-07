@@ -28,6 +28,7 @@
     - nginx
     - php
     - aegir
+    - dehydrated
   tags:
     - aegir
 

@@ -14,13 +14,16 @@ aegir ALL=NOPASSWD: /usr/local/bin/aegir-reload-nginx.sh
 aegir ALL=NOPASSWD: /usr/local/bin/aegir-systemctl-status
 www-data ALL=NOPASSWD: /usr/local/bin/aegir-systemctl-status
 aegir ALL=NOPASSWD: /usr/local/bin/aegir-ansible
-aegir ALL=NOPASSWD: /usr/local/bin/fix-drupal-permissions.sh
-aegir ALL=NOPASSWD: /usr/local/bin/fix-standalone-permissions.sh
-aegir ALL=NOPASSWD: /usr/local/bin/fix-wordpress-permissions.sh
 aegir ALL=NOPASSWD: /usr/local/bin/aegir-db-filestats
 aegir ALL=NOPASSWD: /usr/local/bin/aegir-disk-usage-report
 aegir ALL=NOPASSWD: /usr/local/aegir-ansible-playbooks/bin/fix-drupal-permissions.sh
+aegir ALL=NOPASSWD: /usr/local/aegir-ansible-playbooks/bin/fix-standalone-permissions.sh
+aegir ALL=NOPASSWD: /usr/local/aegir-ansible-playbooks/bin/fix-wordpress-permissions.sh
 www-data ALL=NOPASSWD: /usr/local/bin/aegir-db-filestats
+# @todo @deprecated
+aegir ALL=NOPASSWD: /usr/local/bin/fix-drupal-permissions.sh
+aegir ALL=NOPASSWD: /usr/local/bin/fix-standalone-permissions.sh
+aegir ALL=NOPASSWD: /usr/local/bin/fix-wordpress-permissions.sh
 # Unban IPs blocked by fail2ban
 aegir ALL=NOPASSWD: /usr/sbin/ufw status
 aegir ALL=NOPASSWD: /usr/bin/fail2ban-client set *

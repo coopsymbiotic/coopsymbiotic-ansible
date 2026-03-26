@@ -17,17 +17,17 @@ if [ -z $SITE_DEST ]; then
   usage
 fi
 
-DEV_PLATFORM="${DEV_PLATFORM:=/var/aegir/platforms/civicrm-d8}"
-PROD_PLATFORM="${PROD_PLATFORM:=/var/aegir/platforms/civicrm-d8}"
-SKIP_TABLES="${SKIP_TABLES:=watchdog,civicrm_log,civicrm_mailing_recipients,civicrm_mailing_event_bounce,civicrm_mailing_event_confirm civicrm_mailing_event_delivered civicrm_mailing_event_forward civicrm_mailing_event_opened civicrm_mailing_event_queue civicrm_mailing_event_reply civicrm_mailing_event_subscribe civicrm_mailing_event_trackable_url_open civicrm_mailing_event_unsubscribe}"
+DEV_PLATFORM="${DEV_PLATFORM:=/var/aegir/platforms/civicrm-d10}"
+PROD_PLATFORM="${PROD_PLATFORM:=/var/aegir/platforms/civicrm-d10}"
+SKIP_TABLES="${SKIP_TABLES:=watchdog,civicrm_log,civicrm_mailing_recipients,civicrm_mailing_event_bounce,civicrm_mailing_event_confirm,civicrm_mailing_event_delivered,civicrm_mailing_event_forward,civicrm_mailing_event_opened,civicrm_mailing_event_queue,civicrm_mailing_event_reply,civicrm_mailing_event_subscribe,civicrm_mailing_event_trackable_url_open,civicrm_mailing_event_unsubscribe}"
 
-if [ ! -f "$PROD_PLATFORM/sites/$SITE_SRC/settings.php" ]; then
-  echo "Prod: $PROD_PLATFORM/sites/$SITE_SRC is not a valid Drupal directory"
+if [ ! -f "$PROD_PLATFORM/web/sites/$SITE_SRC/settings.php" ]; then
+  echo "Prod: $PROD_PLATFORM/web/sites/$SITE_SRC is not a valid Drupal directory"
   exit 1
 fi
 
-if [ ! -f "$DEV_PLATFORM/sites/$SITE_DEST/settings.php" ]; then
-  echo "Dev: $DEV_PLATFORM/sites/$SITE_DEST is not a valid Drupal directory"
+if [ ! -f "$DEV_PLATFORM/web/sites/$SITE_DEST/settings.php" ]; then
+  echo "Dev: $DEV_PLATFORM/web/sites/$SITE_DEST is not a valid Drupal directory"
   exit 1
 fi
 
@@ -41,21 +41,23 @@ set -x
 set -e
 
 cd /tmp/
-
 sqlfile=`mktemp --suffix=.sql`
 
-drush $SITE_SRC sql-dump --skip-tables-list $SKIP_TABLES > $sqlfile
+cd $PROD_PLATFORM
+drush -l $SITE_SRC sql:dump --skip-tables-list=$SKIP_TABLES > $sqlfile
 perl -pi -e 's#\/\*\!5001[7|3].*?`[^\*]*\*\/##g' $sqlfile
 
-cat $sqlfile | drush $SITE_DEST sqlc
+cd $DEV_PLATFORM
+cat $sqlfile | drush -l $SITE_DEST sqlc
 
 rm $sqlfile
 
 # Verify takes care of detecting that it's a dev site and updating the environment
 # and other settings.
-drush $SITE_DEST provision-verify
+sudo /usr/local/bin/aegir-ansible $SITE_DEST 'site/verify.yml'
+drush -l $SITE_DEST cr
 
 # To avoid weird issues because we patch against flushing this
-drush $SITE_DEST sqlq 'TRUNCATE civicrm_cache;'
+drush -l $SITE_DEST sqlq 'TRUNCATE civicrm_cache;'
 
 echo "All done."

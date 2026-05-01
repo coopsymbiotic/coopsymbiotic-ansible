@@ -1,0 +1,12 @@
+# Hotfix for the algif_aead bug
+# To use it: $ ansible-playbook ./helpers/disable_algif_copyfail.yml
+
+- hosts: all
+  tasks:
+    - community.general.modprobe:
+        name: algif_aead
+        state: absent
+    # using community.general.kernel_blacklist does not work on all hosts
+    - shell: echo "install algif_aead /bin/false" > /etc/modprobe.d/disable-algif.conf
+  become: true
+  become_user: root

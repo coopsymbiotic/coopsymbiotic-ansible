@@ -1,0 +1,19 @@
+# Hotfix for the dirtyfrag bug
+# To use it: $ ansible-playbook ./helpers/disable_dirtyfrag.yml
+# For more info: https://github.com/V4bel/dirtyfrag
+
+- hosts: all
+  tasks:
+    - community.general.modprobe:
+        name: esp4
+        state: absent
+    - community.general.modprobe:
+        name: esp6
+        state: absent
+    - community.general.modprobe:
+        name: rxrpc
+        state: absent
+    # using community.general.kernel_blacklist does not work on all hosts
+    - shell: printf 'install esp4 /bin/false\ninstall esp6 /bin/false\ninstall rxrpc /bin/false\n' > /etc/modprobe.d/disable-dirtyfrag.conf
+  become: true
+  become_user: root

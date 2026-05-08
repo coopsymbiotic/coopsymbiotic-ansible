@@ -15,5 +15,7 @@
         state: absent
     # using community.general.kernel_blacklist does not work on all hosts
     - shell: printf 'install esp4 /bin/false\ninstall esp6 /bin/false\ninstall rxrpc /bin/false\n' > /etc/modprobe.d/disable-dirtyfrag.conf
+    # https://github.com/V4bel/dirtyfrag/issues/1#issuecomment-4400768488
+    - shell: echo 3 > /proc/sys/vm/drop_caches
   become: true
   become_user: root

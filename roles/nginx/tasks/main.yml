@@ -25,7 +25,23 @@
     mode: 0644
   with_items:
     - symbiotic-brotli.conf
+  when: "'aegir_managed' not in group_names"
+  notify: reload nginx
+  tags:
+    - nginx
+    - nginx-conf
+
+# Aegir also ships a log_format, and it cannot be redeclared
+- name: Deploy our conf.d overrides such as logformat.conf
+  template:
+    src: "etc/nginx/conf.d/{{ item }}"
+    dest: "/etc/nginx/conf.d/{{ item }}"
+    owner: root
+    group: root
+    mode: 0644
+  with_items:
     - symbiotic-logformat.conf
+  when: "'aegir_managed' not in group_names"
   notify: reload nginx
   tags:
     - nginx

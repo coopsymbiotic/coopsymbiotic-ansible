@@ -34,9 +34,6 @@ aegir_sudoers: johndoe
 aegir_ssh_dir_permission: 0700
 aegir_ssh_dir_group: aegir
 
-# Default Drupal platform to install
-aegir_platform_drupal_version: 10
-
 # We can define an array of unix usernames that will be used to create
 # mysql users. This is to make it easier to connect using Workbench over ssh.
 aegir_mysql_users_ro: []

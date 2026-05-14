@@ -49,13 +49,13 @@
     - aegir-ssh
     - aegir-civicrm-platform
 
-- name: platform | Clone the Symbiotic platform
+# Some clients might use Drupal or WordPress, but the server admin can easily add more platforms
+- name: platform | Clone the Symbiotic standalone platform
   become_user: aegir
-  git: repo=git@lab-platform-key.symbiotic.coop:coopsymbiotic/symbiotic-platform-d{{ aegir_platform_drupal_version }}-civicrm.git
+  git: repo=git@lab-platform-key.symbiotic.coop:coopsymbiotic/coopsymbiotic/plateformes/symbiotic-standalone-civicrm.git
        recursive=yes
        force=yes
-       version=master
-       dest="/var/aegir/platforms/civicrm-d{{ aegir_platform_drupal_version }}"
+       dest="/var/aegir/platforms/standalone-prod"
        update=yes
   tags:
     - aegir-civicrm-platform
